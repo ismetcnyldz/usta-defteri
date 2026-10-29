@@ -135,6 +135,27 @@ header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:1
 #add-stok{color:var(--steel);border-color:var(--steel)}
 #f-ruhsat{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;color:var(--info);border-color:var(--info);font-size:.85rem;padding:8px 10px}
 #f-ruhsat.busy{opacity:.6;pointer-events:none}
+/* Araç fotoğrafları */
+.fotos{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.fotos .ph{position:relative;width:84px;height:84px;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--bg)}
+.fotos .ph img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+.fotos .ph .rmf{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:14px;line-height:1;cursor:pointer}
+.fotos .addf{width:84px;height:84px;border:2px dashed var(--line);border-radius:8px;background:var(--panel);display:grid;place-items:center;gap:2px;font-size:.7rem;color:var(--muted);cursor:pointer}
+.fotos .addf .ic{width:24px;height:24px}
+.lightbox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.9);display:grid;place-items:center;padding:16px}
+.lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+.rp-fotos{display:flex;gap:8px;margin-top:10px}.rp-fotos img{width:120px;height:90px;object-fit:cover;border-radius:6px;border:1px solid #ccc}
+/* Veresiye */
+.sec-h{font-size:1.1rem;text-transform:uppercase;display:flex;align-items:center;gap:6px;margin:14px 0 8px}
+.sec-h .ic{width:22px;height:22px;color:var(--crit)}
+/* Sesli iş emri */
+#btn-voice.on{background:var(--crit);border-color:var(--crit);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.7}}
+.voicebox{border:1px dashed var(--info);border-radius:10px;padding:10px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--info) 8%,var(--panel))}
+.voicebox b{color:var(--info)}
+/* Ödeme bildirimi */
+.paybox{display:grid;gap:8px;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.paybox .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* Şu an dükkanda */
 .now{border:1px solid var(--line);border-left:5px solid var(--info);background:var(--panel);border-radius:10px;padding:10px 12px;margin-bottom:12px}
 .now h3{font-size:1.1rem;text-transform:uppercase;display:flex;align-items:center;gap:6px;margin-bottom:6px}
@@ -502,6 +523,8 @@ button.ucard:hover{border-color:var(--muted);border-left-color:var(--sc)}
   <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
   <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17v.5"/></symbol>
   <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></symbol>
   <symbol id="i-free" viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M6 22v-6a6 6 0 0 1 12 0v6"/><path d="M4 12l-1.5 3M20 12l1.5 3" stroke-dasharray="2 2"/></symbol>
 </svg>
 <!-- Uygulama -->
@@ -546,7 +569,9 @@ button.ucard:hover{border-color:var(--muted);border-left-color:var(--sc)}
       <button class="btn big" id="btn-qr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM5 5v3h3V5zM16 5v3h3V5zM5 16v3h3v-3zM14 14h3v3h-3zM18 18h3v3h-3zM14 19h2v2h-2zM19 14h2v2h-2z"/></svg>QR okut</button>
       <button class="btn big" id="btn-plate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1zm8 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg>Plaka okut</button>
       <input type="file" id="plate-file" accept="image/*" capture="environment" hidden>
+      <button class="btn big" id="btn-voice" type="button" title="Sesle iş emri: '34 ABC 123 balata değişti 1450 lira' deyin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2z"/></svg>Sesle</button>
     </div>
+    <div id="voicebox" hidden></div>
     <div class="toolbar">
       <input class="search" id="q" type="search" placeholder="Plaka, müşteri veya araç ara…">
       <div class="chips" id="filters">
@@ -563,6 +588,10 @@ button.ucard:hover{border-color:var(--muted);border-left-color:var(--sc)}
   </section>
 
   <section id="v-rem" hidden>
+    <div id="borcbox" hidden><h3 class="sec-h"><svg class="ic" aria-hidden="true"><use href="#i-lira"/></svg>Vadesi gelen veresiyeler</h3>
+      <p class="hint" style="margin:0 0 8px">Vadesi bugün ya da geçmiş borçlar. Tek tuşla WhatsApp'tan nazikçe hatırlatın.</p>
+      <div class="list" id="borclist" style="margin-bottom:16px"></div></div>
+    <h3 class="sec-h" style="color:var(--warn)"><svg class="ic" aria-hidden="true" style="color:var(--warn)"><use href="#i-bell"/></svg>Yaklaşan bakımlar</h3>
     <p class="hint">Sonraki bakım tarihi 30 gün içinde olan veya geçmiş araçlar. WhatsApp ile hatırlatma gönderin, müşteri yine size gelsin.</p>
     <div class="list" id="remlist"></div>
   </section>
@@ -748,6 +777,8 @@ button.ucard:hover{border-color:var(--muted);border-left-color:var(--sc)}
           <label class="f">Müşteri şikayeti<textarea id="f-complaint" placeholder="Frenlerden ses geliyor, direksiyon titriyor"></textarea></label>
           <label class="f">Usta notu / tespit<textarea id="f-notes" placeholder="Ön balatalar bitmiş, diskler ince"></textarea></label>
         </div>
+        <div class="fotos" id="fotos"></div>
+        <input type="file" id="foto-file" accept="image/*" capture="environment" multiple hidden>
       </fieldset>
 
       <fieldset>
@@ -763,11 +794,13 @@ button.ucard:hover{border-color:var(--muted);border-left-color:var(--sc)}
           <button type="button" class="btn" id="add-iscilik"><svg class="ic" aria-hidden="true"><use href="#i-hand"/></svg>+ İşçilik</button>
           <button type="button" class="btn" id="add-stok"><svg class="ic" aria-hidden="true"><use href="#i-box"/></svg>+ Stoktan</button>
         </div>
-        <div class="quick" id="quick"></div>
+        <div class="quick" id="quick" style="display:flex;align-items:center;gap:8px"><input id="quick-in" list="dl-quick" class="search" style="flex:1;min-width:200px" placeholder="Hızlı ekle: yaz ve seç (balata, yağ bakımı, akü…)" autocomplete="off"><button type="button" class="chip edit" id="quick-edit" hidden>Düzenle</button></div>
+        <datalist id="dl-quick"></datalist>
         <div class="vatrow">
           <input type="checkbox" id="f-vat" hidden>
           <label class="f" style="grid-auto-flow:column;align-items:center;gap:6px">Alınan ödeme ₺<input id="f-paid" inputmode="decimal" style="width:7.5rem" placeholder="0"></label>
           <label class="f" style="grid-auto-flow:column;align-items:center;gap:6px">Ödeme şekli<select id="f-paymethod" style="width:7.5rem"><option>Nakit</option><option>Kart</option><option>Havale</option></select></label>
+          <label class="f" id="duebox" style="grid-auto-flow:column;align-items:center;gap:6px" hidden>Veresiye vadesi<input id="f-duedate" type="date" style="width:10rem"></label>
         </div>
         <div class="totals" id="totals"></div>
       </fieldset>
@@ -1324,8 +1357,22 @@ function remList(){
   const lim=Date.now()+30*864e5;
   return Object.values(latest).filter(j=>j.nextDate&&new Date(j.nextDate+'T00:00').getTime()<=lim).sort((a,b)=>a.nextDate.localeCompare(b.nextDate));
 }
+function borcList(){const today=ymd(new Date());return state.jobs.filter(j=>calc(j).due>0&&j.status==='teslim'&&j.dueDate&&j.dueDate<=today).sort((a,b)=>a.dueDate.localeCompare(b.dueDate))}
+function renderBorc(){const L=borcList();const box=$('#borcbox');box.hidden=!L.length;if(!L.length){$('#borclist').innerHTML='';return L}
+  const today=ymd(new Date());
+  $('#borclist').innerHTML=L.map(j=>{const c=calc(j);const late=Math.round((new Date(today+'T00:00')-new Date(j.dueDate+'T00:00'))/864e5);return `
+  <div class="card" style="--sc:var(--crit)">
+    <div class="plate-cell">${plateHtml(j.plate)}</div>
+    <div class="mid"><div class="veh">${esc(j.customer||'Müşteri')} · ${esc(j.vehicle||'')}</div>
+      <div class="cmp">Kalan borç <b style="color:var(--crit)">${tl(c.due)}</b> · vade ${ddate(j.dueDate)}${late>0?' · <b>'+late+' gün geçti</b>':' · bugün'}</div></div>
+    <div class="right">${j.phone?`<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${waNum(j.phone)}?text=${encodeURIComponent(msg('borc',j))}">Hatırlat</a>`:'<span class="hint">Telefon yok</span>'}
+      <button class="btn" data-id="${esc(j.id)}">Aç</button></div>
+  </div>`}).join('');return L}
+function borcNotify(){const L=borcList();if(!L.length)return;const k='ud_borcNotif';let last='';try{last=localStorage.getItem(k)||''}catch(_){}const today=ymd(new Date());if(last===today)return;try{localStorage.setItem(k,today)}catch(_){}
+  const tot=L.reduce((a,j)=>a+calc(j).due,0);notify('Vadesi gelen veresiye',`${L.length} müşteri · toplam ${tl(tot)}. Bakım sekmesinden hatırlatın.`,'borc')}
 function renderRem(){
-  const r=remList();const cnt=$('#rem-cnt');cnt.hidden=!r.length;cnt.textContent=r.length;
+  const b=renderBorc();
+  const r=remList();const cnt=$('#rem-cnt');cnt.hidden=!(r.length+b.length);cnt.textContent=r.length+b.length;
   const el=$('#remlist');
   if(!r.length){el.innerHTML='<div class="empty"><h3>Yaklaşan bakım yok</h3>İş kaydederken “Sonraki bakım” tarihini girin; zamanı gelince burada görünür.</div>';return}
   const today=new Date().toISOString().slice(0,10);
@@ -1348,6 +1395,7 @@ function msg(kind,j){
   const link=j.trackId?trackUrl(j.trackId):'';
   if(kind==='takip')return `Merhaba${name}, ${car} servisimize alındı.\nAracınızın durumunu bu linkten anlık takip edebilirsiniz:\n${link||'(link kayıttan sonra oluşur)'}\n\n${shop}`;
   if(kind==='teklif')return `Merhaba${name}, ${car} için tespitimiz ve fiyat teklifimiz:\n${j.notes?j.notes+'\n':''}\n${lines||'• (kalem eklenmedi)'}\n\n${tot}\n\n${link?'Detayları görüp buradan onaylayabilirsiniz:\n'+link:'Onay verirseniz işe başlıyoruz.'}\n${shop}`;
+  if(kind==='borc')return `Merhaba${name}, ${car} için ${tl(c.due)} kalan ödemenizin vadesi ${j.dueDate?ddate(j.dueDate)+' tarihinde ':''}gelmiştir. Uygun olduğunuzda ödemenizi rica ederiz.${(state.setup||{}).iban&&false?'':''}\n\n${shop}${state.shopPhone?' · '+state.shopPhone:''}`;
   if(kind==='hazir'){const t=(state.cfg&&state.cfg.msgHazir)||HAZIR_DEF;
     return t.replace(/\{ad\}/g,name.trim()).replace(/\{arac\}/g,car).replace(/\{plaka\}/g,fmtPlate(j.plate)).replace(/\{tutar\}/g,c.due>0?'Ödenecek tutar: '+tl(c.due):'').replace(/\{link\}/g,link?'Detaylar: '+link:'').replace(/\{dukkan\}/g,shop).replace(/\n{3,}/g,'\n\n').replace(/\n +/g,'\n').trim()}
   if(kind==='fis')return `${shop} – İş fişi\nTarih: ${new Date(j.createdAt||Date.now()).toLocaleDateString('tr-TR')}\nAraç: ${fmtPlate(j.plate)} ${j.vehicle||''}${j.km?' · '+Number(j.km).toLocaleString('tr-TR')+' km':''}\n\nYapılan işlemler:\n${lines||'-'}\n\nAra toplam: ${tl(c.sub)}${j.vat?'\nKDV %20: '+tl(c.kdv):''}\n${tot}\nÖdenen: ${tl(+j.paid||0)}${c.due>0?'\nKalan: '+tl(c.due):''}${j.nextDate||j.nextKm?`\n\nSonraki bakım: ${[j.nextDate?ddate(j.nextDate):'',j.nextKm?Number(j.nextKm).toLocaleString('tr-TR')+' km':''].filter(Boolean).join(' veya ')}`:''}\n\nBizi tercih ettiğiniz için teşekkürler.`;
@@ -1371,7 +1419,8 @@ function openSheet(job,prefill){
   $('#btn-tp-job').hidden=isCirak();
   if(!draft.trackId){draft._own=newToken();draft.trackId=(!job&&prevToken(draft.plate))||draft._own}
   state.waKind=job?(draft.status==='hazir'?'hazir':draft.status==='teslim'?'fis':draft.status==='onay'?'teklif':'takip'):'takip';
-  $('#ruhsat-info').innerHTML=ruhsatInfoHtml(draft.ruhsat);
+  $('#ruhsat-info').innerHTML=ruhsatInfoHtml(draft.ruhsat);renderFotos();
+  $('#f-duedate').value=draft.dueDate||'';
   renderStatus();renderItems();renderHist();updateWa();renderCirakBox();renderQuick();
   state.sheetInit=sheetSnap();$('#cancel').classList.remove('armed');$('#cancel').textContent='Vazgeç';
   $('#sheet').hidden=false;document.body.style.overflow='hidden';$('#sheet').scrollTop=0;
@@ -1387,7 +1436,7 @@ function readForm(){
   draft.plate=normPlate($('#f-plate').value);
   if(!state.editing&&draft._own)draft.trackId=prevToken(draft.plate)||draft._own;
   ['vehicle','km','customer','phone','complaint','notes','nextDate','nextKm'].forEach(k=>{draft[k]=$('#f-'+k.toLowerCase()).value.trim()});
-  draft.vat=false;draft.paid=numIn($('#f-paid').value);
+  draft.vat=false;draft.paid=numIn($('#f-paid').value);draft.dueDate=$('#f-duedate').value||'';
 }
 function renderStatus(){$('#statusbar').innerHTML=STATUS.map(s=>`<button type="button" data-s="${s.k}" style="--sc:${s.c}" aria-pressed="${draft.status===s.k}">${ic(s.i)}${s.t}</button>`).join('')}
 function renderItems(){
@@ -1402,7 +1451,7 @@ function renderItems(){
   renderTotals();
 }
 function renderTotals(){
-  const c=calc(draft);
+  const c=calc(draft);const db=$('#duebox');if(db){db.hidden=!(c.total>0&&c.due>0);if(!db.hidden&&!$('#f-duedate').value){const d=new Date();d.setDate(d.getDate()+7);$('#f-duedate').value=d.toISOString().slice(0,10)}}
   const part=t=>draft.items.filter(i=>(i.type==='iscilik')===t).reduce((a,i)=>a+(+i.qty||0)*(+i.price||0),0);
   $('#totals').innerHTML=`<div><span>Parça</span><span>${tl(part(false))}</span></div>
   <div><span>İşçilik</span><span>${tl(part(true))}</span></div>
@@ -1959,8 +2008,14 @@ function renewHtml(username){
   const wa=s.supportPhone?`https://wa.me/${waNum(s.supportPhone)}?text=${encodeURIComponent('Merhaba, Usta Defteri aboneliği için yazıyorum.'+(username?' Kullanıcı adım: '+username:''))}`:'';
   return `${rows.length?`<div class="plans">${rows.join('')}</div>`:''}
     ${s.iban?`<div class="ibanbox"><small>Havale / EFT</small><b class="num">${esc(s.iban)}</b>${s.ibanName?`<span>${esc(s.ibanName)}</span>`:''}<span class="hint">Açıklamaya kullanıcı adınızı yazın${username?': <b>'+esc(username)+'</b>':''}</span><button type="button" class="btn" data-copy-iban>IBAN'ı kopyala</button></div>`:''}
-    ${wa?`<a class="btn wa" href="${wa}" target="_blank" rel="noopener">WhatsApp'tan yazın${s.supportPhone?' · '+esc(s.supportPhone):''}</a>`:''}`;
+    ${wa?`<a class="btn wa" href="${wa}" target="_blank" rel="noopener">WhatsApp'tan yazın${s.supportPhone?' · '+esc(s.supportPhone):''}</a>`:''}
+    <div class="paybox"><b>Ödemeyi yaptıysanız bize bildirin</b><div class="row"><select id="pay-plan" class="btn"><option value="aylik">Aylık${s.priceM?' · '+priceTxt(s.priceM):''}</option><option value="yillik">Yıllık${s.priceY?' · '+priceTxt(s.priceY):''}</option></select><input id="pay-note" class="btn" style="flex:1;min-width:160px;font-weight:400" placeholder="Not (gönderen ad, tarih…)"><button type="button" class="btn primary" id="pay-notify">Ödemeyi yaptım, bildir</button></div><span class="hint">Yönetici ödemeyi görünce üyeliğiniz uzatılır; size bildirim gelir.</span></div>`;
 }
+document.addEventListener('click',async e=>{const b=e.target.closest('#pay-notify');if(!b)return;const me=state.me;if(!me||isCirak())return;
+  if(!navigator.onLine){toast('Bildirmek için internet gerekli');return}
+  const plan=$('#pay-plan').value;const s=state.setup||{};const amount=plan==='aylik'?+(s.priceM||0):+(s.priceY||0);
+  b.disabled=true;try{await fdb.collection('talepler').add({kind:'odeme',ustaId:me.id,ustaName:me.name||me.username,ustaShop:state.shop||'',ustaPhone:me.phone||state.shopPhone||'',username:me.username||'',plan,amount,note:($('#pay-note').value||'').trim(),status:'yeni',createdAt:Date.now()});
+    toast('Ödeme bildirimi gönderildi');$('#pay-note').value=''}catch(ex){toast(authMsg(ex))}finally{b.disabled=false}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-copy-iban]'))copyText(String((state.setup||{}).iban||'').replace(/\s/g,''),'IBAN kopyalandı')});
 
 /* kendi kendine kayıt */
@@ -2324,6 +2379,7 @@ function reportHtml(j,price){
       <div><small>Araç sahibi</small><b>${esc(j.customer||'-')}</b></div><div><small>Durum</small><b>${esc(st)}</b></div>${j.ruhsat&&j.ruhsat.vin?`<div><small>Şasi no</small><b>${esc(j.ruhsat.vin)}</b></div>`:''}${j.ruhsat&&j.ruhsat.engine?`<div><small>Motor no</small><b>${esc(j.ruhsat.engine)}</b></div>`:''}</div>
     </div>
     ${j.complaint?`<div class="rp-box"><small>Şikâyet / istek</small><div>${esc(j.complaint)}</div></div>`:''}
+    ${(j.fotos||[]).length?`<div class="rp-fotos">${j.fotos.slice(0,4).map(f=>`<img src="${f.d}" alt="">`).join('')}</div>`:''}
     <table class="rp-t"><thead><tr><th>Yapılan işlemler ve parçalar</th><th class="n">Adet</th>${price?'<th class="n">Tutar</th>':''}</tr></thead>
       <tbody>${rows||`<tr><td colspan="${price?3:2}">-</td></tr>`}</tbody>
       ${price?`<tfoot>${j.vat?`<tr><td colspan="2">Ara toplam</td><td class="n">${tl(c.sub)}</td></tr><tr><td colspan="2">KDV %20</td><td class="n">${tl(c.kdv)}</td></tr>`:''}
@@ -2366,7 +2422,13 @@ function renderTalepler(){
   $('#tp-cnt').hidden=!cnt;$('#tp-cnt').textContent=cnt;
   $('#tp-uview').hidden=adm;$('#tp-aview').hidden=!adm;
   const map=adm?TPS_ADMIN:TPS;
-  const card=t=>{const st=map[t.status]||map.yeni;const q=t.quote?quoteCalc(t.quote):null;return `
+  const card=t=>{if(t.kind==='odeme'){const okd=t.status==='onaylandi';return `
+    <button class="card" data-tp="${esc(t.id)}" style="--sc:${okd?'var(--ok)':'var(--warn)'}">
+      <div class="plate-cell">${ic('lira')}</div>
+      <div class="mid"><div class="veh">${adm?esc(t.ustaName||'Usta')+(t.ustaShop?' · '+esc(t.ustaShop):''):'Ödeme bildirimi'}</div>
+        <div class="cmp">${PLANS[t.plan]||t.plan} üyelik${t.amount?' · '+tl(t.amount):''}${t.note?' · '+esc(t.note):''}</div></div>
+      <div class="right"><span class="pill" style="color:${okd?'var(--ok)':'var(--warn)'}">${okd?'Üyelik uzatıldı':adm?'Ödeme bildirimi':'İletildi, bekliyor'}</span><span class="when">${dstr(t.createdAt)}</span></div></button>`}
+    const st=map[t.status]||map.yeni;const q=t.quote?quoteCalc(t.quote):null;return `
     <button class="card" data-tp="${esc(t.id)}" style="--sc:${st.c}">
       <div class="plate-cell">${t.plate?plateHtml(t.plate):'<span class="hint">Plaka yok</span>'}</div>
       <div class="mid"><div class="veh">${adm?esc(t.ustaName||'Usta')+(t.ustaShop?' · '+esc(t.ustaShop):''):esc(t.vehicle||'Araç bilgisi yok')}</div>
@@ -2447,6 +2509,20 @@ function renderTpView(first){
   const t=state.talepler.find(x=>x.id===tpOpenId);const body=$('#tpv-body');
   if(!t){if(first)body.innerHTML='<p class="hint">Yükleniyor…</p>';return}
   const adm=isAdm();const st=(adm?TPS_ADMIN:TPS)[t.status]||TPS.yeni;
+  if(t.kind==='odeme'){$('#tpv-title').textContent='Ödeme bildirimi';const okd=t.status==='onaylandi';
+    body.innerHTML=`<fieldset><legend>Ödeme bildirimi</legend><dl class="kv">
+      <dt>Usta</dt><dd>${esc(t.ustaName||'')}${t.ustaShop?' · '+esc(t.ustaShop):''}${t.username?' · <code>'+esc(t.username)+'</code>':''}${t.ustaPhone?' · '+esc(t.ustaPhone):''}</dd>
+      <dt>Plan</dt><dd>${PLANS[t.plan]||t.plan}${t.amount?' · '+tl(t.amount):''}</dd>${t.note?`<dt>Not</dt><dd>${esc(t.note)}</dd>`:''}
+      <dt>Tarih</dt><dd>${new Date(t.createdAt).toLocaleString('tr-TR')}</dd><dt>Durum</dt><dd><span class="pill" style="color:${okd?'var(--ok)':'var(--warn)'}">${okd?'Üyelik uzatıldı':'Bekliyor'}</span></dd></dl>
+      ${adm&&!okd?`<p class="hint">Hesabınıza ödemenin geldiğini kontrol edin; sonra onaylayın. Üyelik ${t.plan==='yillik'?'1 yıl':'1 ay'} uzar, ustaya bildirim gider.</p><div class="actions"><button type="button" class="btn primary" id="pay-ok">Ödeme geldi, üyeliği uzat</button><button type="button" class="btn danger" id="pay-no">Reddet</button></div>`:''}
+      ${!adm&&!okd?'<p class="hint">Yönetici ödemeyi görünce üyeliğiniz uzatılır.</p>':''}</fieldset>`;
+    const ok=$('#pay-ok');if(ok)ok.onclick=async()=>{ok.disabled=true;try{const ud=await fdb.doc('ustalar/'+t.ustaId).get();const u=ud.data()||{};
+      const base=Math.max(Date.now(),u.untilMs||0);const untilMs=addMonths(base,t.plan==='yillik'?12:1);const bt=fdb.batch();
+      bt.update(fdb.doc('ustalar/'+t.ustaId),{untilMs,active:true,plan:t.plan});
+      bt.set(fdb.collection('odemeler').doc(),{ustaId:t.ustaId,name:t.ustaName||'',username:t.username||'',plan:t.plan,amount:+t.amount||0,untilMs,at:Date.now(),by:state.me.uid,talepId:t.id});
+      bt.update(fdb.doc('talepler/'+t.id),{status:'onaylandi',quotedAt:Date.now()});await bt.commit();toast('Üyelik uzatıldı: '+new Date(untilMs).toLocaleDateString('tr-TR'))}catch(ex){toast(authMsg(ex));ok.disabled=false}};
+    const no=$('#pay-no');if(no)no.onclick=()=>fdb.doc('talepler/'+t.id).update({status:'iptal'}).then(()=>toast('Reddedildi')).catch(ex=>toast(authMsg(ex)));
+    return}
   $('#tpv-title').textContent=t.plate?fmtPlate(t.plate):'Parça talebi';
   if(adm&&!tpQuote)tpQuote=JSON.parse(JSON.stringify(t.quote||{items:(t.parts||[]).map(p=>({name:p.name,brand:'',qty:p.qty||1,price:''})),vat:false,note:''}));
   if(adm&&tpQuote&&!tpQuote.items.length)tpQuote.items.push({name:'',brand:'',qty:1,price:''});
@@ -2538,7 +2614,8 @@ function subTalepler(){
   let first=true;
   subs.push(q.onSnapshot(snap=>{
     if(!first){snap.docChanges().forEach(ch=>{const t=ch.doc.data();
-      if(ch.type==='added'&&isAdm()&&t.status==='yeni')notify('Yeni parça talebi',`${t.ustaName||t.shop||'Usta'} · ${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''}`,'tp:'+ch.doc.id);
+      if(ch.type==='added'&&isAdm()&&t.status==='yeni')notify(t.kind==='odeme'?'Ödeme bildirimi':'Yeni parça talebi',t.kind==='odeme'?`${t.ustaName||'Usta'} · ${PLANS[t.plan]||t.plan}${t.amount?' · '+tl(t.amount):''}`:`${t.ustaName||t.shop||'Usta'} · ${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''}`,'tp:'+ch.doc.id);
+      if(ch.type==='modified'&&!isAdm()&&t.kind==='odeme'&&t.status==='onaylandi'&&(state.talepler.find(x=>x.id===ch.doc.id)||{}).status!=='onaylandi')notify('Üyeliğiniz uzatıldı','Ödemeniz alındı, teşekkürler. Üyelik süreniz güncellendi.','tp:'+ch.doc.id);
       if(ch.type==='modified'&&!isAdm()&&t.status==='fiyatlandi'&&!(state.talepler.find(x=>x.id===ch.doc.id)||{}).quote)notify('Parça fiyatı geldi',`${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''} için fiyat geldi, onaylayın.`,'tp:'+ch.doc.id)})}
     first=false;
     state.talepler=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));renderTalepler()},()=>{}));
@@ -2552,7 +2629,7 @@ function notify(title,body,tag){
   if(!notifyOk())return;
   try{const o={body,tag,icon:'../icon-192.png',badge:'../icon-192.png',renotify:true};
     if(navigator.serviceWorker&&navigator.serviceWorker.ready&&document.visibilityState!=='visible')navigator.serviceWorker.ready.then(r=>r.showNotification(title,o)).catch(()=>new Notification(title,o));
-    else{const n=new Notification(title,o);n.onclick=()=>{window.focus();if(tag&&tag.startsWith('tp:')){setTab('parca');openTpView(tag.slice(3))}n.close()}}}catch(_){}
+    else{const n=new Notification(title,o);n.onclick=()=>{window.focus();if(tag&&tag.startsWith('tp:')){setTab('parca');openTpView(tag.slice(3))}if(tag==='borc')setTab('rem');n.close()}}}catch(_){}
 }
 function renderNotifBtn(){const b=$('#set-notif');if(!b)return;if(!('Notification' in window)){b.textContent='Bu cihaz bildirim desteklemiyor';b.disabled=true;return}
   const p=Notification.permission;b.textContent=p==='granted'?'Bildirimler açık ✓':p==='denied'?'Bildirim engellenmiş (tarayıcı ayarından açın)':'Bildirimleri aç';b.disabled=p!=='default'}
@@ -2732,7 +2809,7 @@ function startApp(){
   state.ciraklar=[];
   setTab('jobs');show('app');render();
   subs.push(jobsCol().orderBy('createdAt','desc').onSnapshot(snap=>{
-    state.jobs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(j=>!j.deleted);state.loading=false;render();syncBusy();
+    state.jobs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(j=>!j.deleted);state.loading=false;render();syncBusy();if(!isCirak())setTimeout(borcNotify,1500);
     if(state.pendingPlate){const p=state.pendingPlate;state.pendingPlate='';state.pub=null;openPlate(p)}
   },e=>{state.loading=false;render();toast(authMsg(e))}));
   state.shop=me.shop||'';state.shopPhone=me.shopPhone||'';renderShop();
@@ -2831,6 +2908,62 @@ async function readPlate(file){
   }catch(e){toast('Plaka okuyucu yüklenemedi. İnternet bağlantınızı kontrol edin.');return ''}
 }
 
+/* ---------- Sesle iş emri ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null;
+const TR_NUM={'sıfır':0,'bir':1,'iki':2,'üç':3,'dört':4,'beş':5,'altı':6,'yedi':7,'sekiz':8,'dokuz':9,'on':10,'yirmi':20,'otuz':30,'kırk':40,'elli':50,'altmış':60,'yetmiş':70,'seksen':80,'doksan':90,'yüz':100,'bin':1000,'milyon':1e6};
+function trWordsToNumber(s){const w=s.toLocaleLowerCase('tr').split(/\s+/).filter(Boolean);let tot=0,cur=0,any=false;
+  for(const x of w){if(/^\d+$/.test(x)){cur+=+x;any=true;continue}const v=TR_NUM[x];if(v==null)continue;any=true;
+    if(v===100){cur=(cur||1)*100}else if(v>=1000){tot+=(cur||1)*v;cur=0}else cur+=v}
+  return any?tot+cur:null}
+function parseVoice(text){
+  const t=' '+text.replace(/[.,]/g,' ').replace(/\s+/g,' ').trim()+' ';const lower=t.toLocaleLowerCase('tr');
+  const out={items:[],raw:text};
+  out.plate=plateFromText(text.toUpperCase().replace(/\s+/g,' '))||'';
+  // "kilometre 148 bin" / "148 bin kilometre"
+  const km=lower.match(/(?:kilometre|km)\s+([\d\s\wıüöçşğ]{1,20}?)(?=\s(?:lira|tl|balata|yağ|disk|müşteri|şikayet|$))/)||lower.match(/([\d\s\wıüöçşğ]{1,20}?)\s+(?:kilometre|km)\b/);
+  if(km){const n=trWordsToNumber(km[1]);if(n&&n>100)out.km=n}
+  const cust=lower.match(/müşteri\s+([a-zçğıöşü]+(?:\s[a-zçğıöşü]+)?)/);if(cust)out.customer=cust[1].split(' ').map(w=>w.charAt(0).toLocaleUpperCase('tr')+w.slice(1)).join(' ');
+  // hızlı kalemler: başlık kelimeleri geçiyorsa
+  const money=[...lower.matchAll(/([\d\s\wıüöçşğ]{1,25}?)\s*(?:lira|tl|₺)\b/g)].map(m=>trWordsToNumber(m[1])).filter(n=>n&&n>0);
+  quickList().forEach(q=>{const keys=q.t.toLocaleLowerCase('tr').split(/\s+/).filter(k=>k.length>3&&!/değişti|bakımı|bakım|yapıldı/.test(k));if(keys.length&&keys.every(k=>lower.includes(k.slice(0,5))))out.items.push(q)});
+  if(money.length)out.price=money[money.length-1];
+  const sk=lower.match(/şikayet\s+(.+?)(?=\s(?:müşteri|kilometre|km|lira|tl)\b|$)/);if(sk)out.complaint=sk[1].trim();
+  return out}
+function applyVoice(v){
+  if(!draft)openSheet(null);
+  if(v.plate&&!normPlate($('#f-plate').value))$('#f-plate').value=fmtPlate(v.plate);
+  if(v.km)$('#f-km').value=v.km;if(v.customer&&!$('#f-customer').value)$('#f-customer').value=v.customer;
+  if(v.complaint&&!$('#f-complaint').value)$('#f-complaint').value=v.complaint;
+  draft.items=draft.items.filter(i=>i.name||i.price);
+  v.items.forEach(q=>{q.items.forEach(([type,name])=>{if(!draft.items.some(i=>i.name===name))draft.items.push({type,name,qty:1,price:lastPrice(name)})});if(!$('#f-complaint').value)$('#f-complaint').value=q.t});
+  if(v.price&&draft.items.length){const last=draft.items[draft.items.length-1];if(!last.price)last.price=v.price}
+  readForm();renderItems();renderHist();updateWa();saveDraft();
+  const got=[v.plate?'plaka':'',v.items.length?v.items.map(q=>q.t).join(', '):'',v.price?tl(v.price):'',v.km?'km':'',v.customer?'müşteri':''].filter(Boolean).join(' · ');
+  toast(got?'Anlaşıldı: '+got+' — kontrol edin':'Anlayamadım; plakayı ve işi söyleyin')}
+function voiceStart(){
+  if(!SR){toast('Bu tarayıcı sesli komutu desteklemiyor (Chrome kullanın)');return}
+  if(rec){try{rec.stop()}catch(_){}return}
+  rec=new SR();rec.lang='tr-TR';rec.interimResults=true;rec.continuous=false;
+  const b=$('#btn-voice');b.classList.add('on');const vb=$('#voicebox');vb.hidden=false;vb.innerHTML='<b>Dinliyorum…</b> Örnek: "34 ABC 123 balata değişti 1450 lira kilometre 148 bin müşteri Ahmet Yılmaz"';
+  let finalT='';
+  rec.onresult=e=>{let s='';for(const r of e.results){s+=r[0].transcript+' ';if(r.isFinal)finalT+=r[0].transcript+' '}vb.innerHTML='<b>Dinliyorum…</b> '+esc(s)};
+  rec.onerror=e=>{vb.innerHTML='<b>Ses alınamadı.</b> '+(e.error==='not-allowed'?'Mikrofon izni verin.':'Tekrar deneyin.');};
+  rec.onend=()=>{b.classList.remove('on');rec=null;const txt=finalT.trim();if(txt){vb.innerHTML='<b>Söylenen:</b> '+esc(txt);applyVoice(parseVoice(txt))}setTimeout(()=>{vb.hidden=true},4000)};
+  try{rec.start()}catch(_){b.classList.remove('on');rec=null;vb.hidden=true}}
+$('#btn-voice').onclick=voiceStart;
+if(!SR){const b=$('#btn-voice');b.hidden=true}
+/* ---------- Araç fotoğrafları (iş fişinde, küçültülmüş) ---------- */
+const FOTO_MAX=4;
+function fileToThumb(file,max,q){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const sc=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(img.src);res(c.toDataURL('image/jpeg',q))};img.onerror=rej;img.src=URL.createObjectURL(file)})}
+function renderFotos(){const el=$('#fotos');if(!el||!draft)return;const F=draft.fotos||[];
+  el.innerHTML=F.map((f,i)=>`<div class="ph"><img src="${f.d}" alt="Araç fotoğrafı ${i+1}" data-lb="${i}"><button type="button" class="rmf" data-rmf="${i}" aria-label="Fotoğrafı sil">×</button></div>`).join('')+(F.length<FOTO_MAX?`<button type="button" class="addf" id="foto-add">${ic('cam')}Fotoğraf<br>çek</button>`:'')+(F.length?`<span class="hint">${F.length}/${FOTO_MAX}</span>`:'');
+  const a=$('#foto-add');if(a)a.onclick=()=>$('#foto-file').click()}
+$('#foto-file').addEventListener('change',async e=>{const files=[...e.target.files];e.target.value='';if(!files.length||!draft)return;draft.fotos=draft.fotos||[];
+  for(const f of files){if(draft.fotos.length>=FOTO_MAX){toast('En fazla '+FOTO_MAX+' fotoğraf');break}try{let d=await fileToThumb(f,900,.72);if(d.length>180000)d=await fileToThumb(f,640,.6);draft.fotos.push({t:Date.now(),d})}catch(_){toast('Fotoğraf eklenemedi')}}
+  renderFotos();saveDraft();toast('Fotoğraf eklendi · kaydedince saklanır')});
+$('#fotos').addEventListener('click',e=>{const r=e.target.closest('[data-rmf]');if(r){draft.fotos.splice(+r.dataset.rmf,1);renderFotos();saveDraft();return}
+  const im=e.target.closest('[data-lb]');if(im){const lb=document.createElement('div');lb.className='lightbox';lb.innerHTML=`<img src="${im.src}" alt="">`;lb.onclick=()=>lb.remove();document.body.appendChild(lb)}});
 /* ---------- Ruhsat tarama (Google Cloud Vision) ---------- */
 function ruhsatInfoHtml(r){if(!r)return'';const bits=[r.vin?'Şasi: '+r.vin:'',r.engine?'Motor: '+r.engine:'',r.fuel?'Yakıt: '+r.fuel:'',r.color?'Renk: '+r.color:'',r.reg?'İlk tescil: '+r.reg:''].filter(Boolean);return bits.length?esc(bits.join(' · ')):''}
 function fileToJpegB64(file,max){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const sc=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(img.src);res(c.toDataURL('image/jpeg',.88).split(',')[1])};img.onerror=rej;img.src=URL.createObjectURL(file)})}
@@ -2990,7 +3123,8 @@ $('#add-parca').onclick=()=>addItem('parca');$('#add-iscilik').onclick=()=>addIt
 $('#items').addEventListener('input',e=>{const row=e.target.closest('.item');if(!row)return;const it=draft.items[+row.dataset.n];const k=e.target.dataset.k;
   if(k==='name')it.name=e.target.value;else if(k==='qty')it.qty=numIn(e.target.value);else if(k==='price')it.price=numIn(e.target.value);
   renderTotals();updateWa()});
-$('#items').addEventListener('change',e=>{if(e.target.dataset.k==='type'){draft.items[+e.target.closest('.item').dataset.n].type=e.target.value;renderItems();updateWa()}});
+$('#items').addEventListener('change',e=>{if(e.target.dataset.k==='name'){const q=quickByTitle(e.target.value);if(q){const n=+e.target.closest('.item').dataset.n;draft.items.splice(n,1);addQuick(q);return}}
+  if(e.target.dataset.k==='type'){draft.items[+e.target.closest('.item').dataset.n].type=e.target.value;renderItems();updateWa()}});
 $('#items').addEventListener('click',e=>{if(e.target.classList.contains('rm')){draft.items.splice(+e.target.closest('.item').dataset.n,1);renderItems();updateWa()}});
 ['f-vat','f-paid'].forEach(id=>$('#'+id).addEventListener('input',()=>{readForm();renderTotals();updateWa()}));
 ['f-vehicle','f-km','f-customer','f-phone','f-notes','f-nextdate','f-nextkm'].forEach(id=>$('#'+id).addEventListener('input',updateWa));
@@ -3025,14 +3159,18 @@ function parseQuick(t){return String(t||'').split('\n').map(l=>l.trim()).filter(
   return {t:t.trim().slice(0,40),items:rest.split(',').map(s=>s.trim()).filter(Boolean).map(s=>s.startsWith('*')?['iscilik',s.slice(1).trim()]:[(/işçili|iscilik|balans|tespit|ayar/i.test(s)?'iscilik':'parca'),s])}}).filter(Boolean).slice(0,30)}
 function lastPrice(name){const n=String(name).toLocaleLowerCase('tr');let best=null;
   for(const j of state.jobs){for(const i of (j.items||[])){if(String(i.name||'').toLocaleLowerCase('tr')===n&&+i.price>0&&(!best||(j.updatedAt||0)>best.t))best={t:j.updatedAt||0,p:+i.price}}}return best?best.p:''}
-function renderQuick(){const el=$('#quick');if(!el)return;
-  el.innerHTML=quickList().map((q,n)=>`<button type="button" class="chip" data-q="${n}" title="${esc(q.items.map(i=>i[1]).join(', '))}">${ic('plus','in')}${esc(q.t)}</button>`).join('')+(isCirak()?'':'<button type="button" class="chip edit" id="quick-edit">Düzenle</button>');
-  const ed=$('#quick-edit');if(ed)ed.onclick=()=>{$('#btn-set').click();setTimeout(()=>$('#set-quick').focus(),300)}}
-$('#quick').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b||!draft)return;const q=quickList()[+b.dataset.q];if(!q)return;
-  draft.items=draft.items.filter(i=>i.name||i.price);
+function renderQuick(){const dl=$('#dl-quick');if(!dl)return;const Q=quickList();
+  dl.innerHTML=Q.map(q=>`<option value="${esc(q.t)}">${esc(q.items.map(i=>i[1]).join(', '))}</option>`).join('');
+  // "+ Parça" satırındaki listeye de hızlı başlıkları ekle: oradan da seçilebilsin
+  const dp=$('#dl-parca');if(dp&&!dp.dataset.q){dp.dataset.q='1';dp.insertAdjacentHTML('afterbegin',Q.map(q=>`<option value="${esc(q.t)}">`).join(''))}
+  const ed=$('#quick-edit');if(ed){ed.hidden=isCirak();ed.onclick=()=>{$('#btn-set').click();setTimeout(()=>$('#set-quick').focus(),300)}}}
+function addQuick(q){if(!draft||!q)return false;draft.items=draft.items.filter(i=>i.name||i.price);
   q.items.forEach(([type,name])=>{if(!draft.items.some(i=>i.name===name))draft.items.push({type,name,qty:1,price:lastPrice(name)})});
   if(!draft.complaint&&!$('#f-complaint').value)$('#f-complaint').value=q.t;
-  renderItems();updateWa();toast(q.t+' eklendi')});
+  renderItems();updateWa();saveDraft();toast(q.t+' eklendi');return true}
+const quickByTitle=t=>{t=String(t||'').trim().toLocaleLowerCase('tr');return quickList().find(q=>q.t.toLocaleLowerCase('tr')===t)};
+$('#quick-in').addEventListener('change',e=>{const q=quickByTitle(e.target.value);if(q){addQuick(q);e.target.value=''}});
+$('#quick-in').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const v=e.target.value.trim().toLocaleLowerCase('tr');const q=quickByTitle(v)||quickList().find(x=>x.t.toLocaleLowerCase('tr').startsWith(v));if(q){addQuick(q);e.target.value=''}}});
 function fillCfg(){const c=state.cfg||{};const a=$('#set-addr');if(a&&document.activeElement!==a)a.value=c.addr||'';const hz=$('#set-hazir');if(hz&&document.activeElement!==hz)hz.value=c.msgHazir||'';
   const q=$('#set-quick');if(q&&document.activeElement!==q)q.value=quickText(quickList());
   const img=$('#logo-prev');if(img){img.hidden=!c.logo;if(c.logo)img.src=c.logo;$('#logo-del').hidden=!c.logo}}
