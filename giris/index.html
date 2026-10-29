@@ -820,6 +820,7 @@ button.ucard:hover{border-color:var(--muted);border-left-color:var(--sc)}
           <label class="f">Adres (servis raporunda görünür)<input id="set-addr" maxlength="120" placeholder="Sanayi Sitesi 12. Blok No:5, Antalya"></label>
           <div class="f" style="display:grid;gap:6px"><span style="font-size:.8rem;color:var(--muted);font-weight:500">Logo (servis raporunun sol üstünde)</span>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><img id="logo-prev" class="logo-prev" alt="" hidden><label class="btn" style="cursor:pointer">Logo seç<input type="file" id="set-logo" accept="image/*" hidden></label><button type="button" class="btn" id="logo-del" hidden>Logoyu kaldır</button></div></div>
+          <label class="f">"Araç hazır" mesajım (boş bırakırsanız standart kısa mesaj gider; {ad} {arac} {plaka} {tutar} {link} {dukkan} yazdığınız yere bilgiler gelir)<textarea id="set-hazir" rows="4" placeholder="Merhaba {ad}, {arac} hazır, dilediğiniz zaman alabilirsiniz. {tutar} {link} {dukkan}"></textarea></label>
           <label class="f">Hızlı iş kalemleri (her satır: Başlık: kalem, kalem…)<textarea id="set-quick" rows="5" style="font-family:var(--f-mono);font-size:13px" placeholder="Balata değişti: Ön balata, Balata değişim işçiliği"></textarea></label>
           <p class="hint" style="margin:0">Müşteriye giden mesajlarda ve QR etiketlerde görünür.</p>
           <div class="f" style="display:grid;gap:6px"><span style="font-size:.8rem;color:var(--muted);font-weight:500">Bildirimler (yeni parça talebi, gelen fiyat)</span><button type="button" class="btn" id="set-notif" style="justify-self:start">Bildirimleri aç</button></div>
@@ -1327,7 +1328,8 @@ function msg(kind,j){
   const link=j.trackId?trackUrl(j.trackId):'';
   if(kind==='takip')return `Merhaba${name}, ${car} servisimize alındı.\nAracınızın durumunu bu linkten anlık takip edebilirsiniz:\n${link||'(link kayıttan sonra oluşur)'}\n\n${shop}`;
   if(kind==='teklif')return `Merhaba${name}, ${car} için tespitimiz ve fiyat teklifimiz:\n${j.notes?j.notes+'\n':''}\n${lines||'• (kalem eklenmedi)'}\n\n${tot}\n\n${link?'Detayları görüp buradan onaylayabilirsiniz:\n'+link:'Onay verirseniz işe başlıyoruz.'}\n${shop}`;
-  if(kind==='hazir')return `Merhaba${name}, ${car} hazır, teslim alabilirsiniz.\n${c.due>0?'Ödenecek tutar: '+tl(c.due)+'\n':''}${link?'Detaylar: '+link+'\n':''}\n${shop}`;
+  if(kind==='hazir'){const t=(state.cfg&&state.cfg.msgHazir)||HAZIR_DEF;
+    return t.replace(/\{ad\}/g,name.trim()).replace(/\{arac\}/g,car).replace(/\{plaka\}/g,fmtPlate(j.plate)).replace(/\{tutar\}/g,c.due>0?'Ödenecek tutar: '+tl(c.due):'').replace(/\{link\}/g,link?'Detaylar: '+link:'').replace(/\{dukkan\}/g,shop).replace(/\n{3,}/g,'\n\n').replace(/\n +/g,'\n').trim()}
   if(kind==='fis')return `${shop} – İş fişi\nTarih: ${new Date(j.createdAt||Date.now()).toLocaleDateString('tr-TR')}\nAraç: ${fmtPlate(j.plate)} ${j.vehicle||''}${j.km?' · '+Number(j.km).toLocaleString('tr-TR')+' km':''}\n\nYapılan işlemler:\n${lines||'-'}\n\nAra toplam: ${tl(c.sub)}${j.vat?'\nKDV %20: '+tl(c.kdv):''}\n${tot}\nÖdenen: ${tl(+j.paid||0)}${c.due>0?'\nKalan: '+tl(c.due):''}${j.nextDate||j.nextKm?`\n\nSonraki bakım: ${[j.nextDate?ddate(j.nextDate):'',j.nextKm?Number(j.nextKm).toLocaleString('tr-TR')+' km':''].filter(Boolean).join(' veya ')}`:''}\n\nBizi tercih ettiğiniz için teşekkürler.`;
   return `Merhaba${name}, ${car} için bakım zamanı ${j.nextDate?ddate(j.nextDate)+' itibarıyla ':''}geldi${j.nextKm?' ('+Number(j.nextKm).toLocaleString('tr-TR')+' km)':''}. Uygun olduğunuz bir gün randevu verelim mi?\n${shop}`;
 }
@@ -1397,6 +1399,7 @@ function renderHist(){
     $('#fillprev').onclick=()=>{['vehicle','customer','phone'].forEach(k=>{if(!$('#f-'+k).value)$('#f-'+k).value=last[k]||''});updateWa();prev.textContent='Önceki kayıttan araç ve müşteri bilgisi getirildi.'}}
   else prev.textContent='';
 }
+const HAZIR_DEF='Merhaba {ad}, {arac} hazır, teslim alabilirsiniz.\n{tutar}\n{link}\n\n{dukkan}';
 function updateWa(){
   if(!draft)return;readForm();
   document.querySelectorAll('#wakinds .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===state.waKind));
@@ -2929,7 +2932,7 @@ function renderShop(){$('#shopline').textContent=isCirak()?((state.shop||'')+(st
 $('#shop-form').addEventListener('submit',e=>{e.preventDefault();state.shop=$('#set-shop').value.trim();state.shopPhone=$('#set-phone').value.trim();renderShop();
   fdb.doc('ustalar/'+state.me.id).update({shop:state.shop,shopPhone:state.shopPhone}).catch(ex=>toast(authMsg(ex)));
   const quick=parseQuick($('#set-quick').value);
-  settingsDoc().set({addr:$('#set-addr').value.trim(),quick,updatedAt:Date.now()},{merge:true}).catch(ex=>toast(authMsg(ex)));
+  settingsDoc().set({addr:$('#set-addr').value.trim(),quick,msgHazir:$('#set-hazir').value.trim(),updatedAt:Date.now()},{merge:true}).catch(ex=>toast(authMsg(ex)));
   toast('Dükkan bilgileri kaydedildi')});
 /* ---------- Dükkan ayarları: adres, logo, hızlı kalemler ---------- */
 const QUICK_DEF=[
@@ -2957,7 +2960,7 @@ $('#quick').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if
   q.items.forEach(([type,name])=>{if(!draft.items.some(i=>i.name===name))draft.items.push({type,name,qty:1,price:lastPrice(name)})});
   if(!draft.complaint&&!$('#f-complaint').value)$('#f-complaint').value=q.t;
   renderItems();updateWa();toast(q.t+' eklendi')});
-function fillCfg(){const c=state.cfg||{};const a=$('#set-addr');if(a&&document.activeElement!==a)a.value=c.addr||'';
+function fillCfg(){const c=state.cfg||{};const a=$('#set-addr');if(a&&document.activeElement!==a)a.value=c.addr||'';const hz=$('#set-hazir');if(hz&&document.activeElement!==hz)hz.value=c.msgHazir||'';
   const q=$('#set-quick');if(q&&document.activeElement!==q)q.value=quickText(quickList());
   const img=$('#logo-prev');if(img){img.hidden=!c.logo;if(c.logo)img.src=c.logo;$('#logo-del').hidden=!c.logo}}
 $('#set-logo').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
