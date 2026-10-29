@@ -1,5 +1,5 @@
 // Usta Defteri - çevrimdışı çalışma. Güncelleme yaptığınızda sürüm adını değiştirin (usta-v3 gibi).
-const CACHE = 'usta-v23';
+const CACHE = 'usta-v24';
 const SHELL = ['./', 'giris/', 'index.html', 'config.js', 'manifest.json', 'logo.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 const LIB_HOSTS = /(^|\.)(gstatic\.com|jsdelivr\.net|googleapis\.com|projectnaptha\.com)$/;
 
@@ -28,4 +28,13 @@ self.addEventListener('fetch', e => {
       return res;
     })));
   }
+});
+// Bildirime tıklayınca uygulamayı aç
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = new URL('giris/', self.registration.scope).href;
+  e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    const w = list.find(c => c.url.startsWith(url)); if (w) return w.focus();
+    return clients.openWindow(url);
+  }));
 });
