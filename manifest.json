@@ -3,7 +3,7 @@
   "short_name": "Usta Defteri",
   "description": "Tamirciler için iş emri, araç geçmişi, WhatsApp teklif ve bakım hatırlatma defteri.",
   "lang": "tr",
-  "start_url": "./app.html",
+  "start_url": "./giris/",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
