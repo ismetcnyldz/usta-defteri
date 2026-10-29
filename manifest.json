@@ -1,0 +1,17 @@
+{
+  "name": "Usta Defteri",
+  "short_name": "Usta Defteri",
+  "description": "Tamirciler için iş emri, araç geçmişi, WhatsApp teklif ve bakım hatırlatma defteri.",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef1f3",
+  "theme_color": "#2f4858",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
