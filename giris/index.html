@@ -569,7 +569,7 @@ html,body{overscroll-behavior-x:none}
     <button class="tab" role="tab" id="tab-kasa" aria-selected="false"><svg class="ic fill" aria-hidden="true"><use href="#i-kasa"/></svg>Kasa</button>
     <button class="tab" role="tab" id="tab-stok" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-oil"/></svg>Stok <span class="cnt" id="stok-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-parca" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg>Parça <span class="cnt" id="tp-cnt" hidden>0</span></button>
-    <button class="tab" role="tab" id="tab-cirak" aria-selected="false"><svg class="ic fill" aria-hidden="true"><use href="#i-cirak"/></svg>Çıraklar</button>
+    <button class="tab" role="tab" id="tab-cirak" aria-selected="false"><svg class="ic fill" aria-hidden="true"><use href="#i-cirak"/></svg>Personel</button>
     <button class="tab" role="tab" id="tab-cari" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-hand"/></svg>Veresiye <span class="cnt" id="cari-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-users" aria-selected="false" hidden><svg class="ic fill" aria-hidden="true"><use href="#i-usta"/></svg>Ustalar</button>
   </div>
@@ -686,7 +686,7 @@ html,body{overscroll-behavior-x:none}
     <div class="list" id="c-list"></div>
     <form id="c-form" autocomplete="off" style="margin-top:14px">
       <fieldset>
-        <legend>Yeni çırak ekle</legend>
+        <legend>Yeni personel ekle</legend>
         <div class="grid2">
           <label class="f">Ad soyad<input id="c-name" required placeholder="Ahmet"></label>
           <label class="f">Telefon (WhatsApp)<input id="c-phone" inputmode="tel" placeholder="0533 000 00 00"></label>
@@ -694,8 +694,8 @@ html,body{overscroll-behavior-x:none}
           <label class="f">Şifre<input id="c-pass" required minlength="6"></label>
         </div>
         <div class="err" id="c-err" style="margin-top:8px"></div>
-        <div class="actions"><button class="btn primary" id="c-btn" type="submit">Çırağı ekle</button></div>
-        <p class="hint" style="margin:8px 0 0">Çırak kendi telefonunda bu kullanıcı adıyla girer. Sizin işlerinizi görür, boştaki işi alır, hazır yapar, aldığı parayı ve masrafı yazar. Kasanızın toplamını ve diğer bölümleri göremez.</p>
+        <div class="actions"><button class="btn primary" id="c-btn" type="submit">Personeli ekle</button></div>
+        <p class="hint" style="margin:8px 0 0">Personel kendi telefonunda bu kullanıcı adıyla girer. Sizin işlerinizi görür, boştaki işi alır, hazır yapar, aldığı parayı ve masrafı yazar. Kasanızın toplamını ve diğer bölümleri göremez.</p>
       </fieldset>
     </form>
   </section>
@@ -737,9 +737,9 @@ html,body{overscroll-behavior-x:none}
     <p class="hint">Teslim edilmiş ama parası tam alınmamış işler. Vadesi gelen kırmızı yanar; <b>Hatırlat</b> ile WhatsApp'tan "şu tarihli servisten şu kadar kaldı" mesajı gider, <b>Tahsil et</b> ile kasaya yazılır.</p>
     <div class="list" id="ca-alist"></div>
     <h3 class="sec-h" style="color:var(--crit);margin-top:20px"><svg class="ic" aria-hidden="true"><use href="#i-cashout"/></svg>Tedarikçiye borçlar</h3>
-    <p class="hint">Parçacı, rektefeci, hırdavatçı… kime ne kadar borcun var. Stok'ta "Veresiye" ile mal girince buraya kendiliğinden düşer; elle de ekleyebilirsin.</p>
+    <p class="hint">Her firma için ayrı cari: parçacı, yağcı, rektefeci, hırdavatçı… Firmaya dokun → toplam borç, ödenen, kalan, bu ayki hareketler, "Ödeme yap". Stok'ta "Veresiye" ile mal girince buraya kendiliğinden düşer.</p>
     <div id="ca-sup" class="chips" style="margin-bottom:8px"></div>
-    <div class="list" id="ca-blist"></div>
+    <details style="margin-top:10px"><summary class="hint" style="cursor:pointer">Açık borç kalemleri (tek tek)</summary><div class="list" id="ca-blist" style="margin-top:8px"></div></details>
   </section>
   <section id="v-users" hidden>
     <div class="stats" id="adm-stats">
@@ -895,7 +895,7 @@ html,body{overscroll-behavior-x:none}
       </fieldset>
 
       <fieldset id="cirakbox" hidden>
-        <legend>Çırak</legend>
+        <legend>Personel</legend>
         <div id="cirak-in"></div>
       </fieldset>
 
@@ -1106,7 +1106,7 @@ html,body{overscroll-behavior-x:none}
 </div>
 <div id="imgview" hidden><img alt="Fotoğraf"><button class="btn" id="imgview-close">Kapat</button></div>
 
-<!-- Çırak düzenle (usta) -->
+<!-- Personel düzenle (usta) -->
 <div class="sheet" id="casheet" hidden>
   <div class="inner" style="max-width:560px">
     <div class="sheet-head"><h2 id="cas-title">Cari</h2><button class="x" id="cas-close" aria-label="Kapat">×</button></div>
@@ -1115,7 +1115,7 @@ html,body{overscroll-behavior-x:none}
 </div>
 <div class="sheet" id="csheet" hidden>
   <div class="inner" style="max-width:560px">
-    <div class="sheet-head"><h2 id="cs-title">Çırak</h2><button class="x" id="cs-close" aria-label="Kapat">×</button></div>
+    <div class="sheet-head"><h2 id="cs-title">Personel</h2><button class="x" id="cs-close" aria-label="Kapat">×</button></div>
     <div id="cs-body"></div>
   </div>
 </div>
@@ -1460,8 +1460,13 @@ function renderCari(){
     <div class="right">${b.tel?`<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${waNum(b.tel)}?text=${encodeURIComponent(alacakMsg(b))}">Hatırlat</a>`:'<span class="hint">Telefon yok</span>'}
       <button class="btn primary" data-atahsil="${esc(b.id)}">Tahsil et</button><button class="btn" data-bsil="${esc(b.id)}">Sil</button></div></div>`}).join('');
   if(!A.length&&!MA.length)el.innerHTML='<div class="empty"><h3>Alacak yok</h3>İş fişinde "Ödenen" toplamdan az girilip araç teslim edilince kalan tutar burada görünür. Fişsiz alacağı "+ Alacak ekle" ile yazın.</div>';
-  const sup={};B.forEach(b=>{sup[b.kime]=(sup[b.kime]||0)+borcKalan(b)});
-  $('#ca-sup').innerHTML=Object.keys(sup).sort((a,b)=>sup[b]-sup[a]).map(k=>`<button type="button" class="chip" data-sup="${esc(k)}">${esc(k)}: <b>${tl(sup[k])}</b> ›</button>`).join('')+(Object.keys(sup).length?'<span class="hint" style="align-self:center">Cariye girmek için isme dokun</span>':'');
+  const sup={};const m0=new Date();m0.setDate(1);m0.setHours(0,0,0,0);const mS=m0.getTime();
+  (state.borclar||[]).filter(b=>b.tip!=='alacak').forEach(b=>{const o=sup[b.kime]||(sup[b.kime]={kal:0,ayB:0,ayO:0,son:0});const t=b.at||b.createdAt||0;o.son=Math.max(o.son,t);
+    if(b.tip==='odeme'){if(t>=mS)o.ayO+=(+b.tutar||0)}else{o.kal+=borcKalan(b);if(t>=mS)o.ayB+=(+b.tutar||0)}});
+  const keys=Object.keys(sup).sort((a,b)=>sup[b].kal-sup[a].kal||sup[b].son-sup[a].son);
+  $('#ca-sup').innerHTML=keys.length?`<div class="list">${keys.map(k=>{const o=sup[k];return `<button type="button" class="ucard" data-sup="${esc(k)}" style="--sc:${o.kal>0?'var(--crit)':'var(--ok)'}">
+    <div style="min-width:0"><div class="nm">${esc(k)}</div><div class="meta">Bu ay borçlanılan ${tl(o.ayB)} · bu ay ödenen ${tl(o.ayO)}</div></div>
+    <div style="text-align:right"><b class="num" style="color:${o.kal>0?'var(--crit)':'var(--ok)'};font-size:1.05rem">${o.kal>0?tl(o.kal):'Kapalı'}</b><div class="hint">kalan borç ›</div></div></button>`}).join('')}</div>`:'';
   if(casKime&&!$('#casheet').hidden)renderCas();
   $('#ca-blist').innerHTML=B.length?B.map(b=>{const late=b.vade?Math.round((new Date(today+'T00:00')-new Date(b.vade+'T00:00'))/864e5):null;
     return `<div class="card" style="--sc:${late!==null&&late>=0?'var(--crit)':'var(--muted)'}">
@@ -1476,17 +1481,25 @@ function openCas(k){casKime=k;renderCas();$('#casheet').hidden=false;document.bo
 function closeCas(){$('#casheet').hidden=true;document.body.style.overflow='';casKime=null}
 $('#cas-close').onclick=closeCas;
 $('#ca-sup').addEventListener('click',e=>{const b=e.target.closest('[data-sup]');if(b)openCas(b.dataset.sup)});
+let casRange='bu';
 function renderCas(){
-  const k=casKime;const L=(state.borclar||[]).filter(b=>b.kime===k&&b.tip!=='alacak').sort((a,b)=>(a.at||a.createdAt)-(b.at||b.createdAt));
-  const borc=L.filter(b=>b.tip!=='odeme');const ode=L.filter(b=>b.tip==='odeme');
-  const tB=borc.reduce((a,b)=>a+(+b.tutar||0),0),tO=borc.reduce((a,b)=>a+(+b.odenen||0),0),kal=r2(tB-tO);
+  const k=casKime;const ALL=(state.borclar||[]).filter(b=>b.kime===k&&b.tip!=='alacak').sort((a,b)=>(b.at||b.createdAt)-(a.at||a.createdAt));
+  const borcAll=ALL.filter(b=>b.tip!=='odeme');
+  const tB=borcAll.reduce((a,b)=>a+(+b.tutar||0),0),tO=borcAll.reduce((a,b)=>a+(+b.odenen||0),0),kal=r2(tB-tO);
+  const now=new Date();let a0=0,a1=Infinity;if(casRange==='bu'){const d=new Date(now.getFullYear(),now.getMonth(),1);a0=d.getTime();a1=new Date(now.getFullYear(),now.getMonth()+1,1).getTime()}else if(casRange==='gecen'){a0=new Date(now.getFullYear(),now.getMonth()-1,1).getTime();a1=new Date(now.getFullYear(),now.getMonth(),1).getTime()}else if(casRange==='3ay'){a0=new Date(now.getFullYear(),now.getMonth()-2,1).getTime()}
+  const L=ALL.filter(b=>{const t=b.at||b.createdAt||0;return t>=a0&&t<a1});
+  const pB=L.filter(b=>b.tip!=='odeme').reduce((a,b)=>a+(+b.tutar||0),0),pO=L.filter(b=>b.tip==='odeme').reduce((a,b)=>a+(+b.tutar||0),0);
+  const borc=borcAll.slice().sort((a,b)=>(a.at||a.createdAt)-(b.at||b.createdAt));
+  const lb={bu:'Bu ay',gecen:'Geçen ay','3ay':'Son 3 ay',tum:'Tümü'}[casRange];
   $('#cas-title').textContent=k;
   const rows=L.map(b=>b.tip==='odeme'?`<div class="k-row"><div><div class="d" style="color:var(--ok)">Ödeme${b.not?' · '+esc(b.not):''}</div><div class="m">${new Date(b.at||b.createdAt).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})}</div></div><b style="color:var(--ok)">-${tl(+b.tutar||0)}</b></div>`
     :`<div class="k-row"><div><div class="d">${esc(b.not||'Borç')}</div><div class="m">${new Date(b.at||b.createdAt).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})}${b.vade?' · vade '+ddate(b.vade):''}${borcKalan(b)>0&&+b.odenen?' · kalan '+tl(borcKalan(b)):borcKalan(b)<=0?' · kapandı':''}</div></div><b style="color:var(--crit)">+${tl(+b.tutar||0)}</b></div>`).join('');
   $('#cas-body').innerHTML=`<div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:10px">
-      <div class="stat"><b class="num" style="color:var(--crit)">${tl(tB)}</b><small>Toplam borç</small></div><div class="stat"><b class="num" style="color:var(--ok)">${tl(tO)}</b><small>Ödenen</small></div><div class="stat"><b class="num">${tl(kal)}</b><small>Kalan</small></div></div>
-    <div class="actions" style="margin:0 0 12px"><button type="button" class="btn primary" id="cas-pay" ${kal>0?'':'disabled'}>Ödeme yap</button><button type="button" class="btn" id="cas-add">+ Borç ekle</button>${k&&/\d{10,}/.test((k.match(/\d[\d ]{9,}/)||[''])[0].replace(/\s/g,''))?'':''}</div>
-    <h3 class="sec-h" style="margin-top:0">Hareketler</h3><div class="list">${rows||'<div class="empty">Hareket yok</div>'}</div>
+      <div class="stat"><b class="num" style="color:var(--crit)">${tl(tB)}</b><small>Toplam borçlanılan</small></div><div class="stat"><b class="num" style="color:var(--ok)">${tl(tO)}</b><small>Toplam ödenen</small></div><div class="stat"><b class="num" style="font-size:1.2rem">${tl(kal)}</b><small>KALAN BORÇ</small></div></div>
+    <div class="actions" style="margin:0 0 12px"><button type="button" class="btn primary" id="cas-pay" ${kal>0?'':'disabled'}>Ödeme yap</button><button type="button" class="btn" id="cas-add">+ Borç ekle</button><button type="button" class="btn" id="cas-wa">Ekstreyi WhatsApp'la gönder</button></div>
+    <div class="chips" id="cas-range" style="margin-bottom:8px">${['bu','gecen','3ay','tum'].map(r=>`<button type="button" class="chip" data-r="${r}" aria-pressed="${casRange===r}">${{bu:'Bu ay',gecen:'Geçen ay','3ay':'Son 3 ay',tum:'Tümü'}[r]}</button>`).join('')}</div>
+    <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:10px"><div class="stat"><b class="num" style="color:var(--crit)">${tl(pB)}</b><small>${lb} borçlanılan</small></div><div class="stat"><b class="num" style="color:var(--ok)">${tl(pO)}</b><small>${lb} ödenen</small></div></div>
+    <h3 class="sec-h" style="margin-top:0">Hareketler · ${lb}</h3><div class="list">${rows||'<div class="empty">Bu dönemde hareket yok</div>'}</div>
     <p class="hint" style="margin-top:10px">Ödeme, en eski borçtan başlayarak düşer ve kasaya "Borç ödeme" gideri olarak yazılır.</p>`;
   $('#cas-pay').onclick=()=>{const v=prompt(`${k} – kalan ${tl(kal)}. Ne kadar ödendi?`,String(Math.round(kal)));if(v===null)return;let amt=Math.min(kal,numIn(v));if(!(amt>0)){toast('Tutar girilmedi');return}
     const now=Date.now();const bt=fdb.batch();let left=amt;
@@ -1494,6 +1507,9 @@ function renderCas(){
     bt.set(borcCol().doc(),{tip:'odeme',kime:k,tutar:r2(amt),not:'',at:now,createdAt:now});
     bt.set(kasaCol().doc(),{type:'gider',amount:r2(amt),cat:'Borç ödeme',method:'Nakit',desc:`${k} – borç ödemesi`,at:now,createdAt:now,byName:state.me.name||''});
     bt.commit().then(()=>toast(tl(amt)+' ödendi, kasadan düşüldü')).catch(ex=>toast('Kaydedilemedi: '+authMsg(ex)))};
+  $('#cas-range').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;casRange=b.dataset.r;renderCas()};
+  $('#cas-wa').onclick=()=>{const t=`${state.shop||'Servis'} – ${k} cari ekstresi (${lb})\n\nToplam borçlanılan: ${tl(tB)}\nToplam ödenen: ${tl(tO)}\nKALAN BORÇ: ${tl(kal)}\n\n${lb} hareketler:\n${L.slice().reverse().map(b=>`${new Date(b.at||b.createdAt).toLocaleDateString('tr-TR')} ${b.tip==='odeme'?'Ödeme -':'Borç +'}${tl(+b.tutar||0)}${b.not?' ('+b.not+')':''}`).join('\n')||'-'}`;
+    try{window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}catch(_){}};
   $('#cas-add').onclick=()=>{closeCas();$('#ca-form').hidden=false;$('#ca-aform').hidden=true;$('#ca-kime').value=k;setTimeout(()=>{$('#ca-form').scrollIntoView({block:'center'});$('#ca-tutar').focus()},60)};
 }
 function alacakMsg(b){const shop=(state.shop||'Servisimiz')+(state.shopPhone?' · '+state.shopPhone:'');const name=b.kime?' '+b.kime.split(' ')[0]:'';
@@ -1752,7 +1768,7 @@ async function createUsta(e){
   finally{btn.disabled=false;btn.textContent='Hesabı oluştur'}
 }
 
-/* ---------- Çıraklar ---------- */
+/* ---------- Personeller ---------- */
 state.cRange='gun';state.cKasa=[];let csId=null;
 function cBounds(){const n=new Date();n.setHours(0,0,0,0);let a=new Date(n);if(state.cRange==='hafta')a.setDate(n.getDate()-((n.getDay()+6)%7));if(state.cRange==='ay')a=new Date(n.getFullYear(),n.getMonth(),1);return a.getTime()}
 async function loadCirakStats(){if(!state.me||isCirak())return;try{const s=await kasaCol().where('at','>=',cBounds()).get();state.cKasa=s.docs.map(d=>d.data()).filter(x=>!x.deleted&&x.cirakId)}catch(e){state.cKasa=[]}renderCiraklar()}
@@ -1762,22 +1778,22 @@ function cStats(cid){const from=cBounds();const jobs=state.jobs.filter(j=>j.cira
 function renderCiraklar(){
   const el=$('#c-list');if(!el)return;const L=state.ciraklar||[];
   if(!$('#c-pass').value)$('#c-pass').value=genPass();
-  if(!L.length){el.innerHTML='<div class="empty"><h3>Henüz çırak yok</h3>Aşağıdan çırak ekleyin. Kullanıcı adı ve şifresini WhatsApp\'la gönderirsiniz, çırak kendi telefonundan girer.</div>';return}
+  if(!L.length){el.innerHTML='<div class="empty"><h3>Henüz personel yok</h3>Aşağıdan personel ekleyin. Kullanıcı adı ve şifresini WhatsApp\'la gönderirsiniz, personel kendi telefonundan girer.</div>';return}
   el.innerHTML=L.map(c=>{const st=cStats(c.cid);return `<button class="ucard" data-cid="${esc(c.cid)}" style="--sc:${c.active?'var(--ok)':'var(--crit)'}">
     <div style="min-width:0;width:100%"><div class="nm">${esc(c.name)}${c.active?'':' <span class="pill" style="color:var(--crit)">Kapalı</span>'} <span class="hint" style="font-weight:400">· ${st.acik} açık iş</span></div>
-      <div class="meta">${esc(c.username)}${c.phone?' · '+esc(c.phone):''}</div>
+      <div class="meta">${esc(c.username)}${c.phone?' · '+esc(c.phone):''}${c.ucret&&+c.ucret.tutar?' · '+(c.ucret.tip==='ay'?'aylık ':'haftalık ')+tl(+c.ucret.tutar):''}</div>
       <div class="c-stats"><div><b>${st.aldi}</b><small>Aldığı iş</small></div><div><b>${st.bitti}</b><small>Bitirdiği</small></div><div><b style="color:var(--ok)">${tl(st.gelir)}</b><small>Tahsilat</small></div><div><b style="color:var(--crit)">${tl(st.gider)}</b><small>Masraf</small></div></div></div>
     <span class="go">›</span></button>`}).join('');
   if(csId&&!$('#csheet').hidden)renderCs();
 }
 $('#c-range').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;state.cRange=b.dataset.r;document.querySelectorAll('#c-range .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));loadCirakStats()});
-function cirakInvite(c,p){return `Merhaba ${c.name}, ${state.me.name||'ustan'} seni Usta Defteri'ne çırak olarak ekledi.\n\nUygulama: ${APP_URL}\nKullanıcı adı: ${c.username}\nŞifre: ${p||'(ustana sor)'}\n\nLinke gir, Android'de "Uygulamayı yükle", iPhone'da Paylaş > "Ana Ekrana Ekle" de. Sonra bu bilgilerle giriş yap. Boştaki işleri alabilir, bitince "Hazır" yapabilir, aldığın parayı ve masrafı yazabilirsin.`}
+function cirakInvite(c,p){return `Merhaba ${c.name}, ${state.me.name||'ustan'} seni Usta Defteri'ne personel olarak ekledi.\n\nUygulama: ${APP_URL}\nKullanıcı adı: ${c.username}\nŞifre: ${p||'(ustana sor)'}\n\nLinke gir, Android'de "Uygulamayı yükle", iPhone'da Paylaş > "Ana Ekrana Ekle" de. Sonra bu bilgilerle giriş yap. Boştaki işleri alabilir, bitince "Hazır" yapabilir, aldığın parayı ve masrafı yazabilirsin.`}
 $('#c-form').addEventListener('submit',async e=>{
   e.preventDefault();const err=$('#c-err');err.textContent='';
   const name=$('#c-name').value.trim(),phone=$('#c-phone').value.trim(),username=normUser($('#c-user').value),pass=$('#c-pass').value;
   if(username.length<3){err.textContent='Kullanıcı adı en az 3 harf olmalı (Türkçe harf ve boşluk kullanmayın).';return}
   if(pass.length<6){err.textContent='Şifre en az 6 karakter olmalı.';return}
-  if(!navigator.onLine){err.textContent='Çırak eklemek için internet gerekli.';return}
+  if(!navigator.onLine){err.textContent='Personel eklemek için internet gerekli.';return}
   const b=$('#c-btn');b.disabled=true;b.textContent='Ekleniyor…';
   try{
     if(RESERVED.includes(username)||(await fdb.doc('logins/'+username).get()).exists){err.textContent='Bu kullanıcı adı alınmış, başka bir tane seçin.';return}
@@ -1790,9 +1806,30 @@ $('#c-form').addEventListener('submit',async e=>{
     $('#c-form').reset();$('#c-pass').value=genPass();toast(name+' eklendi');
     state.ciraklar=[...(state.ciraklar||[]).filter(x=>x.cid!==cid),{cid,...c}];openCs(cid);
   }catch(ex){err.textContent=authMsg(ex)}
-  finally{b.disabled=false;b.textContent='Çırağı ekle'}
+  finally{b.disabled=false;b.textContent='Personeli ekle'}
 });
-function openCs(cid){csId=cid;renderCs();$('#csheet').hidden=false;document.body.style.overflow='hidden'}
+let csMaas=[];
+function openCs(cid){csId=cid;csMaas=[];renderCs();$('#csheet').hidden=false;document.body.style.overflow='hidden';loadMaas(cid)}
+function loadMaas(cid){kasaCol().where('maasFor','==',cid).get().then(sn=>{if(csId!==cid)return;csMaas=sn.docs.map(d=>({id:d.id,...d.data()})).filter(x=>!x.deleted).sort((a,b)=>b.at-a.at);renderCs()}).catch(()=>{})}
+function maasPeriod(tip){const n=new Date();n.setHours(0,0,0,0);let a,b;if(tip==='ay'){a=new Date(n.getFullYear(),n.getMonth(),1);b=new Date(n.getFullYear(),n.getMonth()+1,1)}else{a=new Date(n);a.setDate(n.getDate()-((n.getDay()+6)%7));b=new Date(a);b.setDate(a.getDate()+7)}return{a:a.getTime(),b:b.getTime(),label:tip==='ay'?n.toLocaleDateString('tr-TR',{month:'long'})+' ayı':'Bu hafta ('+a.toLocaleDateString('tr-TR',{day:'numeric',month:'short'})+' – '+new Date(b-1).toLocaleDateString('tr-TR',{day:'numeric',month:'short'})+')'}}
+function maasHtml(c){const u=c.ucret||{};const tip=u.tip||'hafta';const tut=+u.tutar||0;const P=maasPeriod(tip);
+  const cur=csMaas.filter(x=>x.at>=P.a&&x.at<P.b);const avans=cur.filter(x=>x.cat==='Avans').reduce((a,x)=>a+(+x.amount||0),0),odenen=cur.filter(x=>x.cat==='Maaş').reduce((a,x)=>a+(+x.amount||0),0);const kalan=r2(tut-avans-odenen);
+  const hist=csMaas.slice(0,12).map(x=>`<div class="row"><div><b>${x.cat==='Avans'?'Avans':'Ücret ödemesi'}</b>${x.desc&&x.desc.indexOf('–')>0?'':''}<br><span class="hint">${new Date(x.at).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})}${x.note?' · '+esc(x.note):''}</span></div><div class="num" style="color:var(--crit)">-${tl(+x.amount||0)}</div></div>`).join('');
+  return `<fieldset><legend>Ücret · avans</legend>
+    <div class="grid2" style="align-items:end"><label class="f">Ücret<select id="cs-utip"><option value="hafta" ${tip==='hafta'?'selected':''}>Haftalık</option><option value="ay" ${tip==='ay'?'selected':''}>Aylık</option></select></label>
+      <label class="f">Tutar (₺)<input id="cs-utut" inputmode="numeric" value="${tut||''}" placeholder="5000"></label></div>
+    <div class="actions" style="margin:6px 0 10px"><button type="button" class="btn" id="cs-usave">Ücreti kaydet</button></div>
+    ${tut?`<div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:8px"><div class="stat"><b class="num">${tl(tut)}</b><small>${tip==='ay'?'Aylık':'Haftalık'} ücret</small></div><div class="stat"><b class="num" style="color:var(--warn)">${tl(avans+odenen)}</b><small>Verilen (avans+ödeme)</small></div><div class="stat"><b class="num" style="color:${kalan>0?'var(--crit)':'var(--ok)'}">${tl(kalan)}</b><small>Kalan · ${P.label}</small></div></div>
+    <div class="actions"><button type="button" class="btn" id="cs-avans">Avans ver</button><button type="button" class="btn primary" id="cs-ode" ${kalan>0?'':'disabled'}>Kalanı öde (${tl(Math.max(0,kalan))})</button></div>
+    <p class="hint" style="margin:8px 0 0">Avans ve ödemeler kasadan "Maaş" gideri olarak düşer; ${tip==='ay'?'ay':'hafta'} sonunda kalan sıfırlanınca yeni dönem başlar.</p>`:'<p class="hint">Ücreti yazıp kaydedin; sonra avans verdikçe buraya işleyin, dönem sonunda kalan görünür.</p>'}
+    ${hist?`<div class="hist" style="margin-top:10px">${hist}</div>`:''}
+  </fieldset>`}
+function bindMaas(c){const u=c.ucret||{};
+  $('#cs-usave').onclick=()=>{const tip=$('#cs-utip').value,tutar=numIn($('#cs-utut').value);fdb.doc('ciraklar/'+c.cid).update({ucret:{tip,tutar:r2(tutar)}}).then(()=>toast('Ücret kaydedildi')).catch(ex=>toast(authMsg(ex)))};
+  const pay=(cat,def)=>{const v=prompt(`${c.name} – ${cat==='Avans'?'avans':'ücret ödemesi'} tutarı (₺)`,String(Math.round(def||0)||''));if(v===null)return;const amt=numIn(v);if(!(amt>0)){toast('Tutar girilmedi');return}
+    const now=Date.now();kasaCol().add({type:'gider',amount:r2(amt),cat:cat,method:'Nakit',desc:`${c.name} – ${cat==='Avans'?'avans':'ücret ödemesi'}`,maasFor:c.cid,note:'',at:now,createdAt:now,byName:state.me.name||''}).then(()=>{toast(tl(amt)+(cat==='Avans'?' avans verildi':' ücret ödendi')+', kasadan düşüldü');loadMaas(c.cid)}).catch(ex=>toast('Kaydedilemedi: '+authMsg(ex)))};
+  const a=$('#cs-avans');if(a)a.onclick=()=>pay('Avans',0);
+  const o=$('#cs-ode');if(o)o.onclick=()=>{const tip=u.tip||'hafta';const P=maasPeriod(tip);const cur=csMaas.filter(x=>x.at>=P.a&&x.at<P.b).reduce((s,x)=>s+(+x.amount||0),0);pay('Maaş',Math.max(0,(+u.tutar||0)-cur))}}
 function closeCs(){$('#csheet').hidden=true;document.body.style.overflow='';csId=null}
 function renderCs(){
   const c=(state.ciraklar||[]).find(x=>x.cid===csId);if(!c){closeCs();return}
@@ -1808,12 +1845,13 @@ function renderCs(){
     <fieldset><legend>${state.cRange==='gun'?'Bugün':state.cRange==='hafta'?'Bu hafta':'Bu ay'}</legend>
       <div class="c-stats"><div><b>${st.aldi}</b><small>Aldığı iş</small></div><div><b>${st.bitti}</b><small>Bitirdiği</small></div><div><b style="color:var(--ok)">${tl(st.gelir)}</b><small>Tahsilat</small></div><div><b style="color:var(--crit)">${tl(st.gider)}</b><small>Masraf</small></div></div>
       <div class="hist" style="margin-top:10px">${jobs.length?jobs.map(j=>`<div class="row"><div><b>${esc(fmtPlate(j.plate))}</b> ${esc(j.vehicle||'')}<br><span class="hint">${(SMAP[j.status]||{}).t||''}${j.doneAt?' · bitti '+dstr(j.doneAt):''}</span></div><div class="num">${tl(calc(j).total)}</div></div>`).join(''):'<span class="hint">Henüz iş almadı.</span>'}</div></fieldset>
+    ${maasHtml(c)}
     <fieldset><legend>Hesap</legend><div class="actions">
       <button type="button" class="btn${c.active?' danger':''}" id="cs-toggle">${c.active?'Hesabı kapat':'Hesabı aç'}</button>
-      <button type="button" class="btn danger" id="cs-del">Çırağı sil</button></div>
-      <p class="hint" style="margin:8px 0 0">Silinen çırağın yaptığı işler ve kasa kayıtları silinmez.</p></fieldset>`;
-  $('#cs-copy').onclick=()=>copyText(inv,'Giriş bilgileri kopyalandı');
-  $('#cs-toggle').onclick=()=>fdb.doc('ciraklar/'+c.cid).update({active:!c.active}).then(()=>toast(c.active?'Çırak hesabı kapatıldı':'Çırak hesabı açıldı')).catch(ex=>toast(authMsg(ex)));
+      <button type="button" class="btn danger" id="cs-del">Personeli sil</button></div>
+      <p class="hint" style="margin:8px 0 0">Silinen personelin yaptığı işler ve kasa kayıtları silinmez.</p></fieldset>`;
+  $('#cs-copy').onclick=()=>copyText(inv,'Giriş bilgileri kopyalandı');bindMaas(c);
+  $('#cs-toggle').onclick=()=>fdb.doc('ciraklar/'+c.cid).update({active:!c.active}).then(()=>toast(c.active?'Personel hesabı kapatıldı':'Personel hesabı açıldı')).catch(ex=>toast(authMsg(ex)));
   $('#cs-reset').onclick=async()=>{const b=$('#cs-reset');b.disabled=true;b.textContent='Sıfırlanıyor…';
     try{const pass=genPass();const {uid,email}=await newAuth(c.username,pass);const bt=fdb.batch();
       bt.update(fdb.doc('ciraklar/'+c.cid),{authUid:uid,email,pass});bt.set(fdb.doc('auth/'+uid),{ustaId:state.me.id,role:'cirak',cirakId:c.cid});
@@ -1821,24 +1859,24 @@ function renderCs(){
       await bt.commit();toast('Yeni şifre: '+pass)}catch(ex){$('#cs-err').textContent=authMsg(ex)}finally{b.disabled=false;b.textContent='Şifreyi sıfırla'}};
   $('#cs-del').onclick=async()=>{const b=$('#cs-del');if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='Emin misiniz? Sil';return}
     try{const bt=fdb.batch();bt.update(fdb.doc('ciraklar/'+c.cid),{deleted:true,active:false,pass:null,deletedAt:Date.now()});bt.delete(fdb.doc('logins/'+c.username));if(c.authUid)bt.delete(fdb.doc('auth/'+c.authUid));
-      await bt.commit();closeCs();toast('Çırak silindi')}catch(ex){toast(authMsg(ex))}};
+      await bt.commit();closeCs();toast('Personel silindi')}catch(ex){toast(authMsg(ex))}};
 }
 $('#cs-close').onclick=closeCs;
 document.addEventListener('click',e=>{const c=e.target.closest('[data-cid]');if(c)openCs(c.dataset.cid)});
 
-/* iş fişinde çırak */
+/* iş fişinde personel */
 function renderCirakBox(){
   if(!draft)return;const box=$('#cirakbox'),el=$('#cirak-in');
   if(isCirak()){
     box.hidden=false;
     if(!draft.cirakId)el.innerHTML='<button type="button" class="btn primary take" id="take-job">Bu işi ben alıyorum</button><p class="hint" style="margin:6px 0 0">Alınca iş sizin adınıza yazılır ve “Yapılıyor” olur.</p>';
     else if(draft.cirakId===state.me.cirakId)el.innerHTML='<b style="color:var(--ok)">Bu iş sizde.</b> <span class="hint">Bitince durumu “Hazır” yapıp kaydedin, aldığınız parayı “Alınan ödeme”ye yazın.</span>';
-    else el.innerHTML=`Bu iş <b>${esc(draft.cirakName||'başka bir çırak')}</b>'de.`;
+    else el.innerHTML=`Bu iş <b>${esc(draft.cirakName||'başka bir personel')}</b>'de.`;
     const t=$('#take-job');if(t)t.onclick=()=>{draft.cirakId=state.me.cirakId;draft.cirakName=state.me.name;draft.assignedAt=Date.now();if(draft.status==='sirada')draft.status='yapiliyor';save()};
     return;
   }
   const L=state.ciraklar||[];box.hidden=!L.length&&!draft.cirakId;if(box.hidden)return;
-  el.innerHTML=`<label class="f">İşi yapan çırak<select id="f-cirak"><option value="">Boşta (kimseye atanmadı)</option>${L.filter(c=>c.active||c.cid===draft.cirakId).map(c=>`<option value="${esc(c.cid)}"${c.cid===draft.cirakId?' selected':''}>${esc(c.name)}</option>`).join('')}${draft.cirakId&&!L.some(c=>c.cid===draft.cirakId)?`<option value="${esc(draft.cirakId)}" selected>${esc(draft.cirakName||'Silinmiş çırak')}</option>`:''}</select></label>
+  el.innerHTML=`<label class="f">İşi yapan personel<select id="f-cirak"><option value="">Boşta (kimseye atanmadı)</option>${L.filter(c=>c.active||c.cid===draft.cirakId).map(c=>`<option value="${esc(c.cid)}"${c.cid===draft.cirakId?' selected':''}>${esc(c.name)}</option>`).join('')}${draft.cirakId&&!L.some(c=>c.cid===draft.cirakId)?`<option value="${esc(draft.cirakId)}" selected>${esc(draft.cirakName||'Silinmiş personel')}</option>`:''}</select></label>
     ${draft.doneByName?`<p class="hint" style="margin:6px 0 0">Hazır yapan: ${esc(draft.doneByName)} · ${dstr(draft.doneAt)}</p>`:''}`;
   $('#f-cirak').onchange=e=>{const c=L.find(x=>x.cid===e.target.value);draft.cirakId=c?c.cid:'';draft.cirakName=c?c.name:'';draft.assignedAt=c?Date.now():null};
 }
@@ -1878,13 +1916,13 @@ function renderKasa(loading){
       ${state.kRange!=='gun'?`<div class="k-day"><span>${d.toLocaleDateString('tr-TR',{day:'numeric',month:'long'})} ${DAYS[d.getDay()]}</span><span class="num">${tl(dt.in-dt.out)}</span></div>`:''}
       ${g[k].map(x=>`<button class="k-row" data-k="${esc(x.id)}" style="--sc:${x.type==='gelir'?'var(--ok)':'var(--crit)'}">
         <span class="d">${esc(x.desc||x.cat||'')}</span><span class="a" style="color:${x.type==='gelir'?'var(--ok)':'var(--crit)'}">${x.type==='gelir'?'+':'−'}${tl(x.amount)}</span>
-        <span class="m">${new Date(x.at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})} · ${esc(x.cat||'')} · ${esc(x.method||'Nakit')}${x.auto?' · iş fişinden':''}${x.cirakId&&!isCirak()?' · '+esc(x.byName||'Çırak'):''}</span></button>`).join('')}`}).join('')}
+        <span class="m">${new Date(x.at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})} · ${esc(x.cat||'')} · ${esc(x.method||'Nakit')}${x.auto?' · iş fişinden':''}${x.cirakId&&!isCirak()?' · '+esc(x.byName||'Personel'):''}</span></button>`).join('')}`}).join('')}
   const rep=kReport();$('#k-wa').href='https://wa.me/?text='+encodeURIComponent(rep);
 }
 function kReport(){const L=state.kasa,t=kTotals(L);const cats={};L.forEach(x=>{const k=(x.type==='gelir'?'+ ':'− ')+(x.cat||'Diğer');cats[k]=(cats[k]||0)+(+x.amount||0)});
   const lb=state.kRange==='gun'?new Date(state.kRef).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric',weekday:'long'}):kLabel();
-  const byC={};L.filter(x=>x.cirakId).forEach(x=>{const k=x.byName||'Çırak';byC[k]=byC[k]||{i:0,o:0};if(x.type==='gelir')byC[k].i+=+x.amount||0;else byC[k].o+=+x.amount||0});
-  const cTxt=Object.keys(byC).length?'\n\nÇıraklar:\n'+Object.keys(byC).map(k=>`${k}: +${tl(byC[k].i)} / −${tl(byC[k].o)}`).join('\n'):'';
+  const byC={};L.filter(x=>x.cirakId).forEach(x=>{const k=x.byName||'Personel';byC[k]=byC[k]||{i:0,o:0};if(x.type==='gelir')byC[k].i+=+x.amount||0;else byC[k].o+=+x.amount||0});
+  const cTxt=Object.keys(byC).length?'\n\nPersoneller:\n'+Object.keys(byC).map(k=>`${k}: +${tl(byC[k].i)} / −${tl(byC[k].o)}`).join('\n'):'';
   return `${isCirak()?(state.me.name+' – '):''}${state.shop||'Kasa'} – ${lb} kasa raporu\n\nGiren: ${tl(t.in)}\nÇıkan: ${tl(t.out)}\nKalan: ${tl(t.in-t.out)}\n${Object.keys(t.m).map(m=>`${m}: ${tl(t.m[m])}`).join('\n')}\n\n${Object.keys(cats).sort().map(k=>`${k}: ${tl(cats[k])}`).join('\n')}${cTxt}`}
 $('#k-range').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;state.kRange=b.dataset.r;document.querySelectorAll('#k-range .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));subKasa()});
 function kShift(n){const d=new Date(state.kRef);if(state.kRange==='ay')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n*(state.kRange==='hafta'?7:1));state.kRef=d;subKasa()}
@@ -2224,7 +2262,7 @@ function renderSub(){
 
 /* ayarlar: kayıtlarımı indir */
 function xmlEsc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-/* ---------- Dönem raporu: işler + kasa + stok + çıraklar (günlük / haftalık / aylık) ---------- */
+/* ---------- Dönem raporu: işler + kasa + stok + personeller (günlük / haftalık / aylık) ---------- */
 function rangeBounds(r){const n=new Date();n.setHours(0,0,0,0);let a=new Date(n),b=new Date(n);
   if(r==='gun'){b.setDate(a.getDate()+1)}else if(r==='dun'){a.setDate(n.getDate()-1);b=new Date(n)}
   else if(r==='hafta'||r==='ghafta'){const wd=(n.getDay()+6)%7;a.setDate(n.getDate()-wd);if(r==='ghafta')a.setDate(a.getDate()-7);b=new Date(a);b.setDate(a.getDate()+7)}
@@ -2239,13 +2277,13 @@ async function periodReport(uid,a,b,meta){
   const opened=jobsAll.filter(j=>inR(j.createdAt||0)),done=jobsAll.filter(j=>j.status==='teslim'&&inR(j.updatedAt||0)),open=jobsAll.filter(j=>j.status!=='teslim');
   const ciro=done.reduce((s,j)=>s+calc(j).total,0),borc=jobsAll.reduce((s,j)=>s+calc(j).due,0);
   const kt=kTotals(kasa);const S=harSum(har);const low=stok.filter(isLow);
-  const byC={};kasa.forEach(x=>{if(!x.cirakId)return;const k=x.byName||'Çırak';byC[k]=byC[k]||{i:0,o:0,n:0};if(x.type==='gelir')byC[k].i+=+x.amount||0;else byC[k].o+=+x.amount||0});
+  const byC={};kasa.forEach(x=>{if(!x.cirakId)return;const k=x.byName||'Personel';byC[k]=byC[k]||{i:0,o:0,n:0};if(x.type==='gelir')byC[k].i+=+x.amount||0;else byC[k].o+=+x.amount||0});
   done.forEach(j=>{if(j.doneByName){byC[j.doneByName]=byC[j.doneByName]||{i:0,o:0,n:0};byC[j.doneByName].n++}});
   const lb=rangeLabel(a,b);const shop=meta.shop||meta.name||'Dükkan';
-  const text=`${shop} – ${lb}\n\nİŞLER\nAçılan iş: ${opened.length}\nTeslim edilen: ${done.length}\nTeslim edilen işlerin tutarı: ${tl(ciro)}\nHâlâ açık iş: ${open.length}\nMüşteri borcu (toplam): ${tl(borc)}\n\nKASA\nGiren: ${tl(kt.in)}\nÇıkan: ${tl(kt.out)}\nKalan: ${tl(kt.in-kt.out)}\n${Object.keys(kt.m).map(m=>`${m}: ${tl(kt.m[m])}`).join('\n')}\n\nSTOK\nGelen mal: ${tl(S.inV)}\nKullanılan (alış): ${tl(S.outV)}\nVeresiye alınan: ${tl(S.ver)}\nAzalan/biten ürün: ${low.length}${Object.keys(byC).length?'\n\nÇIRAKLAR\n'+Object.keys(byC).map(k=>`${k}: ${byC[k].n} iş teslim, +${tl(byC[k].i)} / −${tl(byC[k].o)}`).join('\n'):''}`;
+  const text=`${shop} – ${lb}\n\nİŞLER\nAçılan iş: ${opened.length}\nTeslim edilen: ${done.length}\nTeslim edilen işlerin tutarı: ${tl(ciro)}\nHâlâ açık iş: ${open.length}\nMüşteri borcu (toplam): ${tl(borc)}\n\nKASA\nGiren: ${tl(kt.in)}\nÇıkan: ${tl(kt.out)}\nKalan: ${tl(kt.in-kt.out)}\n${Object.keys(kt.m).map(m=>`${m}: ${tl(kt.m[m])}`).join('\n')}\n\nSTOK\nGelen mal: ${tl(S.inV)}\nKullanılan (alış): ${tl(S.outV)}\nVeresiye alınan: ${tl(S.ver)}\nAzalan/biten ürün: ${low.length}${Object.keys(byC).length?'\n\nPERSONELLAR\n'+Object.keys(byC).map(k=>`${k}: ${byC[k].n} iş teslim, +${tl(byC[k].i)} / −${tl(byC[k].o)}`).join('\n'):''}`;
   const sheets=[
-    {name:'Özet',rows:[['Dükkan',shop],['Dönem',lb],[],['Açılan iş',opened.length],['Teslim edilen',done.length],['Teslim edilen tutar ₺',r2(ciro)],['Açık iş',open.length],['Müşteri borcu ₺',r2(borc)],[],['Kasa giren ₺',r2(kt.in)],['Kasa çıkan ₺',r2(kt.out)],['Kasa kalan ₺',r2(kt.in-kt.out)],...Object.keys(kt.m).map(m=>[m+' ₺',r2(kt.m[m])]),[],['Gelen mal ₺',r2(S.inV)],['Kullanılan (alış) ₺',r2(S.outV)],['Veresiye ₺',r2(S.ver)],['Azalan/biten ürün',low.length],...(Object.keys(byC).length?[[],['Çırak','Teslim','Aldığı ₺','Harcadığı ₺'],...Object.keys(byC).map(k=>[k,byC[k].n,r2(byC[k].i),r2(byC[k].o)])]:[])]},
-    {name:'İşler',rows:[['Açılış','Plaka','Araç','Km','Müşteri','Telefon','Şikayet','Yapılanlar','Durum','Toplam ₺','Ödenen ₺','Kalan ₺','Çırak'],...opened.concat(done.filter(j=>!opened.includes(j))).sort((x,y)=>(x.createdAt||0)-(y.createdAt||0)).map(j=>{const c=calc(j);return[dstr2(j.createdAt),fmtPlate(j.plate),j.vehicle||'',j.km||'',j.customer||'',j.phone||'',j.complaint||'',(j.items||[]).map(i=>i.name+((+i.qty||1)!==1?' x'+i.qty:'')).join(', '),(STATUS.find(s=>s.k===j.status)||{}).t||j.status,r2(c.total),r2(j.paid),r2(c.due),j.cirakName||'']})]},
+    {name:'Özet',rows:[['Dükkan',shop],['Dönem',lb],[],['Açılan iş',opened.length],['Teslim edilen',done.length],['Teslim edilen tutar ₺',r2(ciro)],['Açık iş',open.length],['Müşteri borcu ₺',r2(borc)],[],['Kasa giren ₺',r2(kt.in)],['Kasa çıkan ₺',r2(kt.out)],['Kasa kalan ₺',r2(kt.in-kt.out)],...Object.keys(kt.m).map(m=>[m+' ₺',r2(kt.m[m])]),[],['Gelen mal ₺',r2(S.inV)],['Kullanılan (alış) ₺',r2(S.outV)],['Veresiye ₺',r2(S.ver)],['Azalan/biten ürün',low.length],...(Object.keys(byC).length?[[],['Personel','Teslim','Aldığı ₺','Harcadığı ₺'],...Object.keys(byC).map(k=>[k,byC[k].n,r2(byC[k].i),r2(byC[k].o)])]:[])]},
+    {name:'İşler',rows:[['Açılış','Plaka','Araç','Km','Müşteri','Telefon','Şikayet','Yapılanlar','Durum','Toplam ₺','Ödenen ₺','Kalan ₺','Personel'],...opened.concat(done.filter(j=>!opened.includes(j))).sort((x,y)=>(x.createdAt||0)-(y.createdAt||0)).map(j=>{const c=calc(j);return[dstr2(j.createdAt),fmtPlate(j.plate),j.vehicle||'',j.km||'',j.customer||'',j.phone||'',j.complaint||'',(j.items||[]).map(i=>i.name+((+i.qty||1)!==1?' x'+i.qty:'')).join(', '),(STATUS.find(s=>s.k===j.status)||{}).t||j.status,r2(c.total),r2(j.paid),r2(c.due),j.cirakName||'']})]},
     {name:'Kasa',rows:[['Tarih','Tür','Kategori','Ödeme','Açıklama','Tutar ₺','Giren'],...kasa.sort((x,y)=>(x.at||0)-(y.at||0)).map(x=>[dstr2(x.at),x.type==='gelir'?'Giriş':'Çıkış',x.cat||'',x.method||'',x.desc||'',r2(+x.amount||0)*(x.type==='gelir'?1:-1),x.byName||''])]},
     {name:'Stok hareketleri',rows:[['Tarih','Ürün','Hareket','Miktar','Birim fiyat ₺','Tedarikçi','Ödeme','Plaka','Not','Yapan'],...har.sort((x,y)=>(x.at||0)-(y.at||0)).map(x=>[dstr2(x.at),x.name||'',(HT[x.type]||{}).t||x.type,x.type==='sayim'?r2(x.delta):r2(x.qty),r2(x.price||x.cost||0),x.sup||'',x.pay||'',x.plate?fmtPlate(x.plate):'',x.note||'',x.byName||''])]},
     {name:'Azalan stok',rows:[['Ürün','Elde','Uyarı sınırı','Birim'],...low.map(s=>[s.name,r2(s.qty),r2(s.min),s.unit||'adet'])]}];
@@ -2960,9 +2998,9 @@ async function handleUser(u){
     let cd=null,up=null;
     try{const c=await fdb.doc('ciraklar/'+ad.cirakId).get();cd=c.exists?c.data():false}catch(e){cd=/permission/.test(e.code||'')?false:null}
     try{const x=await fdb.doc('ustalar/'+ustaId).get();up=x.exists?x.data():false}catch(e){up=/permission/.test(e.code||'')?false:null}
-    if(cd===false||(cd&&(!cd.active||cd.authUid!==u.uid))){await auth.signOut();show('login');$('#l-err').textContent='Çırak hesabınız kapatılmış veya şifreniz değiştirilmiş. Ustanızla görüşün.';return}
+    if(cd===false||(cd&&(!cd.active||cd.authUid!==u.uid))){await auth.signOut();show('login');$('#l-err').textContent='Personel hesabınız kapatılmış veya şifreniz değiştirilmiş. Ustanızla görüşün.';return}
     if(up===false||(up&&(!up.active||(up.untilMs&&up.untilMs<Date.now())))){await auth.signOut();show('login');$('#l-err').textContent='Ustanızın hesabı şu an kapalı. Ustanızla görüşün.';return}
-    state.me={role:'cirak',uid:u.uid,id:ustaId,cirakId:ad.cirakId,name:(cd&&cd.name)||'Çırak',username:(cd&&cd.username)||'',ustaName:(up&&up.name)||'',shop:(up&&up.shop)||'',shopPhone:(up&&up.shopPhone)||''};
+    state.me={role:'cirak',uid:u.uid,id:ustaId,cirakId:ad.cirakId,name:(cd&&cd.name)||'Personel',username:(cd&&cd.username)||'',ustaName:(up&&up.name)||'',shop:(up&&up.shop)||'',shopPhone:(up&&up.shopPhone)||''};
     startApp();return;
   }
   try{const s=await fdb.doc('ustalar/'+ustaId).get();prof=s.exists?s.data():false}catch(e){prof=/permission/.test(e.code||'')?false:null}
@@ -2984,7 +3022,7 @@ function startApp(){
   const me=state.me;
   {const bo=$('#btn-out');bo.classList.remove('armed');bo.textContent='Çıkış'}
   const cir=me.role==='cirak';
-  $('#who').innerHTML=ic(me.role==='admin'?'yonetici':cir?'cirak':'usta','fill')+esc(me.name||me.username)+(me.role==='admin'?'<span class="role">Yönetici</span>':cir?'<span class="role">Çırak</span>':'<span class="role">Usta</span>');
+  $('#who').innerHTML=ic(me.role==='admin'?'yonetici':cir?'cirak':'usta','fill')+esc(me.name||me.username)+(me.role==='admin'?'<span class="role">Yönetici</span>':cir?'<span class="role">Personel</span>':'<span class="role">Usta</span>');
   $('#tab-users').hidden=me.role!=='admin';
   ['tab-rem','tab-parca','tab-cirak','tab-cari'].forEach(id=>$('#'+id).hidden=cir);
   $('#v-stok').classList.toggle('cirmode',cir);{const tn=[...$('#tab-stok').childNodes].find(n=>n.nodeType===3&&n.textContent.trim());if(tn)tn.textContent=cir?'Fiyatlar ':'Stok '}
