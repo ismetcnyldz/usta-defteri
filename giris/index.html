@@ -339,7 +339,8 @@ html,body{overscroll-behavior-x:none}
 .tab .ic{width:30px;height:30px}
 .tab .cnt{position:absolute;margin:0;top:2px;right:2px}
 /* Sekme renkleri: her bölümün kendi rengi */
-#tab-jobs{--tc:#2a5d9f}#tab-rem{--tc:#b26a00}#tab-kasa{--tc:#2e7d4f}#tab-stok{--tc:#6a4c93}#tab-parca{--tc:#e08a12}#tab-cirak{--tc:#1f8f8f}#tab-users{--tc:#b3261e}
+#tab-jobs{--tc:#2a5d9f}#tab-rem{--tc:#b26a00}#tab-kasa{--tc:#2e7d4f}#tab-stok{--tc:#6a4c93}#tab-parca{--tc:#e08a12}#tab-cirak{--tc:#1f8f8f}#tab-cari{--tc:#8a3b12}
+#v-cari .card .cmp,#v-cari .card .veh{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35}#v-cari .card .right{flex-wrap:wrap;justify-content:flex-end}#tab-users{--tc:#b3261e}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #tab-jobs{--tc:#7fb0f0}:root:not([data-theme="light"]) #tab-rem{--tc:#f0b04a}:root:not([data-theme="light"]) #tab-kasa{--tc:#5cc28a}:root:not([data-theme="light"]) #tab-stok{--tc:#b89ae0}:root:not([data-theme="light"]) #tab-parca{--tc:#f0a032}:root:not([data-theme="light"]) #tab-cirak{--tc:#5fc9c9}:root:not([data-theme="light"]) #tab-users{--tc:#f07a70}}
 .tab .ic{color:var(--tc,var(--muted))}
 .tab{color:var(--muted);border-radius:10px 10px 0 0}
@@ -569,6 +570,7 @@ html,body{overscroll-behavior-x:none}
     <button class="tab" role="tab" id="tab-stok" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-oil"/></svg>Stok <span class="cnt" id="stok-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-parca" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg>Parça <span class="cnt" id="tp-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-cirak" aria-selected="false"><svg class="ic fill" aria-hidden="true"><use href="#i-cirak"/></svg>Çıraklar</button>
+    <button class="tab" role="tab" id="tab-cari" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-hand"/></svg>Veresiye <span class="cnt" id="cari-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-users" aria-selected="false" hidden><svg class="ic fill" aria-hidden="true"><use href="#i-usta"/></svg>Ustalar</button>
   </div>
 
@@ -698,6 +700,30 @@ html,body{overscroll-behavior-x:none}
     </form>
   </section>
 
+  <section id="v-cari" hidden>
+    <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+      <div class="stat"><svg class="ic" aria-hidden="true"><use href="#i-cashin"/></svg><b class="num" id="ca-alacak" style="color:var(--ok)">0 ₺</b><small>Müşteriden alacak</small></div>
+      <div class="stat"><svg class="ic" aria-hidden="true"><use href="#i-cashout"/></svg><b class="num" id="ca-borc" style="color:var(--crit)">0 ₺</b><small>Tedarikçiye borç</small></div>
+    </div>
+    <h3 class="sec-h" style="color:var(--ok)"><svg class="ic" aria-hidden="true"><use href="#i-cashin"/></svg>Müşteriden alacaklar</h3>
+    <p class="hint">Teslim edilmiş ama parası tam alınmamış işler. Vadesi gelen kırmızı yanar; <b>Hatırlat</b> ile WhatsApp'tan "şu tarihli servisten şu kadar kaldı" mesajı gider, <b>Tahsil et</b> ile kasaya yazılır.</p>
+    <div class="list" id="ca-alist"></div>
+    <h3 class="sec-h" style="color:var(--crit);margin-top:20px"><svg class="ic" aria-hidden="true"><use href="#i-cashout"/></svg>Tedarikçiye borçlar</h3>
+    <p class="hint">Parçacı, rektefeci, hırdavatçı… kime ne kadar borcun var. Stok'ta "Veresiye" ile mal girince buraya kendiliğinden düşer; elle de ekleyebilirsin.</p>
+    <div id="ca-sup" class="chips" style="margin-bottom:8px"></div>
+    <div class="list" id="ca-blist"></div>
+    <form id="ca-form" class="form" style="margin-top:12px" autocomplete="off">
+      <fieldset><legend>Borç ekle</legend>
+        <div class="grid2">
+          <label class="f">Kime<input id="ca-kime" list="dl-sup" placeholder="Ör. Yıldız Otomotiv (parçacı)" required></label>
+          <label class="f">Tutar (₺)<input id="ca-tutar" inputmode="decimal" placeholder="12500" required></label>
+          <label class="f">Ne için<input id="ca-not" placeholder="Balata, disk, yağ…"></label>
+          <label class="f">Vade (ödeme günü)<input id="ca-vade" type="date"></label>
+        </div>
+        <div class="actions"><button class="btn primary" type="submit">Borcu kaydet</button></div>
+      </fieldset>
+    </form>
+  </section>
   <section id="v-users" hidden>
     <div class="stats" id="adm-stats">
       <div class="stat"><svg class="ic fill" aria-hidden="true"><use href="#i-usta"/></svg><b class="num" id="a-active">0</b><small>Aktif usta</small></div>
@@ -1364,7 +1390,7 @@ function render(){
       <span class="amt num">${tl(c.total)}</span>
       ${c.due>0&&c.total>0?`<span class="due num">Kalan ${tl(c.due)}</span>`:`<span class="when">${dstr(j.createdAt)}</span>`}</div>
   </button>`}).join('');
-  renderRem();
+  renderRem();try{renderCari();cariNotify()}catch(e){}
 }
 function remList(){
   const latest={};
@@ -1385,6 +1411,55 @@ function renderBorc(){const L=borcList();const box=$('#borcbox');box.hidden=!L.l
   </div>`}).join('');return L}
 function borcNotify(){const L=borcList();if(!L.length)return;const k='ud_borcNotif';let last='';try{last=localStorage.getItem(k)||''}catch(_){}const today=ymd(new Date());if(last===today)return;try{localStorage.setItem(k,today)}catch(_){}
   const tot=L.reduce((a,j)=>a+calc(j).due,0);notify('Vadesi gelen veresiye',`${L.length} müşteri · toplam ${tl(tot)}. Bakım sekmesinden hatırlatın.`,'borc')}
+/* ---------- Alacak / Borç (cari) ---------- */
+const borcCol=()=>fdb.collection(`users/${state.me.id}/borclar`);
+function alacakList(){return state.jobs.filter(j=>['teslim','hazir'].includes(j.status)&&calc(j).due>0&&calc(j).total>0).sort((a,b)=>(a.dueDate||'9')<(b.dueDate||'9')?-1:1)}
+function borcKalan(b){return Math.max(0,r2((+b.tutar||0)-(+b.odenen||0)))}
+function renderCari(){
+  if(!state.me||isCirak())return;const el=$('#ca-alist');if(!el)return;
+  const today=ymd(new Date());
+  const A=alacakList();const totA=A.reduce((a,j)=>a+calc(j).due,0);
+  const B=(state.borclar||[]).filter(b=>borcKalan(b)>0).sort((a,b)=>(a.vade||'9')<(b.vade||'9')?-1:1);const totB=B.reduce((a,b)=>a+borcKalan(b),0);
+  $('#ca-alacak').textContent=tl(totA);$('#ca-borc').textContent=tl(totB);
+  const lateA=A.filter(j=>j.dueDate&&j.dueDate<=today).length,lateB=B.filter(b=>b.vade&&b.vade<=today).length;
+  const cnt=$('#cari-cnt');cnt.hidden=!(lateA+lateB);cnt.textContent=lateA+lateB;
+  el.innerHTML=A.length?A.map(j=>{const c=calc(j);const late=j.dueDate?Math.round((new Date(today+'T00:00')-new Date(j.dueDate+'T00:00'))/864e5):null;const sd=j.updatedAt||j.createdAt;
+    return `<div class="card" style="--sc:${late!==null&&late>=0?'var(--crit)':'var(--warn)'}">
+    <div class="plate-cell">${plateHtml(j.plate)}</div>
+    <div class="mid"><div class="veh">${esc(j.customer||'Müşteri')} · ${esc(j.vehicle||'')}</div>
+      <div class="cmp">${dstr(sd)} servisi · Toplam ${tl(c.total)} · Ödenen ${tl(+j.paid||0)} · <b style="color:var(--crit)">Kalan ${tl(c.due)}</b>${j.dueDate?' · vade '+ddate(j.dueDate)+(late>0?' <b>('+late+' gün geçti)</b>':late===0?' <b>(bugün)</b>':''):' · vade yazılmamış'}</div></div>
+    <div class="right">${j.phone?`<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${waNum(j.phone)}?text=${encodeURIComponent(msg('borc',j))}">Hatırlat</a>`:'<span class="hint">Telefon yok</span>'}
+      <button class="btn primary" data-tahsil="${esc(j.id)}">Tahsil et</button><button class="btn" data-id="${esc(j.id)}">Aç</button></div></div>`}).join('')
+    :'<div class="empty"><h3>Alacak yok</h3>Tüm teslim edilen işlerin parası alınmış. İş fişinde "Ödenen" eksik girilirse araç burada görünür.</div>';
+  const sup={};B.forEach(b=>{sup[b.kime]=(sup[b.kime]||0)+borcKalan(b)});
+  $('#ca-sup').innerHTML=Object.keys(sup).sort((a,b)=>sup[b]-sup[a]).map(k=>`<span class="chip" style="cursor:default">${esc(k)}: <b>${tl(sup[k])}</b></span>`).join('');
+  $('#ca-blist').innerHTML=B.length?B.map(b=>{const late=b.vade?Math.round((new Date(today+'T00:00')-new Date(b.vade+'T00:00'))/864e5):null;
+    return `<div class="card" style="--sc:${late!==null&&late>=0?'var(--crit)':'var(--muted)'}">
+    <div class="mid" style="grid-column:1/3"><div class="veh">${esc(b.kime)}</div>
+      <div class="cmp">${dstr(b.at||b.createdAt)}${b.not?' · '+esc(b.not):''} · Borç ${tl(+b.tutar||0)}${+b.odenen?' · Ödenen '+tl(+b.odenen):''} · <b style="color:var(--crit)">Kalan ${tl(borcKalan(b))}</b>${b.vade?' · vade '+ddate(b.vade)+(late>0?' <b>('+late+' gün geçti)</b>':late===0?' <b>(bugün)</b>':''):''}</div></div>
+    <div class="right"><button class="btn primary" data-ode="${esc(b.id)}">Ödedim</button><button class="btn" data-bsil="${esc(b.id)}">Sil</button></div></div>`}).join('')
+    :'<div class="empty"><h3>Tedarikçi borcu yok</h3>Veresiye mal alınca ya da aşağıdan ekleyince burada görünür.</div>';
+  const dl=$('#dl-sup');if(dl){const names=new Set([...dl.querySelectorAll('option')].map(o=>o.value));(state.borclar||[]).forEach(b=>{if(b.kime&&!names.has(b.kime)){names.add(b.kime);dl.insertAdjacentHTML('beforeend',`<option value="${esc(b.kime)}">`)}})}
+}
+function cariNotify(){if(!state.me||isCirak())return;const today=ymd(new Date());const k='ud_cariNotif';let last='';try{last=localStorage.getItem(k)||''}catch(_){}if(last===today)return;
+  const A=alacakList().filter(j=>j.dueDate&&j.dueDate<=today),B=(state.borclar||[]).filter(b=>borcKalan(b)>0&&b.vade&&b.vade<=today);if(!A.length&&!B.length)return;
+  try{localStorage.setItem(k,today)}catch(_){}
+  const parts=[];if(A.length)parts.push(`${A.length} müşteriden ${tl(A.reduce((a,j)=>a+calc(j).due,0))} alacak`);if(B.length)parts.push(`${B.length} tedarikçiye ${tl(B.reduce((a,b)=>a+borcKalan(b),0))} borç`);
+  notify('Vadesi gelenler',parts.join(' · ')+'. Veresiye sekmesini açın.','cari')}
+$('#ca-alist').addEventListener('click',e=>{const b=e.target.closest('[data-tahsil]');if(!b)return;e.stopPropagation();const j=state.jobs.find(x=>x.id===b.dataset.tahsil);if(!j)return;const due=calc(j).due;
+  const v=prompt(`${esc(j.customer||fmtPlate(j.plate))} – kalan ${tl(due)}. Ne kadar alındı?`,String(Math.round(due)));if(v===null)return;const amt=Math.min(due,numIn(v));if(!(amt>0)){toast('Tutar girilmedi');return}
+  const now=Date.now();const bt=fdb.batch();bt.update(jobsCol().doc(j.id),{paid:r2((+j.paid||0)+amt),updatedAt:now});
+  bt.set(kasaCol().doc(),{type:'gelir',amount:r2(amt),cat:'Tahsilat',method:'Nakit',desc:`${fmtPlate(j.plate)} ${j.customer||''} – veresiye tahsilatı`,at:now,createdAt:now,jobId:j.id,byName:state.me.name||''});
+  bt.commit().then(()=>toast(tl(amt)+' tahsil edildi, kasaya yazıldı')).catch(ex=>toast('Kaydedilemedi: '+authMsg(ex)))});
+$('#ca-blist').addEventListener('click',e=>{const o=e.target.closest('[data-ode]'),d=e.target.closest('[data-bsil]');
+  if(o){const b=(state.borclar||[]).find(x=>x.id===o.dataset.ode);if(!b)return;const kal=borcKalan(b);const v=prompt(`${b.kime} – kalan ${tl(kal)}. Ne kadar ödendi?`,String(Math.round(kal)));if(v===null)return;const amt=Math.min(kal,numIn(v));if(!(amt>0)){toast('Tutar girilmedi');return}
+    const now=Date.now();const bt=fdb.batch();bt.update(borcCol().doc(b.id),{odenen:r2((+b.odenen||0)+amt),updatedAt:now});
+    bt.set(kasaCol().doc(),{type:'gider',amount:r2(amt),cat:'Borç ödeme',method:'Nakit',desc:`${b.kime} – borç ödemesi${b.not?' ('+b.not+')':''}`,at:now,createdAt:now,byName:state.me.name||''});
+    bt.commit().then(()=>toast(tl(amt)+' ödendi, kasadan düşüldü')).catch(ex=>toast('Kaydedilemedi: '+authMsg(ex)));return}
+  if(d){if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='Emin misin?';setTimeout(()=>{d.classList.remove('armed');d.textContent='Sil'},2500);return}
+    borcCol().doc(d.dataset.bsil).update({deleted:true,deletedAt:Date.now()}).catch(ex=>toast(authMsg(ex)))}});
+$('#ca-form').addEventListener('submit',e=>{e.preventDefault();const kime=$('#ca-kime').value.trim(),tutar=numIn($('#ca-tutar').value);if(!kime||!(tutar>0)){toast('Kime ve tutar gerekli');return}
+  const now=Date.now();borcCol().add({kime,tutar:r2(tutar),odenen:0,not:$('#ca-not').value.trim(),vade:$('#ca-vade').value||'',at:now,createdAt:now}).then(()=>{$('#ca-form').reset();toast('Borç kaydedildi')}).catch(ex=>toast('Kaydedilemedi: '+authMsg(ex)))});
 function renderRem(){
   const b=renderBorc();
   const r=remList();const cnt=$('#rem-cnt');cnt.hidden=!(r.length+b.length);cnt.textContent=r.length+b.length;
@@ -1410,7 +1485,7 @@ function msg(kind,j){
   const link=j.trackId?trackUrl(j.trackId):'';
   if(kind==='takip')return `Merhaba${name}, ${car} servisimize alındı.\nAracınızın durumunu bu linkten anlık takip edebilirsiniz:\n${link||'(link kayıttan sonra oluşur)'}\n\n${shop}`;
   if(kind==='teklif')return `Merhaba${name}, ${car} için tespitimiz ve fiyat teklifimiz:\n${j.notes?j.notes+'\n':''}\n${lines||'• (kalem eklenmedi)'}\n\n${tot}\n\n${link?'Detayları görüp buradan onaylayabilirsiniz:\n'+link:'Onay verirseniz işe başlıyoruz.'}\n${shop}`;
-  if(kind==='borc')return `Merhaba${name}, ${car} için ${tl(c.due)} kalan ödemenizin vadesi ${j.dueDate?ddate(j.dueDate)+' tarihinde ':''}gelmiştir. Uygun olduğunuzda ödemenizi rica ederiz.${(state.setup||{}).iban&&false?'':''}\n\n${shop}${state.shopPhone?' · '+state.shopPhone:''}`;
+  if(kind==='borc'){const sd=j.updatedAt||j.createdAt;return `Merhaba${name}, ${sd?new Date(sd).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})+' tarihli ':''}${car} servisinden kalan ${tl(c.due)} ödemeniz bulunmaktadır${j.dueDate?' (vade: '+ddate(j.dueDate)+')':''}. Uygun olduğunuzda ödemenizi rica ederiz.${(state.setup||{}).iban?'\nIBAN: '+(state.setup||{}).iban:''}\n\n${shop}`}
   if(kind==='hazir'){const t=(state.cfg&&state.cfg.msgHazir)||HAZIR_DEF;
     return t.replace(/\{ad\}/g,name.trim()).replace(/\{arac\}/g,car).replace(/\{plaka\}/g,fmtPlate(j.plate)).replace(/\{tutar\}/g,c.due>0?'Ödenecek tutar: '+tl(c.due):'').replace(/\{link\}/g,link?'Detaylar: '+link:'').replace(/\{dukkan\}/g,shop).replace(/\n{3,}/g,'\n\n').replace(/\n +/g,'\n').trim()}
   if(kind==='fis')return `${shop} – İş fişi\nTarih: ${new Date(j.createdAt||Date.now()).toLocaleDateString('tr-TR')}\nAraç: ${fmtPlate(j.plate)} ${j.vehicle||''}${j.km?' · '+Number(j.km).toLocaleString('tr-TR')+' km':''}\n\nYapılan işlemler:\n${lines||'-'}\n\nAra toplam: ${tl(c.sub)}${j.vat?'\nKDV %20: '+tl(c.kdv):''}\n${tot}\nÖdenen: ${tl(+j.paid||0)}${c.due>0?'\nKalan: '+tl(c.due):''}${j.nextDate||j.nextKm?`\n\nSonraki bakım: ${[j.nextDate?ddate(j.nextDate):'',j.nextKm?Number(j.nextKm).toLocaleString('tr-TR')+' km':''].filter(Boolean).join(' veya ')}`:''}\n\nBizi tercih ettiğiniz için teşekkürler.`;
@@ -1976,6 +2051,7 @@ $('#g-form').addEventListener('submit',e=>{
       b.update(stokCol().doc(it.id),{qty:inc(d),updatedAt:now});
       b.set(harCol().doc(),{type:'sayim',itemId:it.id,name:it.name,unit:it.unit||'adet',qty:Math.abs(d),delta:d,cost:+it.buy||0,note:note||'Sayım',at,createdAt:now,...by});
     }});
+  if(gMode==='giris'&&gPay==='Veresiye'&&total>0)b.set(borcCol().doc(),{kime:sup||'Tedarikçi',tutar:r2(total),odenen:0,not:'Mal girişi: '+rows.map(r=>r.name).slice(0,3).join(', ')+(rows.length>3?' …':''),vade:'',auto:true,at,createdAt:now});
   if(gMode==='giris'&&gPay!=='Veresiye'&&total>0)b.set(kasaCol().doc(),{...by,type:'gider',amount:r2(total),cat:'Parça',method:gPay,desc:'Mal girişi'+(sup?' – '+sup:'')+': '+rows.map(r=>r.name).slice(0,3).join(', ')+(rows.length>3?' …':''),at,stokGroup:grp,auto:true,createdAt:now});
   b.commit().catch(ex=>toast('Kaydedilemedi: '+authMsg(ex)));
   closeG();
@@ -2839,7 +2915,7 @@ function startApp(){
   const cir=me.role==='cirak';
   $('#who').innerHTML=ic(me.role==='admin'?'yonetici':cir?'cirak':'usta','fill')+esc(me.name||me.username)+(me.role==='admin'?'<span class="role">Yönetici</span>':cir?'<span class="role">Çırak</span>':'<span class="role">Usta</span>');
   $('#tab-users').hidden=me.role!=='admin';
-  ['tab-rem','tab-parca','tab-cirak'].forEach(id=>$('#'+id).hidden=cir);
+  ['tab-rem','tab-parca','tab-cirak','tab-cari'].forEach(id=>$('#'+id).hidden=cir);
   $('#v-stok').classList.toggle('cirmode',cir);{const tn=[...$('#tab-stok').childNodes].find(n=>n.nodeType===3&&n.textContent.trim());if(tn)tn.textContent=cir?'Fiyatlar ':'Stok '}
   $('#shop-form').hidden=cir;
   document.querySelector('#filters .chip[data-f="benim"]').hidden=!cir;
@@ -2872,12 +2948,16 @@ function startApp(){
     state.track=m;render();if(draft&&!$('#sheet').hidden)updateWa()},()=>{}));
   if(kSub){try{kSub()}catch(e){}kSub=null}kKey='';state.kRef=new Date();if(state.tab==='kasa')subKasa();
   if(shSub){try{shSub()}catch(e){}shSub=null}shKey='';state.stok=[];state.har=[];
+  state.borclar=[];if(!cir)subs.push(borcCol().onSnapshot(sn=>{state.borclar=sn.docs.map(d=>({id:d.id,...d.data()})).filter(x=>!x.deleted);renderCari();cariNotify()},()=>{}));
   subs.push(stokCol().onSnapshot(sn=>{state.stok=sn.docs.map(d=>({id:d.id,...d.data()})).filter(x=>!x.deleted);renderStok();
     if(!$('#ssheet').hidden)renderSsTop();if(!$('#spick').hidden)renderPick();if(draft&&!$('#sheet').hidden&&draft.items.some(i=>i.stokId))renderItems()},()=>{}));
   if(me.role==='admin'){
     $('#u-pass').value=genPass();
+    let uFirst=true;
     subs.push(fdb.collection('ustalar').orderBy('createdAt','desc').onSnapshot(snap=>{
       state.allUsers=snap.docs.map(d=>({uid:d.id,...d.data()}));state.users=state.allUsers.filter(u=>!u.deleted);renderUsers();
+      if(!uFirst&&!snap.metadata.hasPendingWrites){snap.docChanges().forEach(ch=>{const u=ch.doc.data();if(ch.type==='added'&&u.selfSignup&&u.role==='usta')notify('Yeni usta kaydı',`${u.name||u.username}${u.shop?' · '+u.shop:''}${u.phone?' · '+u.phone:''}`)})}
+      uFirst=false;
     },()=>{}));
   }
 }
@@ -3138,8 +3218,8 @@ function renderTrack(t){
 $('#pub-login').onclick=()=>{state.pub=null;show('login')};
 
 /* ---------- Olaylar ---------- */
-function setTab(t){state.tab=t;if(t==='kasa')subKasa();if(t==='cirak')loadCirakStats();if(t==='stok'){renderStok();subHar()}['jobs','rem','kasa','stok','parca','cirak','users'].forEach(k=>{$('#tab-'+k).setAttribute('aria-selected',t===k);$('#v-'+k).hidden=t!==k});$('#newjob').hidden=t==='users'||t==='parca'||t==='kasa'||t==='cirak'||t==='stok'}
-$('#tab-cirak').onclick=()=>setTab('cirak');
+function setTab(t){state.tab=t;if(t==='kasa')subKasa();if(t==='cirak')loadCirakStats();if(t==='stok'){renderStok();subHar()}if(t==='cari')renderCari();['jobs','rem','kasa','stok','parca','cirak','cari','users'].forEach(k=>{$('#tab-'+k).setAttribute('aria-selected',t===k);$('#v-'+k).hidden=t!==k});$('#newjob').hidden=t==='users'||t==='parca'||t==='kasa'||t==='cirak'||t==='stok'}
+$('#tab-cirak').onclick=()=>setTab('cirak');$('#tab-cari').onclick=()=>setTab('cari');
 $('#tab-kasa').onclick=()=>setTab('kasa');$('#tab-stok').onclick=()=>setTab('stok');
 $('#tab-parca').onclick=()=>setTab('parca');
 $('#tab-jobs').onclick=()=>setTab('jobs');$('#tab-rem').onclick=()=>setTab('rem');$('#tab-users').onclick=()=>setTab('users');
