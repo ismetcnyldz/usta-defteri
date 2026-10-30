@@ -1466,7 +1466,7 @@ function renderCari(){
   const keys=Object.keys(sup).sort((a,b)=>sup[b].kal-sup[a].kal||sup[b].son-sup[a].son);
   $('#ca-sup').innerHTML=keys.length?`<div class="list">${keys.map(k=>{const o=sup[k];return `<button type="button" class="ucard" data-sup="${esc(k)}" style="--sc:${o.kal>0?'var(--crit)':'var(--ok)'}">
     <div style="min-width:0"><div class="nm">${esc(k)}</div><div class="meta">Bu ay borçlanılan ${tl(o.ayB)} · bu ay ödenen ${tl(o.ayO)}</div></div>
-    <div style="text-align:right"><b class="num" style="color:${o.kal>0?'var(--crit)':'var(--ok)'};font-size:1.05rem">${o.kal>0?tl(o.kal):'Kapalı'}</b><div class="hint">kalan borç ›</div></div></button>`}).join('')}</div>`:'';
+    <div style="text-align:right"><b class="num" style="color:${o.kal>0?'var(--crit)':'var(--ok)'};font-size:1.05rem">${o.kal>0?tl(o.kal):'Kapalı'}</b><div class="hint">${o.kal>0?'kalan borç ›':`<span class="btn" data-casil="${esc(k)}" style="padding:2px 8px;font-size:.75rem">Sil</span>`}</div></div></button>`}).join('')}</div>`:'';
   if(casKime&&!$('#casheet').hidden)renderCas();
   $('#ca-blist').innerHTML=B.length?B.map(b=>{const late=b.vade?Math.round((new Date(today+'T00:00')-new Date(b.vade+'T00:00'))/864e5):null;
     return `<div class="card" style="--sc:${late!==null&&late>=0?'var(--crit)':'var(--muted)'}">
@@ -1480,7 +1480,9 @@ let casKime=null;
 function openCas(k){casKime=k;renderCas();$('#casheet').hidden=false;document.body.style.overflow='hidden'}
 function closeCas(){$('#casheet').hidden=true;document.body.style.overflow='';casKime=null}
 $('#cas-close').onclick=closeCas;
-$('#ca-sup').addEventListener('click',e=>{const b=e.target.closest('[data-sup]');if(b)openCas(b.dataset.sup)});
+$('#ca-sup').addEventListener('click',e=>{const d=e.target.closest('[data-casil]');if(d){e.stopPropagation();if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='Emin misin?';setTimeout(()=>{d.classList.remove('armed');d.textContent='Sil'},2500);return}
+    const k=d.dataset.casil;const bt=fdb.batch();(state.borclar||[]).filter(x=>x.kime===k&&x.tip!=='alacak').forEach(x=>bt.update(borcCol().doc(x.id),{deleted:true,deletedAt:Date.now()}));bt.commit().then(()=>toast(k+' carisi silindi')).catch(ex=>toast(authMsg(ex)));return}
+  const b=e.target.closest('[data-sup]');if(b)openCas(b.dataset.sup)});
 let casRange='bu';
 function renderCas(){
   const k=casKime;const ALL=(state.borclar||[]).filter(b=>b.kime===k&&b.tip!=='alacak').sort((a,b)=>(b.at||b.createdAt)-(a.at||a.createdAt));
@@ -1492,15 +1494,22 @@ function renderCas(){
   const borc=borcAll.slice().sort((a,b)=>(a.at||a.createdAt)-(b.at||b.createdAt));
   const lb={bu:'Bu ay',gecen:'Geçen ay','3ay':'Son 3 ay',tum:'Tümü'}[casRange];
   $('#cas-title').textContent=k;
-  const rows=L.map(b=>b.tip==='odeme'?`<div class="k-row"><div><div class="d" style="color:var(--ok)">Ödeme${b.not?' · '+esc(b.not):''}</div><div class="m">${new Date(b.at||b.createdAt).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})}</div></div><b style="color:var(--ok)">-${tl(+b.tutar||0)}</b></div>`
-    :`<div class="k-row"><div><div class="d">${esc(b.not||'Borç')}</div><div class="m">${new Date(b.at||b.createdAt).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})}${b.vade?' · vade '+ddate(b.vade):''}${borcKalan(b)>0&&+b.odenen?' · kalan '+tl(borcKalan(b)):borcKalan(b)<=0?' · kapandı':''}</div></div><b style="color:var(--crit)">+${tl(+b.tutar||0)}</b></div>`).join('');
+  const rows=L.map(b=>b.tip==='odeme'?`<div class="k-row"><div><div class="d" style="color:var(--ok)">Ödeme${b.not?' · '+esc(b.not):''}</div><div class="m">${new Date(b.at||b.createdAt).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})}</div></div><div style="text-align:right"><b style="color:var(--ok)">-${tl(+b.tutar||0)}</b><br><button type="button" class="btn" data-hsil="${esc(b.id)}" style="padding:2px 8px;font-size:.75rem">Sil</button></div></div>`
+    :`<div class="k-row"><div><div class="d">${esc(b.not||'Borç')}</div><div class="m">${new Date(b.at||b.createdAt).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})}${b.vade?' · vade '+ddate(b.vade):''}${borcKalan(b)>0&&+b.odenen?' · kalan '+tl(borcKalan(b)):borcKalan(b)<=0?' · kapandı':''}</div></div><div style="text-align:right"><b style="color:var(--crit)">+${tl(+b.tutar||0)}</b><br><button type="button" class="btn" data-hsil="${esc(b.id)}" style="padding:2px 8px;font-size:.75rem">Sil</button></div></div>`).join('');
   $('#cas-body').innerHTML=`<div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:10px">
       <div class="stat"><b class="num" style="color:var(--crit)">${tl(tB)}</b><small>Toplam borçlanılan</small></div><div class="stat"><b class="num" style="color:var(--ok)">${tl(tO)}</b><small>Toplam ödenen</small></div><div class="stat"><b class="num" style="font-size:1.2rem">${tl(kal)}</b><small>KALAN BORÇ</small></div></div>
     <div class="actions" style="margin:0 0 12px"><button type="button" class="btn primary" id="cas-pay" ${kal>0?'':'disabled'}>Ödeme yap</button><button type="button" class="btn" id="cas-add">+ Borç ekle</button><button type="button" class="btn" id="cas-wa">Ekstreyi WhatsApp'la gönder</button></div>
     <div class="chips" id="cas-range" style="margin-bottom:8px">${['bu','gecen','3ay','tum'].map(r=>`<button type="button" class="chip" data-r="${r}" aria-pressed="${casRange===r}">${{bu:'Bu ay',gecen:'Geçen ay','3ay':'Son 3 ay',tum:'Tümü'}[r]}</button>`).join('')}</div>
     <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:10px"><div class="stat"><b class="num" style="color:var(--crit)">${tl(pB)}</b><small>${lb} borçlanılan</small></div><div class="stat"><b class="num" style="color:var(--ok)">${tl(pO)}</b><small>${lb} ödenen</small></div></div>
     <h3 class="sec-h" style="margin-top:0">Hareketler · ${lb}</h3><div class="list">${rows||'<div class="empty">Bu dönemde hareket yok</div>'}</div>
-    <p class="hint" style="margin-top:10px">Ödeme, en eski borçtan başlayarak düşer ve kasaya "Borç ödeme" gideri olarak yazılır.</p>`;
+    <p class="hint" style="margin-top:10px">Ödeme, en eski borçtan başlayarak düşer ve kasaya "Borç ödeme" gideri olarak yazılır. Yanlış kaydı "Sil" ile kaldırabilirsin.</p>
+    <div class="actions" style="margin-top:14px"><button type="button" class="btn danger" id="cas-del">Bu cariyi tamamen sil</button></div>`;
+  $('#cas-body').onclick=e=>{const h=e.target.closest('[data-hsil]');if(!h)return;if(!h.classList.contains('armed')){h.classList.add('armed');h.textContent='Emin misin?';setTimeout(()=>{h.classList.remove('armed');h.textContent='Sil'},2500);return}
+    const b=(state.borclar||[]).find(x=>x.id===h.dataset.hsil);if(!b)return;const bt=fdb.batch();bt.update(borcCol().doc(b.id),{deleted:true,deletedAt:Date.now()});
+    if(b.tip==='odeme'){let left=+b.tutar||0;borc.slice().reverse().forEach(x=>{if(left<=0||!(+x.odenen))return;const d=Math.min(left,+x.odenen);bt.update(borcCol().doc(x.id),{odenen:r2((+x.odenen)-d)});left=r2(left-d)})}
+    bt.commit().then(()=>toast('Kayıt silindi')).catch(ex=>toast(authMsg(ex)))};
+  $('#cas-del').onclick=()=>{const d=$('#cas-del');if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='Emin misin? Tüm borç ve ödeme kayıtları silinecek';setTimeout(()=>{d.classList.remove('armed');d.textContent='Bu cariyi tamamen sil'},3500);return}
+    const bt=fdb.batch();ALL.forEach(x=>bt.update(borcCol().doc(x.id),{deleted:true,deletedAt:Date.now()}));bt.commit().then(()=>{toast(k+' carisi silindi');closeCas()}).catch(ex=>toast(authMsg(ex)))};
   $('#cas-pay').onclick=()=>{const v=prompt(`${k} – kalan ${tl(kal)}. Ne kadar ödendi?`,String(Math.round(kal)));if(v===null)return;let amt=Math.min(kal,numIn(v));if(!(amt>0)){toast('Tutar girilmedi');return}
     const now=Date.now();const bt=fdb.batch();let left=amt;
     borc.filter(b=>borcKalan(b)>0).forEach(b=>{if(left<=0)return;const d=Math.min(left,borcKalan(b));bt.update(borcCol().doc(b.id),{odenen:r2((+b.odenen||0)+d),updatedAt:now});left=r2(left-d)});
