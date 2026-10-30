@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /giris/
+Sitemap: https://ustadefteri.net/sitemap.xml
