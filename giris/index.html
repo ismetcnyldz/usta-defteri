@@ -255,6 +255,14 @@ label.f textarea{resize:vertical;min-height:64px}
 .rp-t .n{text-align:right;white-space:nowrap}
 .rp-t tfoot td{border:0;padding:3px 8px}
 .rp-t tr.tot td{font-weight:800;font-size:15px;border-top:2px solid #111;padding-top:6px}
+.rp-fat{margin:14px 0 6px;border:2px dashed #8a6d1f;border-radius:8px;padding:10px 12px;background:#fffbea;page-break-inside:avoid}
+.rp-fat-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.rp-fat-h b{font-size:14px;letter-spacing:.06em;color:#6b5210}.rp-fat-h span{font-size:10.5px;color:#7a6a3a}
+.rp-fat-cf{margin-top:6px}
+.rp-fat-t{margin:8px 0 4px;font-size:12px}.rp-fat-t th{background:#8a6d1f;font-size:10.5px;padding:5px 6px}.rp-fat-t td{padding:4px 6px}
+.rp-fat-t tr.sep td{border-top:1px solid #8a6d1f;font-weight:700;padding-top:6px}
+.rp-fat-t tr.tot td{font-size:14px;border-top:2px solid #6b5210}
+.rp-fat-n{font-size:11px;color:#5a4a1a;line-height:1.45;border-top:1px dotted #c9b26a;padding-top:6px;margin-top:4px}
 .rp-bot{display:flex;gap:14px;align-items:stretch;margin-top:10px}
 .rp-next{flex:1;border:2px dashed #e08a12;border-radius:8px;padding:9px 12px}
 .rp-next b{display:block;font-size:17px;margin:2px 0}
@@ -404,6 +412,7 @@ html,body{overscroll-behavior-x:none}
 .st-card .sq{text-align:right;font-family:var(--f-mono);white-space:nowrap}
 .st-card .sq b{font-size:1.35rem}
 .st-card .sq small{display:block;font-family:var(--f-body);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.cir-note{display:none}#v-stok.cirmode>*:not(.toolbar):not(#st-list):not(.cir-note){display:none}#v-stok.cirmode .cir-note{display:block}#v-stok.cirmode .st-card .sq{display:none}#v-stok.cirmode .st-card{--sc:var(--line)}
 .st-h{font-family:var(--f-display);text-transform:uppercase;font-size:1.35rem;margin:24px 0 8px;color:var(--steel)}
 .g-row{display:grid;grid-template-columns:minmax(0,1fr) 5rem 6.5rem 2rem;gap:6px;align-items:center}
 .g-row.np{grid-template-columns:minmax(0,1fr) 6.5rem 2rem}
@@ -631,6 +640,7 @@ html,body{overscroll-behavior-x:none}
       <button class="btn big k-plus" id="st-in"><svg class="ic" aria-hidden="true"><use href="#i-boxin"/></svg>+ Mal girişi</button>
       <button class="btn big" id="st-new"><svg class="ic" aria-hidden="true"><use href="#i-boxplus"/></svg>+ Yeni ürün</button>
     </div>
+    <p class="hint cir-note" style="margin:0 0 8px">Fiyat listesi: ürünü yazın, satış fiyatını görün. Fiyatları ustanız belirler.</p>
     <div class="toolbar">
       <input class="search" id="st-q" type="search" placeholder="Ürün, marka veya kod ara…">
       <div class="chips" id="st-cats"></div>
@@ -769,6 +779,8 @@ html,body{overscroll-behavior-x:none}
           <label class="f">Kilometre<input id="f-km" inputmode="numeric" placeholder="148500"></label>
           <label class="f">Müşteri adı<input id="f-customer" placeholder="Ahmet Yılmaz"></label>
           <label class="f">Telefon (WhatsApp)<input id="f-phone" inputmode="tel" placeholder="0532 123 45 67"></label>
+          <label class="f">TC / Vergi no <small style="font-weight:400;color:var(--muted)">(fatura için)</small><input id="f-tckn" inputmode="numeric" placeholder="11 veya 10 hane"></label>
+          <label class="f">Fatura adresi / unvan <small style="font-weight:400;color:var(--muted)">(boşsa ad yazılır)</small><input id="f-faddr" placeholder="Firma adı, mahalle, ilçe/il"></label>
         </div>
         <div id="prev" class="hint" style="margin-top:8px"></div>
       </fieldset>
@@ -1137,7 +1149,8 @@ html,body{overscroll-behavior-x:none}
   <div class="inner" style="max-width:820px">
     <div class="sheet-head"><h2>Servis raporu</h2><button class="x" id="rep-close" aria-label="Kapat">×</button></div>
     <p class="hint" style="margin:0 0 8px">Yazdırıp müşterinin aracına bırakın; yapılan işler, kullanılan parçalar ve sonraki bakım yazar. Telefonda “Yazdır” deyince PDF olarak da kaydedebilirsiniz.</p>
-    <label class="kvkk" style="margin:0 0 10px"><input type="checkbox" id="rep-price" checked> <span>Fiyatları da göster</span></label>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin:0 0 10px"><label class="kvkk" style="margin:0"><input type="checkbox" id="rep-price" checked> <span>Fiyatları da göster</span></label>
+    <label class="kvkk" style="margin:0"><input type="checkbox" id="rep-fat" checked> <span>Fatura bilgilerini ekle (KDV hariç / dahil)</span></label></div>
     <div id="rep-view"></div>
     <div class="actions" style="margin-top:12px"><button type="button" class="btn primary" id="rep-print">Yazdır / PDF</button><button type="button" class="btn wa" id="rep-wa">WhatsApp'la gönder</button></div>
   </div>
@@ -1415,7 +1428,7 @@ function openSheet(job,prefill){
   draft=JSON.parse(JSON.stringify(job||{...blank(),...(prefill||{})}));delete draft.id;
   $('#sheet-title').textContent=job?'İş emri':'Yeni iş emri';
   $('#f-plate').value=fmtPlate(draft.plate);
-  ['vehicle','km','customer','phone','complaint','notes','nextDate','nextKm'].forEach(k=>{$('#f-'+k.toLowerCase()).value=draft[k]||''});
+  ['vehicle','km','customer','phone','tckn','faddr','complaint','notes','nextDate','nextKm'].forEach(k=>{$('#f-'+k.toLowerCase()).value=draft[k]||''});
   $('#f-paymethod').value='Nakit';  $('#f-vat').checked=!!draft.vat;$('#f-paid').value=draft.paid?String(draft.paid).replace('.',','):'';
   $('#del').hidden=!job||isCirak();$('#del').classList.remove('armed');$('#del').textContent='Sil';
   $('#btn-tp-job').hidden=isCirak();
@@ -1437,7 +1450,7 @@ function askCloseSheet(){if(!draft){closeSheet();return}
 function readForm(){
   draft.plate=normPlate($('#f-plate').value);
   if(!state.editing&&draft._own)draft.trackId=prevToken(draft.plate)||draft._own;
-  ['vehicle','km','customer','phone','complaint','notes','nextDate','nextKm'].forEach(k=>{draft[k]=$('#f-'+k.toLowerCase()).value.trim()});
+  ['vehicle','km','customer','phone','tckn','faddr','complaint','notes','nextDate','nextKm'].forEach(k=>{draft[k]=$('#f-'+k.toLowerCase()).value.trim()});
   draft.vat=false;draft.paid=numIn($('#f-paid').value);draft.dueDate=$('#f-duedate').value||'';
 }
 function renderStatus(){$('#statusbar').innerHTML=STATUS.map(s=>`<button type="button" data-s="${s.k}" style="--sc:${s.c}" aria-pressed="${draft.status===s.k}">${ic(s.i)}${s.t}</button>`).join('')}
@@ -1793,13 +1806,13 @@ const isLow=s=>(+s.min||0)>0?(+s.qty||0)<=(+s.min||0):(+s.qty||0)<=0;
 function atFromDate(dv){const now=new Date();let at=new Date(dv+'T00:00');if(!dv||dv===ymd(now))return now.getTime();at.setHours(12,0,0,0);return at.getTime()}
 
 function renderStok(){
-  if(!state.me||isCirak())return;
-  const L=state.stok,low=L.filter(isLow);
+  if(!state.me)return;
+  const L=state.stok,low=L.filter(isLow),cm=isCirak();
   $('#st-n').textContent=L.length;
   $('#st-val').textContent=tl(L.reduce((a,s)=>a+Math.max(0,+s.qty||0)*(+s.buy||0),0));
   $('#st-low').textContent=low.length;$('#st-low').style.color=low.length?'var(--crit)':'';
-  const c=$('#stok-cnt');c.hidden=!low.length;c.textContent=low.length;
-  const cats=['tum',...S_CATS.filter(k=>L.some(s=>(s.cat||'Diğer')===k)),...(low.length?['azalan']:[])];
+  const c=$('#stok-cnt');c.hidden=!low.length||cm;c.textContent=low.length;
+  const cats=['tum',...S_CATS.filter(k=>L.some(s=>(s.cat||'Diğer')===k)),...(low.length&&!cm?['azalan']:[])];
   if(!cats.includes(state.stCat))state.stCat='tum';
   $('#st-cats').innerHTML=cats.map(k=>`<button class="chip" data-c="${k}" aria-pressed="${state.stCat===k}">${k==='tum'?'Tümü':k==='azalan'?'Azalan ('+low.length+')':k}</button>`).join('');
   const q=trLow($('#st-q').value);
@@ -1807,14 +1820,14 @@ function renderStok(){
   if(q)V=V.filter(s=>trLow(s.name+' '+(s.brand||'')+' '+(s.cat||'')).includes(q));
   V.sort((a,b)=>(isLow(b)-isLow(a))||String(a.name).localeCompare(String(b.name),'tr'));
   $('#st-list').innerHTML=V.length?V.map(s=>{const lw=isLow(s);return `<button class="ucard st-card" data-s="${esc(s.id)}" style="--sc:${lw?'var(--crit)':'var(--ok)'}">
-    <span><span class="nm">${esc(s.name)}</span><br><span class="meta">${esc(s.cat||'Diğer')}${s.brand?' · '+esc(s.brand):''}${s.sell?' · satış '+tl(s.sell):''}</span></span>
+    <span><span class="nm">${esc(s.name)}</span><br><span class="meta">${esc(s.cat||'Diğer')}${s.brand?' · '+esc(s.brand):''}${s.sell?' · satış <b style="color:var(--ink);font-size:1.05em">'+tl(s.sell)+'</b>':(cm?' · fiyat girilmemiş, ustanıza sorun':'')}</span></span>
     <span class="sq" style="color:${lw?'var(--crit)':'var(--ink)'}"><b>${fq(s.qty)}</b> ${esc(s.unit||'adet')}${lw?'<small>'+((+s.qty||0)<=0?'Bitti':'Azaldı')+'</small>':''}</span></button>`}).join('')
-    :`<div class="empty"><h3>${L.length?'Bulunamadı':'Stokta ürün yok'}</h3>${L.length?'':'“Mal girişi” ile gelen yağ, filtre gibi ürünleri yazın; listede olmayan ürün kendiliğinden eklenir. İş fişinde “Stoktan” ile kullanınca stoktan düşer.'}</div>`;
+    :`<div class="empty"><h3>${L.length?'Bulunamadı':'Stokta ürün yok'}</h3>${L.length?'':(cm?'Ustanız stoka ürün girince fiyatlar burada görünür.':'“Mal girişi” ile gelen yağ, filtre gibi ürünleri yazın; listede olmayan ürün kendiliğinden eklenir. İş fişinde “Stoktan” ile kullanınca stoktan düşer.')}</div>`;
   $('#dl-stok').innerHTML=L.map(s=>`<option value="${esc(s.name)}">`).join('');
 }
 $('#st-q').addEventListener('input',renderStok);
 $('#st-cats').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;state.stCat=b.dataset.c;renderStok()});
-$('#st-list').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(!b)return;const s=state.stok.find(x=>x.id===b.dataset.s);if(s)openSs(s)});
+$('#st-list').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(!b)return;if(isCirak()){toast('Fiyat ve stok değişikliğini ustanız yapar');return}const s=state.stok.find(x=>x.id===b.dataset.s);if(s)openSs(s)});
 $('#st-new').onclick=()=>openSs(null);
 $('#st-in').onclick=()=>openG('giris',null);
 
@@ -2363,10 +2376,10 @@ async function openReport(){
   repJob.addr=addr;
   let qr='';try{await loadLib('qr');const q=qrcode(0,'M');q.addData(trackUrl(repJob.trackId));q.make();qr=q.createSvgTag({cellSize:3,margin:0,scalable:true})}catch(_){}
   repJob.qr=qr;
-  $('#rep-price').checked=localStorage.getItem('ud_repPrice')!=='0';
+  $('#rep-price').checked=localStorage.getItem('ud_repPrice')!=='0';$('#rep-fat').checked=localStorage.getItem('ud_repFat')!=='0';
   renderReport();$('#repsheet').hidden=false;document.body.style.overflow='hidden';
 }
-function reportHtml(j,price){
+function reportHtml(j,price,fat){
   const c=calc(j);const st=(STATUS.find(s=>s.k===j.status)||{}).t||'';
   const d=new Date(j.status==='teslim'&&j.updatedAt?j.updatedAt:Date.now());
   const rows=j.items.map(i=>`<tr><td>${esc(i.name||'')}<small>${i.type==='iscilik'?'İşçilik':'Parça'}</small></td><td class="n">${+i.qty||1}</td>${price?`<td class="n">${tl((+i.qty||1)*(+i.price||0))}</td>`:''}</tr>`).join('');
@@ -2388,6 +2401,7 @@ function reportHtml(j,price){
         <tr class="tot"><td colspan="2">Toplam${j.vat?' (KDV dahil)':''}</td><td class="n">${tl(c.total)}</td></tr>
         ${+j.paid?`<tr><td colspan="2">Ödenen</td><td class="n">${tl(+j.paid)}</td></tr>`:''}${c.due>0&&+j.paid?`<tr><td colspan="2">Kalan</td><td class="n">${tl(c.due)}</td></tr>`:''}</tfoot>`:''}
     </table>
+    ${price&&fat?invoiceHtml(j,c):''}
     ${j.notes?`<div class="rp-box"><small>Ustanın notu</small><div>${esc(j.notes)}</div></div>`:''}
     <div class="rp-bot">
       ${next?`<div class="rp-next"><small>Sonraki bakım</small><b>${esc(next)}</b><span>Bu raporu aracınızda saklayın. Bakım zamanı gelince bizi arayın.</span></div>`:'<div class="rp-next"><small>Bu raporu aracınızda saklayın</small><span>Sonraki servisinizde yapılan işlemleri ve kullanılan parçaları görmek için işinize yarar.</span></div>'}
@@ -2396,11 +2410,32 @@ function reportHtml(j,price){
     <div class="rp-foot"><span>${esc(state.shop||'')}${state.shopPhone?' · '+esc(state.shopPhone):''}</span><span>Usta Defteri ile hazırlanmıştır</span></div>
   </div>`;
 }
-function renderReport(){const pr=$('#rep-price').checked;$('#rep-view').innerHTML=reportHtml(repJob,pr)}
+/* Fatura taslağı: fiyatlar KDV dahil girilir; iç yüzde ile matrah ve KDV ayrılır (KDV %20) */
+function invoiceHtml(j,c){
+  const R=0.20;const items=(j.items||[]).filter(i=>i.name||+i.price);
+  const rows=items.map(i=>{const q=+i.qty||1,d=(+i.price||0)*q,h=d/(1+R),k=d-h;
+    return `<tr><td>${esc(i.name||'')}<small>${i.type==='iscilik'?'Hizmet (işçilik)':'Mal (parça)'}</small></td><td class="n">${q}</td><td class="n">${tl((+i.price||0)/(1+R))}</td><td class="n">${tl(h)}</td><td class="n">${tl(k)}</td><td class="n">${tl(d)}</td></tr>`}).join('');
+  const H=c.total/(1+R),K=c.total-H;
+  const parca=items.filter(i=>i.type!=='iscilik').reduce((a,i)=>a+(+i.qty||1)*(+i.price||0),0),isc=c.total-parca;
+  const unvan=(j.faddr||'').trim()||j.customer||'-';
+  return `<div class="rp-fat">
+    <div class="rp-fat-h"><b>FATURA BİLGİLERİ</b><span>Fatura keserken bu bölüme bakın · Tutarlar KDV dahil alınmış, KDV iç yüzdeyle (%${R*100}) ayrılmıştır</span></div>
+    <div class="rp-cf rp-fat-cf"><div><small>Alıcı (ad / unvan)</small><b>${esc(unvan)}</b></div><div><small>TC kimlik / Vergi no</small><b>${esc(j.tckn||'______________')}</b></div>
+      <div><small>Plaka</small><b>${esc(fmtPlate(j.plate))}</b></div><div><small>Telefon</small><b>${esc(j.phone||'-')}</b></div></div>
+    <table class="rp-t rp-fat-t"><thead><tr><th>Kalem</th><th class="n">Adet</th><th class="n">Birim (KDV hariç)</th><th class="n">Matrah (hariç)</th><th class="n">KDV %${R*100}</th><th class="n">Tutar (dahil)</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="6">-</td></tr>'}</tbody>
+      <tfoot><tr><td colspan="5">Mal (parça) toplamı · KDV dahil</td><td class="n">${tl(parca)}</td></tr><tr><td colspan="5">Hizmet (işçilik) toplamı · KDV dahil</td><td class="n">${tl(isc)}</td></tr>
+        <tr class="sep"><td colspan="5">MATRAH (KDV hariç toplam)</td><td class="n">${tl(H)}</td></tr><tr><td colspan="5">Hesaplanan KDV %${R*100}</td><td class="n">${tl(K)}</td></tr>
+        <tr class="tot"><td colspan="5">GENEL TOPLAM (KDV dahil)</td><td class="n">${tl(c.total)}</td></tr></tfoot></table>
+    <div class="rp-fat-n">Fatura düzenlenirken: matrah <b>${tl(H)}</b> + KDV <b>${tl(K)}</b> = <b>${tl(c.total)}</b> yazılır. Parçalar "mal", işçilik "hizmet" satırı olarak kesilir. KDV oranı farklı bir kalem varsa muhasebecinize belirtin.</div>
+  </div>`;
+}
+function renderReport(){const pr=$('#rep-price').checked,ft=$('#rep-fat').checked;$('#rep-view').innerHTML=reportHtml(repJob,pr,ft)}
 $('#rep-price').onchange=()=>{try{localStorage.setItem('ud_repPrice',$('#rep-price').checked?'1':'0')}catch(_){}renderReport()};
+$('#rep-fat').onchange=()=>{try{localStorage.setItem('ud_repFat',$('#rep-fat').checked?'1':'0')}catch(_){}renderReport()};
 function closeReport(){$('#repsheet').hidden=true;if($('#sheet').hidden)document.body.style.overflow=''}
 $('#rep-close').onclick=closeReport;
-$('#rep-print').onclick=()=>{$('#printarea').innerHTML=reportHtml(repJob,$('#rep-price').checked);document.body.classList.add('printing','print-rep');
+$('#rep-print').onclick=()=>{$('#printarea').innerHTML=reportHtml(repJob,$('#rep-price').checked,$('#rep-fat').checked);document.body.classList.add('printing','print-rep');
   setTimeout(()=>{window.print();setTimeout(()=>document.body.classList.remove('printing','print-rep'),600)},150)};
 $('#rep-wa').onclick=()=>{const j=repJob;if(!j)return;const lines=j.items.map(i=>`• ${i.name}${(+i.qty||1)!==1?' x'+i.qty:''}`).join('\n');
   const t=`${state.shop||'Servisimiz'} – Servis raporu\n${fmtPlate(j.plate)} ${j.vehicle||''}${j.km?' · '+Number(j.km).toLocaleString('tr-TR')+' km':''}\n\nYapılan işlemler:\n${lines||'-'}\n${j.nextKm||j.nextDate?'\nSonraki bakım: '+[j.nextKm?Number(j.nextKm).toLocaleString('tr-TR')+' km':'',j.nextDate?ddate(j.nextDate):''].filter(Boolean).join(' veya ')+'\n':''}\nDetaylar: ${trackUrl(j.trackId)}`;
@@ -2804,7 +2839,8 @@ function startApp(){
   const cir=me.role==='cirak';
   $('#who').innerHTML=ic(me.role==='admin'?'yonetici':cir?'cirak':'usta','fill')+esc(me.name||me.username)+(me.role==='admin'?'<span class="role">Yönetici</span>':cir?'<span class="role">Çırak</span>':'<span class="role">Usta</span>');
   $('#tab-users').hidden=me.role!=='admin';
-  ['tab-rem','tab-parca','tab-cirak','tab-stok'].forEach(id=>$('#'+id).hidden=cir);
+  ['tab-rem','tab-parca','tab-cirak'].forEach(id=>$('#'+id).hidden=cir);
+  $('#v-stok').classList.toggle('cirmode',cir);{const tn=[...$('#tab-stok').childNodes].find(n=>n.nodeType===3&&n.textContent.trim());if(tn)tn.textContent=cir?'Fiyatlar ':'Stok '}
   $('#shop-form').hidden=cir;
   document.querySelector('#filters .chip[data-f="benim"]').hidden=!cir;
   document.querySelector('#filters .chip[data-f="bosta"]').hidden=!cir;
@@ -3194,13 +3230,13 @@ function checkDraft(){let s=null;try{s=JSON.parse(localStorage.getItem('ud_draft
   bar.innerHTML=`<div class="draftbar"><span>Yarım kalan iş emri var: <b>${esc(fmtPlate(d.plate)||d.customer||d.vehicle||'kayıt')}</b> (${new Date(s.t).toLocaleString('tr-TR',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})})</span>
     <span style="display:flex;gap:6px"><button type="button" class="btn primary" id="draft-go">Devam et</button><button type="button" class="btn" id="draft-x">Sil</button></span></div>`;
   $('#draft-go').onclick=()=>{const job=s.editing?state.jobs.find(j=>j.id===s.editing):null;openSheet(job||null);Object.assign(draft,d);if(job)state.editing=job.id;
-    $('#f-plate').value=fmtPlate(draft.plate);['vehicle','km','customer','phone','complaint','notes','nextDate','nextKm'].forEach(k=>{$('#f-'+k.toLowerCase()).value=draft[k]||''});
+    $('#f-plate').value=fmtPlate(draft.plate);['vehicle','km','customer','phone','tckn','faddr','complaint','notes','nextDate','nextKm'].forEach(k=>{$('#f-'+k.toLowerCase()).value=draft[k]||''});
     $('#f-paid').value=draft.paid?String(draft.paid).replace('.',','):'';renderStatus();renderItems();renderHist();updateWa();renderCirakBox();toast('Kaldığınız yerden devam edin')};
   $('#draft-x').onclick=clearDraft}
 /* ---------- Temizle ---------- */
 $('#clearform').onclick=()=>{const b=$('#clearform');if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='Emin misiniz? Temizle';setTimeout(()=>{b.classList.remove('armed');b.textContent='Temizle'},3000);return}
   b.classList.remove('armed');b.textContent='Temizle';const keep={trackId:draft.trackId,_own:draft._own,createdAt:draft.createdAt};draft=Object.assign(blank(),keep);
-  $('#f-plate').value='';['vehicle','km','customer','phone','complaint','notes','nextDate','nextKm'].forEach(k=>{$('#f-'+k.toLowerCase()).value=''});$('#f-paid').value='';
+  $('#f-plate').value='';['vehicle','km','customer','phone','tckn','faddr','complaint','notes','nextDate','nextKm'].forEach(k=>{$('#f-'+k.toLowerCase()).value=''});$('#f-paid').value='';
   renderStatus();renderItems();renderHist();updateWa();clearDraft();toast('Form temizlendi');$('#f-plate').focus()};
 
 $('#login-form').addEventListener('submit',doLogin);
