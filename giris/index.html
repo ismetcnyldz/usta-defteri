@@ -3210,29 +3210,59 @@ async function visionText(file){
   const j=await r.json();if(!r.ok||j.error)throw new Error((j.error&&j.error.message)||('HTTP '+r.status));
   const a=j.responses&&j.responses[0];return (a&&a.fullTextAnnotation&&a.fullTextAnnotation.text)||'';
 }
+function plateStrict(t){
+  const s=String(t||'').toLocaleUpperCase('tr').replace(/İ/g,'I');
+  const re=/(?<![0-9A-Z])(0[1-9]|[1-7]\d|8[01])\s?([A-Z]{1,3})\s?(\d{2,5})(?![0-9A-Z])/g;let m;
+  while((m=re.exec(s))){const L=m[2].length,D=m[3].length;if((L===1&&D>=4)||(L===2&&D>=3)||(L===3&&D>=2&&D<=4))return m[1]+m[2]+m[3]}
+  return '';
+}
 function parseRuhsat(text){
-  const up=s=>String(s||'').toLocaleUpperCase('tr').replace(/İ/g,'I');
-  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);const U=lines.map(up);
+  const trUp=s=>String(s||'').toLocaleUpperCase('tr');
+  const ascii=s=>trUp(s).replace(/İ/g,'I').replace(/Ş/g,'S').replace(/Ğ/g,'G').replace(/Ü/g,'U').replace(/Ö/g,'O').replace(/Ç/g,'C');
+  const raw=String(text||'').split('\n').map(l=>l.trim()).filter(Boolean);
+  const LBL=/\b(VERILDIGI IL(?: ?\/ ?ILCE)?|ILCE|PLAKA(?:SI)?|ILK TESCIL TARIHI|TESCIL SIRA NO|TESCIL TARIHI|MARKASI|MARKA|TIPI|TIP|TICARI ADI|TICARI AD|MODEL YILI|MODEL|ARAC SINIFI|CINSI|RENGI|RENK|MOTOR NO|SASE NO|SASI NO|SASE|SASI|NET AGIRLIGI|AZAMI YUKLU AGIRLIGI|KATAR AGIRLIGI|ROMORK AZAMI YUKLU|AGIRLIGI|KOLTUK SAYISI|AYAKTA YOLCU SAYISI|SILINDIR HACMI|MOTOR GUCU|YAKIT CINSI|YAKIT|GUC AGIRLIK ORANI|KULLANIM AMACI|TIP ONAY NO|ONAY NO|T\.?C\.? ?KIMLIK NO|VERGI NO|KIMLIK NO|SOYADI|TICARI UNVANI|UNVANI|ADI SOYADI|ADI|ADRESI|ADRES|ARAC UZERINDE HAK|VE MENFAATI BULUNANLAR|NOTER SATIS TARIHI|NOTER SATIS NO|NOTERIN ADI|DIGER BILGILER|NOTER MUHUR[- ]?IMZA|ONAYLAYAN SICIL[- ]?IMZA|BELGE|SERI|SUR\.? ?DAHIL|MOTOSIKLET|NOTERLIGI|KG|CM3|KW ?\/ ?KG|KW)\b/g;
+  const codeRe=/^\(?\s*([A-Z]{1,2})\s*\.?\s*(\d)?\s*\.?\s*(\d)?\s*\)/;           // (D.1)  (C.1.1)  (A)
+  const codeRe2=/^([A-Z]{1,2})\.(\d)(?:\.(\d))?(?=[\s:]|$)|^([A-Z])(?=\s+\S{3,})/; // D.1  C.1.1  "E SASI NO"
+  const rows=raw.map(line=>{
+    let a=ascii(line),o=trUp(line);let code='';
+    // satır içindeki diğer kodları etiket say: (D.2), D.4
+    const strip=(x)=>x.replace(/\(\s*[A-Z]{1,2}(?:\.\d(?:\.\d)?)?\s*\)/g,m=>' '.repeat(m.length)).replace(/(?<![A-Z0-9])[A-Z]{1,2}\.\d(?:\.\d)?(?![A-Z0-9])/g,m=>' '.repeat(m.length));
+    let m=a.match(codeRe);if(!m)m=a.match(codeRe2);
+    if(m){code=(m[1]||m[4]||'')+(m[2]?'.'+m[2]:'')+(m[3]?'.'+m[3]:'');a=a.slice(m[0].length);o=o.slice(m[0].length)}
+    const a2=strip(a);const codeIdx=[];for(let i=0;i<a.length;i++)if(a[i]!==a2[i])codeIdx.push(i);a=a2;o=o.split('').map((ch,i)=>a2[i]===' '&&codeIdx.includes(i)?' ':ch).join('');
+    // etiket kelimelerini çıkar (indeksler ascii/orijinal hizalı)
+    let val='';let last=0;const parts=[];let mm;LBL.lastIndex=0;
+    while((mm=LBL.exec(a))){parts.push(o.slice(last,mm.index));last=mm.index+mm[0].length}
+    parts.push(o.slice(last));val=parts.join(' ').replace(/[()\/:;|]+/g,' ').replace(/^[\s.\-–]+|[\s.\-–]+$/g,'').replace(/\s+/g,' ').trim();
+    const labelHit=/\b[A-Z]{3,}/.test(a.replace(LBL,'').trim())===false&&(code||a!==a.replace(LBL,'')); // satır sadece etiket mi
+    const isLabel=!!code||(a.replace(LBL,'').replace(/[^A-Z0-9]/g,'').length===0&&a.replace(/[^A-Z]/g,'').length>0);
+    return{code,val,isLabel,o,a};
+  });
+  const next=(i,n=1)=>{const out=[];for(let j=i+1;j<rows.length&&out.length<n;j++){if(rows[j].isLabel&&rows[j].code)break;if(rows[j].isLabel)continue;out.push(rows[j].o.trim())}return out.join(' ')};
+  const get=(codes,labels,n=1)=>{for(let i=0;i<rows.length;i++){const r=rows[i];const byCode=r.code&&codes.includes(r.code);const byLbl=!r.code&&labels&&labels.test(r.a)&&r.isLabel;
+      if(byCode||byLbl){const v=r.val&&/[A-Z0-9]/.test(ascii(r.val))?r.val:next(i,n);if(v)return v}}return ''};
   const out={};
-  const val=(i,rest)=>{rest=(rest||'').replace(/^[\s:.\-–]+/,'').trim();if(rest&&!/^[A-Z]\.?\d?(\.\d)?$/.test(rest))return lines[i].slice(lines[i].length-rest.length).trim();return (lines[i+1]||'').trim()};
-  const grab=(re)=>{for(let i=0;i<U.length;i++){const m=U[i].match(re);if(m){const rest=U[i].slice(m.index+m[0].length);const v=val(i,rest);if(v&&!re.test(up(v)))return v}}return ''};
-  const vinOf=s=>{const m=up(s).replace(/[\s-]/g,'').match(/[A-HJ-NPR-Z0-9]{17}/g)||[];return m.find(v=>/\d/.test(v)&&/[A-Z]/.test(v))};
-  let vin='';for(let i=0;i<U.length&&!vin;i++){if(/\bE\b(?![.\d])|SASI|ŞASI|SASE/.test(U[i])){vin=vinOf(U[i].replace(/^.*?(\bE\b|SASI\s*NO|ŞASI\s*NO|SASE\s*NO)[\s:.]*/,''))||vinOf(U[i+1]||'')}}
-  if(!vin)for(const l of U){vin=vinOf(l);if(vin)break}
-  if(vin)out.vin=vin;
-  out.plate=plateFromText(text)||'';
-  const pl=grab(/\bA\b(?![.\d])|PLAKA(SI)?\b/);if(!out.plate&&pl){const p2=plateFromText(pl);if(p2)out.plate=p2}
-  out.brand=grab(/\bD\.?1\b|MARKA(SI)?\b/);
-  out.type=grab(/\bD\.?3\b|TICARI AD(I)?\b/)||grab(/\bD\.?2\b|\bTIP(I)?\b/);
-  const yr=(text.match(/MODEL\s*(YILI)?\s*[:.]?\s*((19|20)\d{2})/i)||[])[2]||(grab(/MODEL\s*YILI|MODEL\b/).match(/(19|20)\d{2}/)||[])[0];if(yr)out.year=yr;
-  const sur=grab(/\bC\.?1\.?1\b|SOYAD(I)?\b|UNVAN(I)?\b/),nm=grab(/\bC\.?1\.?2\b|\bAD(I)?\b(?!\s*SOYAD)/);
-  const full=grab(/ADI\s*SOYADI|AD\s*SOYAD/);out.owner=(full||[nm,sur].filter(Boolean).join(' ')).replace(/\s+/g,' ').trim();
-  out.engine=grab(/\bP\.?5\b|MOTOR\s*NO/);if(out.engine&&out.engine.length>24)out.engine='';
-  out.fuel=grab(/\bP\.?3\b|YAKIT(\s*CINSI)?/);if(out.fuel&&out.fuel.length>14)out.fuel='';
-  out.color=grab(/\bR\b(?![.\d])|RENG(I)?\b/);if(out.color&&out.color.length>14)out.color='';
-  const reg=(text.match(/\bB\b[\s:.]*(\d{2}[./]\d{2}[./]\d{4})/)||text.match(/TESCIL[^\n]*?(\d{2}[./]\d{2}[./]\d{4})/i)||[])[1];if(reg)out.reg=reg;
-  if(out.vin&&out.type&&up(out.type).includes(out.vin))out.type='';
+  const plateRaw=get(['A'],/\bPLAKA/);out.plate=plateStrict(plateRaw)||plateStrict(text)||'';
+  out.brand=get(['D.1'],/\bMARKA/);
+  const tipi=get(['D.2'],/\bTIPI\b/),ticari=get(['D.3'],/\bTICARI AD/);
+  out.type=tipi||ticari;if(out.brand&&out.type&&ascii(out.type).startsWith(ascii(out.brand)))out.type=out.type.slice(out.brand.length).trim();
+  const yv=get(['D.4'],/\bMODEL YILI/);out.year=(yv.match(/(19|20)\d{2}/)||(text.match(/MODEL\s*YILI[^\n]*\n?[^\n]*?((19|20)\d{2})/i)||[])[1]&&[(text.match(/MODEL\s*YILI[^\n]*\n?[^\n]*?((19|20)\d{2})/i)||[])[1]]||[])[0]||'';
+  const vinOf=s=>{const m=ascii(s).replace(/[\s-]/g,'').match(/[A-HJ-NPR-Z0-9]{17}/g)||[];return m.find(v=>/\d/.test(v)&&/[A-Z]/.test(v))||''};
+  out.vin=vinOf(get(['E'],/\bSAS[EI]\b|\bSAS[EI] NO/));if(!out.vin){for(const l of raw){const v=vinOf(l);if(v&&/^[A-Z]/.test(v)){out.vin=v;break}}}
+  const eng=get(['P.5'],/\bMOTOR NO/);out.engine=eng&&eng.length<=24&&/\d/.test(eng)?eng.replace(/\s/g,''):'';
+  const fuel=get(['P.3'],/\bYAKIT/);out.fuel=fuel&&fuel.length<=14?fuel:'';
+  const col=get(['R'],/\bRENG/);out.color=col&&col.length<=18?col:'';
+  const reg=get(['B'],/\bILK TESCIL/);out.reg=(reg.match(/\d{2}[./]\d{2}[./]\d{4}/)||[])[0]||'';
+  const tc=get(['Y.4'],/KIMLIK NO|VERGI NO/);out.tckn=(ascii(tc).match(/\b\d{10,11}\b/)||[])[0]||'';
+  const sur=get(['C.1.1'],/\bSOYADI|TICARI UNVANI/),nm=get(['C.1.2'],/^\s*ADI\b/);
+  const full=get([],/ADI SOYADI|AD SOYAD/);
+  out.owner=(full||[nm,sur].filter(Boolean).join(' ')).replace(/\s+/g,' ').trim();
+  if(/^\d+$/.test(out.owner))out.owner='';
+  out.addr=get(['C.1.3'],/\bADRES/,2);if(out.addr&&out.addr.length<8)out.addr='';
+  out.kind=get(['D.5'],/\bCINSI\b/);
+  if(out.vin&&out.type&&ascii(out.type).includes(out.vin))out.type='';
   if(out.brand&&out.brand.length>24)out.brand=out.brand.slice(0,24);
+  if(out.type&&out.type.length>40)out.type=out.type.slice(0,40);
   return out;
 }
 $('#f-ruhsat').onclick=()=>$('#ruhsat-file').click();
@@ -3245,6 +3275,8 @@ $('#ruhsat-file').addEventListener('change',async e=>{const f=e.target.files[0];
     if(r.plate&&!normPlate($('#f-plate').value)){$('#f-plate').value=fmtPlate(r.plate);filled.push('plaka')}
     const veh=[r.brand,r.type,r.year].filter(Boolean).join(' ');if(veh&&!$('#f-vehicle').value.trim()){$('#f-vehicle').value=veh;filled.push('araç')}
     if(r.owner&&!$('#f-customer').value.trim()){$('#f-customer').value=r.owner;filled.push('sahibi')}
+    if(r.tckn&&!$('#f-tckn').value.trim()){$('#f-tckn').value=r.tckn;filled.push('TC/vergi no')}
+    if(r.addr&&!$('#f-faddr').value.trim()){$('#f-faddr').value=r.addr;filled.push('adres')}
     draft.ruhsat={vin:r.vin||'',engine:r.engine||'',fuel:r.fuel||'',color:r.color||'',reg:r.reg||'',year:r.year||''};
     $('#ruhsat-info').innerHTML=ruhsatInfoHtml(draft.ruhsat);
     renderHist();updateWa();saveDraft();
