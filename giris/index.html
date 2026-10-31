@@ -1147,6 +1147,7 @@ html,body{overscroll-behavior-x:none}
         <a class="btn wa" id="ue-wa" target="_blank" rel="noopener">Bilgileri WhatsApp'la gönder</a>
         <button type="button" class="btn" id="ue-copy">Kopyala</button>
         <button type="button" class="btn" id="ue-reset">Şifreyi sıfırla</button>
+        <button type="button" class="btn" id="ue-rename">Kullanıcı adını değiştir</button>
       </div>
       <div class="err" id="ue-err" style="margin-top:6px"></div>
     </fieldset>
@@ -1722,7 +1723,7 @@ function save(){
   const diff=Math.round(((+data.paid||0)-prevPaid)*100)/100;
   const prevJob=state.editing?state.jobs.find(j=>j.id===state.editing):null;
   // İnternet yokken de anında kaydedilir; bağlantı gelince gönderilir.
-  ref.set(data).catch(e=>toast('Kaydedilemedi: '+authMsg(e)));
+  ref.set(data).catch(e=>{const m='Bu iş KAYDEDİLEMEDİ: '+authMsg(e)+' Çıkış yapıp tekrar girin, sonra işi yeniden girin.';toast(m);try{alert(m)}catch(_){}});
   if(data.trackId){const c=calc(data);const tk={ustaId:state.me.id,jobId:ref.id,shop:state.shop||'',shopPhone:state.shopPhone||'',plate:data.plate,vehicle:data.vehicle||'',
       status:data.status,notes:data.notes||'',complaint:data.complaint||'',items:data.items.map(i=>({type:i.type,name:i.name,qty:i.qty,price:i.price})),vat:!!data.vat,
       total:c.total,paid:+data.paid||0,updatedAt:now,createdAt:data.createdAt};
@@ -3025,6 +3026,18 @@ $('#ue-reset').onclick=async()=>{
   }catch(ex){err.textContent=authMsg(ex)}
   finally{b.disabled=false;b.textContent='Şifreyi sıfırla'}
 };
+$('#ue-rename').onclick=async()=>{
+  const u=curUsta();if(!u)return;const err=$('#ue-err');err.textContent='';
+  let nu=prompt('Yeni kullanıcı adı (küçük harf, Türkçe karakter yok):',u.username||'');if(nu==null)return;
+  nu=nu.trim().toLowerCase().replace(/ı/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c');
+  if(!/^[a-z0-9._-]{3,30}$/.test(nu)){err.textContent='Kullanıcı adı 3-30 karakter olmalı; harf, rakam, nokta, tire.';return}
+  if(nu===u.username)return;if(RESERVED.includes(nu)){err.textContent='Bu kullanıcı adı kullanılamaz.';return}
+  try{if((await fdb.doc('logins/'+nu).get()).exists){err.textContent='Bu kullanıcı adı alınmış.';return}
+    const L=await fdb.doc('logins/'+u.username).get();const email=(L.exists&&L.data().email)||u.email;
+    const bt=fdb.batch();bt.set(fdb.doc('logins/'+nu),{email,ustaId:u.uid});bt.delete(fdb.doc('logins/'+u.username));bt.update(fdb.doc('ustalar/'+u.uid),{username:nu});
+    await bt.commit();toast('Kullanıcı adı artık: '+nu+' (şifre aynı)');
+  }catch(ex){err.textContent='Değiştirilemedi: '+authMsg(ex)}
+};
 $('#ue-del').onclick=async()=>{
   const u=curUsta();if(!u)return;const d=$('#ue-del');
   if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='Emin misiniz? '+(u.name||u.username)+' silinsin';return}
@@ -3069,7 +3082,12 @@ async function handleUser(u){
     show(!setupDone?'setup':state.pub?'public':location.hash==='#kayit'?'signup':'login');return;
   }
   let ustaId=u.uid,prof=null,ad=null;
-  try{const a=await fdb.doc('auth/'+u.uid).get();if(a.exists){ad=a.data();if(ad.ustaId)ustaId=ad.ustaId}}catch(e){}
+  // Hesap eşleşmesi okunamazsa (zayıf internet) yanlış hesaba yazmamak için: tekrar dene, olmazsa son bilinen eşleşmeyi kullan, o da yoksa durdur
+  const mk='ud_map_'+u.uid;let authOk=false;
+  for(let i=0;i<3&&!authOk;i++){try{const a=await fdb.doc('auth/'+u.uid).get();authOk=true;if(a.exists){ad=a.data();if(ad.ustaId)ustaId=ad.ustaId}}catch(e){if(/permission/.test(e.code||''))authOk=true;else await new Promise(r=>setTimeout(r,1500))}}
+  if(!authOk){try{const c=JSON.parse(localStorage.getItem(mk)||'null');if(c&&c.ustaId){ad=c;ustaId=c.ustaId;authOk=true}}catch(e){}}
+  if(!authOk){await auth.signOut();show('login');$('#l-err').textContent='İnternet bağlantısı zayıf, hesabınız açılamadı. Bağlantınızı kontrol edip tekrar giriş yapın.';return}
+  try{localStorage.setItem(mk,JSON.stringify(ad&&ad.ustaId?ad:{ustaId}))}catch(e){}
   if(ad&&ad.role==='cirak'){
     let cd=null,up=null;
     try{const c=await fdb.doc('ciraklar/'+ad.cirakId).get();cd=c.exists?c.data():false}catch(e){cd=/permission/.test(e.code||'')?false:null}
@@ -3079,7 +3097,8 @@ async function handleUser(u){
     state.me={role:'cirak',uid:u.uid,id:ustaId,cirakId:ad.cirakId,name:(cd&&cd.name)||'Personel',username:(cd&&cd.username)||'',ustaName:(up&&up.name)||'',shop:(up&&up.shop)||'',shopPhone:(up&&up.shopPhone)||''};
     startApp();return;
   }
-  try{const s=await fdb.doc('ustalar/'+ustaId).get();prof=s.exists?s.data():false}catch(e){prof=/permission/.test(e.code||'')?false:null}
+  for(let i=0;i<3;i++){try{const s=await fdb.doc('ustalar/'+ustaId).get();prof=s.exists?s.data():false;break}catch(e){prof=/permission/.test(e.code||'')?false:null;if(prof===false)break;await new Promise(r=>setTimeout(r,1500))}}
+  if(prof===null&&ustaId===u.uid&&!(ad&&ad.ustaId)){await auth.signOut();show('login');$('#l-err').textContent='İnternet bağlantısı zayıf, hesabınız açılamadı. Bağlantınızı kontrol edip tekrar giriş yapın.';return}
   if(prof&&(prof.authUid||ustaId)!==u.uid)prof=false;
   if(prof&&prof.role!=='admin'&&prof.untilMs&&prof.untilMs<Date.now()){
     await auth.signOut();show('login');let sp='';try{sp=((await fdb.doc('meta/setup').get()).data()||{}).supportPhone||''}catch(e){}
