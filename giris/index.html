@@ -413,6 +413,8 @@ html,body{overscroll-behavior-x:none}
 .st-card .sq{text-align:right;font-family:var(--f-mono);white-space:nowrap}
 .st-card .sq b{font-size:1.35rem}
 .st-card .sq small{display:block;font-family:var(--f-body);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.more{border:1px dashed var(--line);border-radius:10px;padding:8px 12px;margin-top:8px}.more summary{cursor:pointer;font-weight:600;color:var(--muted);font-size:.92rem;list-style:none;display:flex;align-items:center;gap:6px}.more summary::before{content:"▸";transition:transform .15s}.more[open] summary::before{transform:rotate(90deg)}.more summary small{font-weight:400}
+.welcome{background:linear-gradient(135deg,#1b232a,#2a3a47);color:#fff;border-radius:14px;padding:16px 18px;margin:0 0 14px}.welcome h3{margin:0 0 6px;font-size:1.15rem}.welcome ol{margin:8px 0 12px;padding-left:20px;display:grid;gap:4px}.welcome ol b{color:var(--accent2)}.welcome .actions{display:flex;gap:8px;flex-wrap:wrap}.welcome .btn{border-color:transparent}
 .cir-note{display:none}#v-stok.cirmode>*:not(.toolbar):not(#st-list):not(.cir-note){display:none}#v-stok.cirmode .cir-note{display:block}#v-stok.cirmode .st-card .sq{display:none}#v-stok.cirmode .st-card{--sc:var(--line)}
 .st-h{font-family:var(--f-display);text-transform:uppercase;font-size:1.35rem;margin:24px 0 8px;color:var(--steel)}
 .g-row{display:grid;grid-template-columns:minmax(0,1fr) 5rem 6.5rem 2rem;gap:6px;align-items:center}
@@ -573,7 +575,9 @@ html,body{overscroll-behavior-x:none}
     <button class="tab" role="tab" id="tab-cirak" aria-selected="false"><svg class="ic fill" aria-hidden="true"><use href="#i-cirak"/></svg>Personel</button>
     <button class="tab" role="tab" id="tab-cari" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-hand"/></svg>Veresiye <span class="cnt" id="cari-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-users" aria-selected="false" hidden><svg class="ic fill" aria-hidden="true"><use href="#i-usta"/></svg>Ustalar</button>
+    <button class="tab" role="tab" id="tab-more" aria-selected="false" hidden style="--tc:#6a7681"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg>Diğer…</button>
   </div>
+  <div id="welcome" hidden></div>
 
   <section id="v-jobs">
     <div class="rv-bar" id="rv-bar" hidden></div>
@@ -829,9 +833,11 @@ html,body{overscroll-behavior-x:none}
           <label class="f">Kilometre<input id="f-km" inputmode="numeric" placeholder="148500"></label>
           <label class="f">Müşteri adı<input id="f-customer" placeholder="Ahmet Yılmaz"></label>
           <label class="f">Telefon (WhatsApp)<input id="f-phone" inputmode="tel" placeholder="0532 123 45 67"></label>
+        </div>
+        <details class="more"><summary>Fatura bilgileri <small>(TC / vergi no, adres — isteğe bağlı)</small></summary><div class="grid2" style="margin-top:8px">
           <label class="f">TC / Vergi no <small style="font-weight:400;color:var(--muted)">(fatura için)</small><input id="f-tckn" inputmode="numeric" placeholder="11 veya 10 hane"></label>
           <label class="f">Fatura adresi / unvan <small style="font-weight:400;color:var(--muted)">(boşsa ad yazılır)</small><input id="f-faddr" placeholder="Firma adı, mahalle, ilçe/il"></label>
-        </div>
+        </div></details>
         <div id="prev" class="hint" style="margin-top:8px"></div>
       </fieldset>
 
@@ -871,7 +877,8 @@ html,body{overscroll-behavior-x:none}
 
       <fieldset>
         <legend>Sonraki bakım</legend>
-        <div class="grid2">
+        <details class="more" id="nb-more"><summary>Sonraki bakımı hatırlat <small>(isteğe bağlı — zamanı gelince müşteriye mesaj atarsın)</small></summary>
+        <div class="grid2" style="margin-top:8px">
           <label class="f">Tarih<input id="f-nextdate" type="date"></label>
           <label class="f">Kilometre<input id="f-nextkm" inputmode="numeric" placeholder="163500"></label>
         </div>
@@ -880,7 +887,7 @@ html,body{overscroll-behavior-x:none}
           <button type="button" class="btn" data-plus="12">+1 yıl</button>
           <button type="button" class="btn" data-pluskm="10000">+10.000 km</button>
           <button type="button" class="btn" data-pluskm="15000">+15.000 km</button>
-        </div>
+        </div></details>
       </fieldset>
 
       <fieldset class="wa-box">
@@ -937,6 +944,7 @@ html,body{overscroll-behavior-x:none}
           <label class="f">Adres (servis raporunda görünür)<input id="set-addr" maxlength="120" placeholder="Sanayi Sitesi 12. Blok No:5, Antalya"></label>
           <div class="f" style="display:grid;gap:6px"><span style="font-size:.8rem;color:var(--muted);font-weight:500">Logo (servis raporunun sol üstünde)</span>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><img id="logo-prev" class="logo-prev" alt="" hidden><label class="btn" style="cursor:pointer">Logo seç<input type="file" id="set-logo" accept="image/*" hidden></label><button type="button" class="btn" id="logo-del" hidden>Logoyu kaldır</button></div></div>
+          <label class="kvkk" style="margin:4px 0 8px"><input type="checkbox" id="set-simple"> <span><b>Basit görünüm</b>: sadece İşler ve Kasa sekmeleri görünsün (Bakım, Stok, Parça, Personel, Veresiye gizli). Alışınca kapatırsın.</span></label>
           <label class="f">"Araç hazır" mesajım (boş bırakırsanız standart kısa mesaj gider; {ad} {arac} {plaka} {tutar} {link} {dukkan} yazdığınız yere bilgiler gelir)<textarea id="set-hazir" rows="4" placeholder="Merhaba {ad}, {arac} hazır, dilediğiniz zaman alabilirsiniz. {tutar} {link} {dukkan}"></textarea></label>
           <label class="f">Hızlı iş kalemleri (her satır: Başlık: kalem, kalem…)<textarea id="set-quick" rows="5" style="font-family:var(--f-mono);font-size:13px" placeholder="Balata değişti: Ön balata, Balata değişim işçiliği"></textarea></label>
           <p class="hint" style="margin:0">Müşteriye giden mesajlarda ve QR etiketlerde görünür.</p>
@@ -1392,7 +1400,7 @@ function render(){
   $('#s-open').textContent=jobs.filter(j=>j.status!=='teslim').length;
   $('#s-ready').textContent=jobs.filter(j=>j.status==='hazir').length;
   $('#s-due').textContent=tl(jobs.reduce((a,j)=>a+calc(j).due,0));
-  renderNow(jobs);
+  renderNow(jobs);try{renderWelcome();applySimple()}catch(e){}
   const q=state.q.trim().toLocaleLowerCase('tr');const qp=normPlate(state.q);
   const list=jobs.filter(j=>{
     const f=state.filter;
@@ -1596,6 +1604,25 @@ function msg(kind,j){
 }
 
 /* ---------- İş formu ---------- */
+/* ---------- Basit başlangıç modu ---------- */
+const SIMPLE_TABS=['tab-rem','tab-stok','tab-parca','tab-cirak','tab-cari'];
+function isSimple(){if(!state.me||state.me.role!=='usta')return false;const c=state.cfg||{};if(typeof c.simple==='boolean')return c.simple;return (state.jobs||[]).length<5}
+function applySimple(){if(!state.me)return;const sm=isSimple();const cir=isCirak();
+  SIMPLE_TABS.forEach(id=>{const t=$('#'+id);if(!t)return;t.hidden=cir?(id!=='tab-stok'):sm});
+  const m=$('#tab-more');if(m)m.hidden=!sm;
+  if(sm&&SIMPLE_TABS.map(x=>x.replace('tab-','')).includes(state.tab))setTab('jobs');
+  const sc=$('#set-simple');if(sc)sc.checked=sm;}
+function setSimple(v){state.cfg=Object.assign({},state.cfg,{simple:v});applySimple();settingsDoc().set({simple:v,updatedAt:Date.now()},{merge:true}).catch(()=>{});toast(v?'Basit görünüm açık: İşler ve Kasa':'Tüm bölümler açıldı')}
+$('#tab-more').onclick=()=>setSimple(false);
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='set-simple')setSimple(e.target.checked)});
+function renderWelcome(){const w=$('#welcome');if(!w)return;const show=state.me&&state.me.role==='usta'&&!(state.jobs||[]).length&&!localStorage.getItem('ud_welcome_off');w.hidden=!show;if(!show)return;
+  w.innerHTML=`<div class="welcome"><h3>Hoş geldin${state.me.name?' '+esc(state.me.name.split(' ')[0]):''} 👋 Üç adımda ilk işin:</h3>
+    <ol><li><b>Plakayı yaz</b> (ya da ruhsatı tarat)</li><li><b>İşi yaz</b>: "Balata değişti" gibi, fiyatı gelsin</li><li><b>Kaydet</b> — müşteriye WhatsApp'tan takip linki gitsin</li></ol>
+    <div class="actions"><button type="button" class="btn primary" id="wl-try">Örnek bir iş aç, dene</button><button type="button" class="btn" id="wl-new">Gerçek işimi açayım</button><button type="button" class="btn" id="wl-off" style="opacity:.8">Gizle</button></div>
+    <p class="hint" style="color:#c9d3da;margin:10px 0 0">Şimdilik sadece <b>İşler</b> ve <b>Kasa</b> açık; Bakım, Stok, Parça, Personel, Veresiye bölümlerini "Diğer…" sekmesinden istediğinde açarsın.</p></div>`;
+  $('#wl-try').onclick=()=>{openSheet(null,{plate:'34ABC123',vehicle:'Fiat Egea 1.3 Mjet 2019',customer:'Deneme Müşteri',phone:''});setTimeout(()=>{const q=quickByTitle('Balata değişti');if(q)addQuick(q);toast('Örnek iş: istersen kaydet, istersen Vazgeç')},200)};
+  $('#wl-new').onclick=()=>openSheet(null);
+  $('#wl-off').onclick=()=>{try{localStorage.setItem('ud_welcome_off','1')}catch(_){}w.hidden=true};}
 function renderNow(jobs){const el=$('#now');const act=jobs.filter(j=>j.status==='yapiliyor').sort((a,b)=>(b.assignedAt||b.updatedAt||0)-(a.assignedAt||a.updatedAt||0));
   el.hidden=!act.length;if(!act.length){el.innerHTML='';return}
   const since=j=>{const t=j.assignedAt||j.updatedAt||j.createdAt;if(!t)return'';const m=Math.round((Date.now()-t)/6e4);return m<60?m+' dk':Math.round(m/60)+' sa'};
@@ -1607,7 +1634,8 @@ function openSheet(job,prefill){
   $('#sheet-title').textContent=job?'İş emri':'Yeni iş emri';
   $('#f-plate').value=fmtPlate(draft.plate);
   ['vehicle','km','customer','phone','tckn','faddr','complaint','notes','nextDate','nextKm'].forEach(k=>{$('#f-'+k.toLowerCase()).value=draft[k]||''});
-  $('#f-paymethod').value='Nakit';  $('#f-vat').checked=!!draft.vat;$('#f-paid').value=draft.paid?String(draft.paid).replace('.',','):'';
+  $('#f-paymethod').value='Nakit';
+  document.querySelectorAll('#sheet details.more').forEach(d=>{d.open=false});if(draft.nextDate||draft.nextKm){const nb=$('#nb-more');if(nb)nb.open=true}if(draft.tckn||draft.faddr){const fd=$('#f-tckn').closest('details');if(fd)fd.open=true}  $('#f-vat').checked=!!draft.vat;$('#f-paid').value=draft.paid?String(draft.paid).replace('.',','):'';
   $('#del').hidden=!job||isCirak();$('#del').classList.remove('armed');$('#del').textContent='Sil';
   $('#btn-tp-job').hidden=isCirak();
   if(!draft.trackId){draft._own=newToken();draft.trackId=(!job&&prevToken(draft.plate))||draft._own}
@@ -3065,7 +3093,7 @@ function startApp(){
   const cir=me.role==='cirak';
   $('#who').innerHTML=ic(me.role==='admin'?'yonetici':cir?'cirak':'usta','fill')+esc(me.name||me.username)+(me.role==='admin'?'<span class="role">Yönetici</span>':cir?'<span class="role">Personel</span>':'<span class="role">Usta</span>');
   $('#tab-users').hidden=me.role!=='admin';
-  ['tab-rem','tab-parca','tab-cirak','tab-cari'].forEach(id=>$('#'+id).hidden=cir);
+  ['tab-rem','tab-parca','tab-cirak','tab-cari'].forEach(id=>$('#'+id).hidden=cir);applySimple();
   $('#v-stok').classList.toggle('cirmode',cir);{const tn=[...$('#tab-stok').childNodes].find(n=>n.nodeType===3&&n.textContent.trim());if(tn)tn.textContent=cir?'Fiyatlar ':'Stok '}
   $('#shop-form').hidden=cir;
   document.querySelector('#filters .chip[data-f="benim"]').hidden=!cir;
@@ -3077,7 +3105,7 @@ function startApp(){
     if(state.pendingPlate){const p=state.pendingPlate;state.pendingPlate='';state.pub=null;openPlate(p)}
   },e=>{state.loading=false;render();toast(authMsg(e))}));
   state.shop=me.shop||'';state.shopPhone=me.shopPhone||'';renderShop();
-  state.cfg={};subs.push(settingsDoc().onSnapshot(s=>{state.cfg=s.data()||{};renderQuick();fillCfg()},()=>{}));
+  state.cfg={};subs.push(settingsDoc().onSnapshot(s=>{state.cfg=s.data()||{};renderQuick();fillCfg();applySimple()},()=>{}));
   setTimeout(checkDraft,800);
   if(!state.shop)settingsDoc().get().then(s=>{const d=s.data();if(d&&!state.shop){state.shop=d.shop||'';state.shopPhone=state.shopPhone||d.phone||'';renderShop()}}).catch(()=>{});
   if(cir)subs.push(fdb.doc('ciraklar/'+me.cirakId).onSnapshot(s=>{const d=s.data();if(!d||!d.active||d.authUid!==me.uid)handleUser(auth.currentUser)},()=>{}));
