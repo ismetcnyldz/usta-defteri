@@ -390,6 +390,10 @@ async function route(){
   document.body.classList.add('det');
   let p=ALL.find(x=>x.id===id);
   if(!p){try{const s=await db.doc('profiller/'+id).get();if(s.exists)p={id,...s.data()}}catch(_){}}
+  // parca-sor.html'den gelen: randevu penceresini önceden doldurup aç
+  try{const q=new URLSearchParams(location.search);if(q.get('rv')==='1'&&p&&!window.__rvAuto){window.__rvAuto=1;setTimeout(()=>{if(!ALL.find(x=>x.id===p.id))ALL.push(p);openRv(p.id);
+    const set=(sel,v)=>{const e=$(sel);if(e&&v&&!e.value)e.value=v};set('#rv-name',q.get('ad'));set('#rv-phone',q.get('tel'));set('#rv-plate',q.get('plaka'));set('#rv-veh',q.get('arac'));set('#rv-note',q.get('not'));
+    const sv=q.get('is');if(sv&&$('#rv-svc')&&[...$('#rv-svc').options].some(o=>o.value===sv))$('#rv-svc').value=sv},400)}}catch(_){}
   if(!p||!p.visible){$('#dwrap').innerHTML='<button class="back" id="bk">‹ Tüm ustalar</button><div class="empty" style="margin-top:10px">Bu usta şu an Usta Bul\'da görünmüyor.</div>';$('#bk').onclick=()=>history.length>1?history.back():go('');return}
   curP=p;const loc=[p.district,p.city].filter(Boolean).join(', ');const tel=waNum(p.phone);
   document.title=`${p.shop} – ${loc||'Oto tamir'} | Usta Bul`;

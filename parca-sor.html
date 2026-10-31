@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Parça Fiyatı Sor – Şasi no ile yedek parça fiyatı ve yakınınızdaki usta | Usta Defteri</title>
+<meta name="description" content="Aracınızın plakası veya şasi numarasıyla yedek parça fiyatı sorun; aynı anda işi yapabilecek yakınınızdaki ustaları görün, arayın, randevu alın. Ücretsiz.">
+<link rel="canonical" href="https://ustadefteri.net/parca-sor.html">
+<meta property="og:title" content="Parça Fiyatı Sor – Usta Defteri">
+<meta property="og:description" content="Şasi no ile parça fiyatı sorun, işi yapacak ustayı bulun, randevu alın.">
+<meta property="og:image" content="https://ustadefteri.net/icon-512.png">
+<meta name="theme-color" content="#1b232a">
+<link rel="icon" href="logo.svg">
+<style>
+:root{--bg:#f4f1ec;--panel:#fff;--ink:#1b232a;--muted:#5d6a74;--line:#e1dcd3;--accent:#e08a12;--accent2:#f2a33a;--dark:#1b232a;--ok:#1f8a4c;--wa:#1f9d55;--crit:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#13181c;--panel:#1c2328;--ink:#e7ecef;--muted:#97a5af;--line:#2e3840;--accent:#f0a032}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}button,select,input,textarea{font:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 14px;border-radius:10px;font-weight:700;text-decoration:none;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#1b1306}.btn.wa{background:var(--wa);border-color:var(--wa);color:#fff}.btn.big{padding:15px 18px;font-size:1.05rem}
+.btn svg{width:18px;height:18px;flex:none}
+header.top{background:var(--dark);color:#fff}header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;letter-spacing:.03em}.brand img{width:32px;height:32px}.brand span{color:var(--accent2)}
+header.top .btn{background:transparent;color:#fff;border-color:#4a5966}
+.hero{background:var(--dark);color:#fff;padding:28px 0 30px}
+.hero h1{font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.12;margin:0 0 8px}.hero h1 em{font-style:normal;color:var(--accent2)}
+.hero p{margin:0;color:#c3ced5;max-width:640px}
+.steps{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.steps span{background:#24303a;border:1px solid #33414c;border-radius:999px;padding:6px 12px;font-size:.9rem;color:#dfe6ea}.steps b{color:var(--accent2);margin-right:4px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:-18px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:640px){.g2{grid-template-columns:1fr}}
+.f{display:grid;gap:5px;font-size:.86rem;font-weight:600;color:var(--muted)}
+.f input,.f select,.f textarea{width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+.f textarea{min-height:96px;resize:vertical}
+.f small{font-weight:400}
+.hint{color:var(--muted);font-size:.9rem}
+.err{color:var(--crit);font-weight:600;min-height:1.2em;margin-top:6px}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85rem;margin:4px 0}.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+.ok{background:#e6f4ea;border:1px solid #bfe3c9;color:#135c2f;border-radius:12px;padding:14px 16px;margin:16px 0}
+@media (prefers-color-scheme:dark){.ok{background:#15301f;border-color:#2a5a3a;color:#bfe3c9}}
+h2{font-size:1.3rem;margin:26px 0 6px}
+.list{display:grid;gap:12px;margin:12px 0 40px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:6px}
+.card h3{margin:0;font-size:1.1rem}.loc{color:var(--muted);font-size:.92rem}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tags span{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 9px;font-size:.8rem}
+.tags span.hit{border-color:var(--accent);color:var(--accent);font-weight:700}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.stars{font-size:.9rem;color:#b26a00}.stars small{color:var(--muted)}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--muted)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.chips button{border:1.5px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 11px;font-size:.85rem;cursor:pointer;color:var(--ink)}.chips button[aria-pressed=true]{background:var(--dark);color:#fff;border-color:var(--dark)}
+footer{color:var(--muted);font-size:.85rem;text-align:center;padding:20px 0 40px}
+.wa-fab{position:fixed;right:16px;bottom:16px;z-index:5}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><img src="logo.svg" alt="">USTA <span>DEFTERİ</span></a>
+  <nav style="display:flex;gap:6px"><a class="btn" href="usta-bul.html" style="white-space:nowrap;padding:8px 10px">Usta Bul</a><a class="btn" href="giris/" style="white-space:nowrap;padding:8px 10px">Usta girişi</a></nav>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <h1>Şasi no ile <em>parça fiyatı sor</em>, işi yapacak ustayı bul</h1>
+  <p>Aracınızın plakasını ya da şasi numarasını ve istediğiniz parçaları yazın. Fiyat size WhatsApp'tan gelir; aynı anda bu işi yapabilecek yakınınızdaki ustalar listelenir — arayın, randevu alın.</p>
+  <div class="steps"><span><b>1</b>Aracı yaz</span><span><b>2</b>Parçaları yaz</span><span><b>3</b>Fiyat + usta listesi gelsin</span></div>
+</div></section>
+
+<main class="wrap">
+  <form class="panel" id="f" autocomplete="on">
+    <div class="g2">
+      <label class="f">Plaka<input id="plate" placeholder="34 ABC 123" maxlength="12" inputmode="text" style="text-transform:uppercase"></label>
+      <label class="f">Şasi no <small>(ruhsatta E / ŞASE NO, 17 hane)</small><input id="vin" placeholder="NM4223…" maxlength="20" style="text-transform:uppercase"></label>
+      <label class="f" style="grid-column:1/-1">Araç <small>(marka model yıl – biliyorsanız)</small><input id="vehicle" placeholder="Fiat Doblo 1.3 Multijet 2019" maxlength="60"></label>
+      <label class="f" style="grid-column:1/-1">İstediğiniz parçalar / yapılacak iş<textarea id="parts" placeholder="Ör. ön balata takımı, ön disk, yağ filtresi + 4 lt 5W-30&#10;ya da: fren sesi var, kontrol edilsin" maxlength="600" required></textarea>
+        <div class="chips" id="quick"></div></label>
+      <label class="f">Adınız<input id="name" placeholder="Ahmet Yılmaz" maxlength="60" required></label>
+      <label class="f">Telefon (WhatsApp)<input id="phone" inputmode="tel" placeholder="05xx xxx xx xx" maxlength="20" required></label>
+      <label class="f">İl<select id="city" required><option value="">Seçin</option></select></label>
+      <label class="f">İlçe <small>(isteğe bağlı)</small><input id="district" placeholder="Kepez" maxlength="40"></label>
+    </div>
+    <div class="err" id="err"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px">
+      <button class="btn pri big" type="submit" id="send">Fiyat iste ve ustaları göster</button>
+      <span class="hint">Ücretsiz. Telefonunuz yalnız fiyat ve randevu için kullanılır.</span>
+    </div>
+  </form>
+
+  <div id="done" hidden></div>
+  <div id="ustalar" hidden>
+    <h2>Bu işi yapabilecek ustalar</h2>
+    <p class="hint" id="ucount"></p>
+    <div class="list" id="list"></div>
+  </div>
+</main>
+<footer>Usta Defteri · <a href="./">ustadefteri.net</a> · <a href="gizlilik.html">Gizlilik</a></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const low=s=>String(s||'').toLocaleLowerCase('tr').trim();
+const waNum=p=>{let n=String(p||'').replace(/\D/g,'');if(n.length===11&&n[0]==='0')n='9'+n;if(n.length===10)n='90'+n;return n};
+const avg=p=>p.ratingCount?p.ratingSum/p.ratingCount:0;
+const starStr=v=>'★'.repeat(Math.round(v))+'☆'.repeat(5-Math.round(v));
+const starsHtml=p=>p.ratingCount?`<span class="stars">${starStr(avg(p))} ${avg(p).toFixed(1).replace('.',',')} <small>(${p.ratingCount} yorum)</small></span>`:'<span class="stars"><small>Henüz puan yok</small></span>';
+const ILLER=['Adana','Adıyaman','Afyonkarahisar','Ağrı','Aksaray','Amasya','Ankara','Antalya','Ardahan','Artvin','Aydın','Balıkesir','Bartın','Batman','Bayburt','Bilecik','Bingöl','Bitlis','Bolu','Burdur','Bursa','Çanakkale','Çankırı','Çorum','Denizli','Diyarbakır','Düzce','Edirne','Elazığ','Erzincan','Erzurum','Eskişehir','Gaziantep','Giresun','Gümüşhane','Hakkari','Hatay','Iğdır','Isparta','İstanbul','İzmir','Kahramanmaraş','Karabük','Karaman','Kars','Kastamonu','Kayseri','Kilis','Kırıkkale','Kırklareli','Kırşehir','Kocaeli','Konya','Kütahya','Malatya','Manisa','Mardin','Mersin','Muğla','Muş','Nevşehir','Niğde','Ordu','Osmaniye','Rize','Sakarya','Samsun','Şanlıurfa','Siirt','Sinop','Sivas','Şırnak','Tekirdağ','Tokat','Trabzon','Tunceli','Uşak','Van','Yalova','Yozgat','Zonguldak'];
+const ADMIN_WA='905455260007';
+/* parça → hizmet eşlemesi (ustaların "yaptığı işler" etiketleriyle eşleşir) */
+const MAP=[[/balata|disk|kaliper|fren|el freni|abs/,'Fren'],[/yağ|filtre|bakım|buji|antifriz|5w|10w/,'Periyodik bakım'],[/triger|v kayış|gergi|devirdaim/,'Triger'],[/debriyaj|şanzıman|vites|volan/,'Şanzıman'],[/akü/,'Akü'],[/klima|kompresör|gaz dolum/,'Klima'],[/rot|balans|rotil|salıncak|amortisör|yürüyen/,'Yürüyen aksam'],[/lastik|jant/,'Lastik'],[/kaporta|boya|tampon|çamurluk|kapı/,'Kaporta-boya'],[/egzoz|katalitik|dpf|susturucu/,'Egzoz'],[/turbo/,'Turbo'],[/enjektör|dizel|mazot|pompa/,'Dizel / enjektör'],[/lpg/,'LPG'],[/cam|silecek/,'Oto cam'],[/far|elektrik|sigorta|alternatör|marş|kablo/,'Elektrik'],[/motor|conta|silindir|piston|kapak/,'Motor'],[/arıza|ses|kontrol|tespit|ışık yandı/,'Arıza tespiti']];
+const svcOf=t=>{const l=low(t);const s=new Set();MAP.forEach(([re,h])=>{if(re.test(l))s.add(h)});return [...s]};
+const QUICK=['Ön balata','Ön disk','Yağ bakımı','Akü','Triger seti','Debriyaj','Klima gazı','Amortisör','Lastik','Far ampulü'];
+$('#city').innerHTML='<option value="">Seçin</option>'+ILLER.map(i=>`<option>${i}</option>`).join('');
+$('#quick').innerHTML=QUICK.map(q=>`<button type="button" data-q="${q}">+ ${q}</button>`).join('');
+$('#quick').onclick=e=>{const b=e.target.closest('[data-q]');if(!b)return;const t=$('#parts');t.value=(t.value.trim()?t.value.trim().replace(/[,\s]+$/,'')+', ':'')+b.dataset.q;t.focus()};
+try{const q=new URLSearchParams(location.search);if(q.get('il'))$('#city').value=q.get('il');const saved=JSON.parse(localStorage.getItem('ps_me')||'{}');if(saved.name)$('#name').value=saved.name;if(saved.phone)$('#phone').value=saved.phone;if(saved.city&&!$('#city').value)$('#city').value=saved.city;if(saved.district)$('#district').value=saved.district}catch(_){}
+firebase.initializeApp(window.FIREBASE_CONFIG);const db=firebase.firestore();
+let last=null;
+$('#f').addEventListener('submit',async e=>{
+  e.preventDefault();const err=$('#err');err.textContent='';
+  const d={plate:$('#plate').value.trim().toLocaleUpperCase('tr').slice(0,12),vin:$('#vin').value.trim().toLocaleUpperCase('tr').replace(/\s/g,'').slice(0,20),vehicle:$('#vehicle').value.trim().slice(0,60),parts:$('#parts').value.trim().slice(0,600),name:$('#name').value.trim().slice(0,60),phone:$('#phone').value.trim().slice(0,20),city:$('#city').value,district:$('#district').value.trim().slice(0,40),status:'yeni',createdAt:Date.now()};
+  if(!d.plate&&!d.vin){err.textContent='Plaka ya da şasi numarasından birini yazın.';return}
+  if(d.parts.length<2){err.textContent='İstediğiniz parçayı ya da işi yazın.';return}
+  if(d.name.length<2){err.textContent='Adınızı yazın.';return}
+  if(waNum(d.phone).length<12){err.textContent='Telefon numaranızı eksiksiz yazın (05xx xxx xx xx).';return}
+  if(!d.city){err.textContent='İlinizi seçin; ustaları ona göre listeleyelim.';return}
+  // günlük sınır (aynı tarayıcı)
+  try{const k='ps_cnt_'+new Date().toISOString().slice(0,10);const n=+localStorage.getItem(k)||0;if(n>=3){err.textContent='Bugün için talep sınırına ulaştınız. WhatsApp\'tan yazabilirsiniz.';return}localStorage.setItem(k,n+1);localStorage.setItem('ps_me',JSON.stringify({name:d.name,phone:d.phone,city:d.city,district:d.district}))}catch(_){}
+  const b=$('#send');b.disabled=true;b.textContent='Gönderiliyor…';
+  try{await db.collection('parca_sor').add(d);last=d;
+    const msg=`Merhaba, parça fiyatı rica ediyorum.\nAraç: ${[d.plate,d.vin?'Şasi '+d.vin:'',d.vehicle].filter(Boolean).join(' · ')}\nParçalar: ${d.parts}\nAd: ${d.name} · ${d.city}${d.district?' / '+d.district:''}`;
+    $('#done').hidden=false;$('#done').innerHTML=`<div class="ok"><b>Talebiniz alındı.</b> Parça fiyatı en kısa sürede <b>${esc(d.phone)}</b> numaranıza WhatsApp'tan gönderilecek. Hızlı cevap için siz de yazabilirsiniz:
+      <div style="margin-top:10px"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(msg)}">WhatsApp'tan fiyat iste</a></div></div>`;
+    $('#f').hidden=true;await showUstalar(d);$('#done').scrollIntoView({behavior:'smooth'});
+  }catch(ex){err.textContent='Gönderilemedi: '+(ex&&ex.message||ex)+' — internetinizi kontrol edip tekrar deneyin.'}
+  finally{b.disabled=false;b.textContent='Fiyat iste ve ustaları göster'}
+});
+async function showUstalar(d){
+  const box=$('#ustalar');box.hidden=false;$('#list').innerHTML='<div class="empty">Ustalar yükleniyor…</div>';
+  let ALL=[];try{const s=await db.collection('profiller').where('visible','==',true).get();ALL=s.docs.map(x=>({id:x.id,...x.data()})).filter(p=>p.shop)}catch(e){$('#list').innerHTML='<div class="empty">Ustalar yüklenemedi.</div>';return}
+  const svc=svcOf(d.parts);const dl=low(d.district);
+  const score=p=>{const C=5,m=4.2;return (C*m+(p.ratingSum||0))/(C+(p.ratingCount||0))+(p.verified?.3:0)};
+  let L=ALL.filter(p=>p.city===d.city);
+  const hit=p=>svc.filter(s=>(p.services||[]).includes(s)).length;
+  L.sort((a,b)=>(dl&&low(b.district).includes(dl))-(dl&&low(a.district).includes(dl))||hit(b)-hit(a)||score(b)-score(a));
+  let note='';if(!L.length){L=ALL.slice().sort((a,b)=>hit(b)-hit(a)||score(b)-score(a)).slice(0,6);note=`${esc(d.city)} ilinde kayıtlı usta henüz yok; diğer illerden ustalar gösteriliyor.`}
+  $('#ucount').innerHTML=note||`${L.length} usta · ${esc(d.city)}${svc.length?' · <b>'+svc.map(esc).join(', ')+'</b> işi yapanlar önde':''}`;
+  const wa=p=>`Merhaba, ustadefteri.net üzerinden ulaşıyorum.\nAraç: ${[d.plate,d.vehicle].filter(Boolean).join(' ')}${d.vin?' (şasi '+d.vin+')':''}\nYapılacak iş / parçalar: ${d.parts}\nRandevu ve fiyat için yazıyorum. – ${d.name}`;
+  $('#list').innerHTML=L.length?L.map(p=>{const tel=waNum(p.phone);const loc=[p.district,p.city].filter(Boolean).join(', ');
+    return `<article class="card"><h3>${esc(p.shop)}${p.verified?' <span title="Doğrulanmış" style="color:var(--ok)">✔</span>':''}</h3>
+      <div class="loc">${esc(loc)}${p.name?' · '+esc(p.name):''}</div>${starsHtml(p)}
+      ${(p.services||[]).length?`<div class="tags">${p.services.slice(0,8).map(s=>`<span class="${svc.includes(s)?'hit':''}">${esc(s)}</span>`).join('')}</div>`:''}
+      <div class="acts">${tel?`<a class="btn" href="tel:+${tel}">📞 Ara</a><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${tel}?text=${encodeURIComponent(wa(p))}">WhatsApp</a>`:''}
+        ${p.acceptAppt!==false?`<a class="btn pri" href="usta-bul.html?u=${encodeURIComponent(p.id)}&rv=1&is=${encodeURIComponent(svc[0]||'')}&plaka=${encodeURIComponent(d.plate)}&arac=${encodeURIComponent(d.vehicle)}&not=${encodeURIComponent(d.parts.slice(0,120))}&ad=${encodeURIComponent(d.name)}&tel=${encodeURIComponent(d.phone)}">Randevu al</a>`:`<a class="btn" href="usta-bul.html?u=${encodeURIComponent(p.id)}">Usta sayfası</a>`}</div></article>`}).join('')
+    :'<div class="empty">Henüz kayıtlı usta yok. Fiyatınız WhatsApp\'tan gelecek.</div>';
+}
+</script>
+</body></html>
