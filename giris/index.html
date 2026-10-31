@@ -682,6 +682,7 @@ html,body{overscroll-behavior-x:none}
         <div class="list" id="ps-list"></div></div>
       <div class="chips" id="tp-filters" style="margin-bottom:12px">
         <button class="chip" data-f="yeni" aria-pressed="true">Yeni</button>
+        <button class="chip" data-f="islemde" aria-pressed="false">İşlemde</button>
         <button class="chip" data-f="fiyatlandi" aria-pressed="false">Fiyat verilen</button>
         <button class="chip" data-f="onaylandi" aria-pressed="false">Onaylanan</button>
         <button class="chip" data-f="tum" aria-pressed="false">Tümü</button>
@@ -2678,8 +2679,8 @@ $('#rep-wa').onclick=()=>{const j=repJob;if(!j)return;const lines=j.items.map(i=
 $('#btn-report').onclick=openReport;
 
 /* ---------- Parça fiyat talepleri ---------- */
-const TPS={yeni:{t:'Fiyat bekliyor',c:'var(--warn)'},fiyatlandi:{t:'Fiyat geldi',c:'var(--info)'},onaylandi:{t:'Sipariş onaylandı',c:'var(--ok)'},iptal:{t:'İptal',c:'var(--muted)'}};
-const TPS_ADMIN={...TPS,yeni:{t:'Yeni talep',c:'var(--crit)'},fiyatlandi:{t:'Fiyat gönderildi',c:'var(--info)'}};
+const TPS={yeni:{t:'Fiyat bekliyor',c:'var(--warn)'},islemde:{t:'İşleme alındı',c:'var(--info)'},fiyatlandi:{t:'Fiyat geldi',c:'var(--info)'},onaylandi:{t:'Sipariş onaylandı',c:'var(--ok)'},iptal:{t:'İptal',c:'var(--muted)'}};
+const TPS_ADMIN={...TPS,yeni:{t:'Yeni talep',c:'var(--crit)'},islemde:{t:'İşlemde',c:'var(--warn)'},fiyatlandi:{t:'Fiyat gönderildi',c:'var(--info)'}};
 const isAdm=()=>state.me&&state.me.role==='admin';
 const isCirak=()=>state.me&&state.me.role==='cirak';
 let tpDraft=null,tpOpenId=null,tpQuote=null;
@@ -2818,6 +2819,7 @@ function renderTpView(first){
       <label class="f" style="margin-top:8px">Ustaya not<input id="q-note" value="${esc(tpQuote.note||'')}" placeholder="Yarın sabah teslim, stokta var vb."></label>
       <div class="totals" id="q-totals"><div class="big"><span>Toplam</span><span>${tl(c.total)}</span></div></div>
       <div class="actions" style="margin-top:10px">
+        ${t.status==='yeni'?'<button type="button" class="btn" id="q-proc" style="background:var(--info);border-color:var(--info);color:#fff">İşleme al</button>':''}
         <button type="button" class="btn primary" id="q-send">${t.quote?'Fiyatı güncelle':'Fiyatı gönder'}</button>
         <a class="btn wa" id="q-wa" target="_blank" rel="noopener">WhatsApp'la da bildir</a>
         ${t.status!=='iptal'?'<button type="button" class="btn" id="q-cancel">Talebi iptal et</button>':''}
@@ -2864,6 +2866,10 @@ $('#tpview').addEventListener('click',async e=>{
     try{const ph=await fdb.collection(`talepler/${t.id}/foto`).get();const bt=fdb.batch();ph.docs.forEach(d=>bt.delete(fdb.doc(`talepler/${t.id}/foto/${d.id}`)));bt.delete(fdb.doc('talepler/'+t.id));await bt.commit();closeTpView();toast('Talep silindi')}
     catch(ex){b.disabled=false;b.textContent='Talebi sil';toast('Silinemedi: '+authMsg(ex))}
     return}
+  if(e.target.id==='q-proc'){const b=e.target;b.disabled=true;
+    fdb.doc('talepler/'+t.id).update({status:'islemde',islemAt:Date.now()}).then(()=>{toast('İşleme alındı, ustaya bildirim gitti');
+      const tel=waNum(t.ustaPhone||'');if(tel){const msg=`Merhaba ${(t.ustaName||'').split(' ')[0]||'usta'}, ${t.plate?fmtPlate(t.plate)+' için ':''}parça talebiniz işleme alındı. Fiyat en kısa sürede Usta Defteri'ne düşecek.`;
+        const w=$('#q-wa');if(w){w.href=`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`;w.textContent='Ustaya WhatsApp\'la da yaz'}}}).catch(ex=>{b.disabled=false;toast(authMsg(ex))});return}
   if(e.target.id==='q-cancel'){const b=e.target;if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='Emin misiniz? İptal et';return}
     fdb.doc('talepler/'+t.id).update({status:'iptal'}).then(()=>toast('Talep iptal edildi')).catch(ex=>toast(authMsg(ex)));return}
   if(e.target.id==='u-approve'||e.target.id==='u-reject'){
@@ -2907,6 +2913,7 @@ function subTalepler(){
     if(!first){snap.docChanges().forEach(ch=>{const t=ch.doc.data();
       if(ch.type==='added'&&isAdm()&&t.status==='yeni')notify(t.kind==='odeme'?'Ödeme bildirimi':'Yeni parça talebi',t.kind==='odeme'?`${t.ustaName||'Usta'} · ${PLANS[t.plan]||t.plan}${t.amount?' · '+tl(t.amount):''}`:`${t.ustaName||t.shop||'Usta'} · ${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''}`,'tp:'+ch.doc.id);
       if(ch.type==='modified'&&!isAdm()&&t.kind==='odeme'&&t.status==='onaylandi'&&(state.talepler.find(x=>x.id===ch.doc.id)||{}).status!=='onaylandi')notify('Üyeliğiniz uzatıldı','Ödemeniz alındı, teşekkürler. Üyelik süreniz güncellendi.','tp:'+ch.doc.id);
+      if(ch.type==='modified'&&!isAdm()&&t.status==='islemde'&&(state.talepler.find(x=>x.id===ch.doc.id)||{}).status!=='islemde')notify('Parça talebiniz işleme alındı',`${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''} — fiyat hazırlanıyor, gelince haber vereceğiz.`,'tp:'+ch.doc.id);
       if(ch.type==='modified'&&!isAdm()&&t.status==='fiyatlandi'&&!(state.talepler.find(x=>x.id===ch.doc.id)||{}).quote)notify('Parça fiyatı geldi',`${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''} için fiyat geldi, onaylayın.`,'tp:'+ch.doc.id)})}
     first=false;
     state.talepler=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));renderTalepler()},()=>{}));
