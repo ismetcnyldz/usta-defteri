@@ -535,6 +535,7 @@ html,body{overscroll-behavior-x:none}
   <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
   <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17v.5"/></symbol>
   <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></symbol>
   <symbol id="i-cam" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></symbol>
   <symbol id="i-free" viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M6 22v-6a6 6 0 0 1 12 0v6"/><path d="M4 12l-1.5 3M20 12l1.5 3" stroke-dasharray="2 2"/></symbol>
@@ -582,6 +583,8 @@ html,body{overscroll-behavior-x:none}
       <button class="btn big" id="btn-qr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM5 5v3h3V5zM16 5v3h3V5zM5 16v3h3v-3zM14 14h3v3h-3zM18 18h3v3h-3zM14 19h2v2h-2zM19 14h2v2h-2z"/></svg>QR okut</button>
       <button class="btn big" id="btn-plate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1zm8 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg>Plaka okut</button>
       <input type="file" id="plate-file" accept="image/*" capture="environment" hidden>
+      <button class="btn big" id="btn-ruhsat" type="button" title="Ruhsatı çek: iş emri kendiliğinden açılır ve dolar"><svg class="ic" aria-hidden="true"><use href="#i-doc"/></svg>Ruhsat tara</button>
+      <input type="file" id="home-ruhsat-file" accept="image/*" capture="environment" hidden>
       <button class="btn big" id="btn-voice" type="button" title="Sesle iş emri: '34 ABC 123 balata değişti 1450 lira' deyin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2z"/></svg>Sesle</button>
     </div>
     <div id="voicebox" hidden></div>
@@ -669,6 +672,10 @@ html,body{overscroll-behavior-x:none}
       <div class="list" id="tp-ulist"></div>
     </div>
     <div id="tp-aview" hidden>
+      <div id="ps-box" hidden style="margin-bottom:16px"><h3 class="sec-h" style="color:var(--info)"><svg class="ic" aria-hidden="true"><use href="#i-ask"/></svg>Müşteri parça talepleri <span class="cnt" id="ps-cnt" hidden>0</span></h3>
+        <p class="hint">Sitedeki "Parça fiyatı sor" sayfasından gelen talepler. WhatsApp'tan fiyat verin, bitince "Kapat".</p>
+        <div class="chips" style="margin-bottom:8px"><button class="chip" data-psf="yeni" aria-pressed="true">Açık</button><button class="chip" data-psf="kapandi" aria-pressed="false">Kapanan</button></div>
+        <div class="list" id="ps-list"></div></div>
       <div class="chips" id="tp-filters" style="margin-bottom:12px">
         <button class="chip" data-f="yeni" aria-pressed="true">Yeni</button>
         <button class="chip" data-f="fiyatlandi" aria-pressed="false">Fiyat verilen</button>
@@ -2371,8 +2378,14 @@ const fotoDoc=id=>fdb.doc('profFoto/'+id);
 function ilOpts(sel){return '<option value="">İl seçin</option>'+ILLER.map(i=>`<option${i===sel?' selected':''}>${i}</option>`).join('')}
 function addrHtml(){return `<div class="grid2"><label class="f">İl<select data-a="city">${ilOpts('')}</select></label><label class="f">İlçe<input data-a="district" maxlength="40" placeholder="Kadıköy"></label></div>
   <label class="f">Dükkan adresi<input data-a="address" maxlength="200" placeholder="Mahalle, cadde/sokak, no"></label>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button type="button" class="btn" data-a="gps"><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg>Dükkândayım, konumumu al</button><span class="hint" data-a="gpsinfo">Müşteri sizi haritada tam yerinde bulsun, yol tarifi alsın. Dükkânda değilseniz adres yeter.</span></div>
+  <input type="hidden" data-a="lat"><input type="hidden" data-a="lng">
   <label class="kvkk"><input type="checkbox" data-a="visible" checked> <span>Dükkânım <b>Usta Bul</b> haritasında görünsün, müşteriler beni bulsun. (İstediğim zaman kapatabilirim.)</span></label>`}
-function readAddr(root){const r=$(root),g=k=>r.querySelector(`[data-a="${k}"]`);return{city:g('city').value,district:g('district').value.trim(),address:g('address').value.trim(),visible:g('visible').checked}}
+function readAddr(root){const r=$(root),g=k=>r.querySelector(`[data-a="${k}"]`);const lat=parseFloat(g('lat').value),lng=parseFloat(g('lng').value);return{city:g('city').value,district:g('district').value.trim(),address:g('address').value.trim(),visible:g('visible').checked,lat:isFinite(lat)?lat:null,lng:isFinite(lng)?lng:null}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a="gps"]');if(!b)return;const r=b.closest('form,div,fieldset');const g=k=>b.parentElement.parentElement.querySelector(`[data-a="${k}"]`);const info=g('gpsinfo');
+  if(!navigator.geolocation){info.textContent='Bu cihaz konum vermiyor.';return}info.textContent='Konum alınıyor…';b.disabled=true;
+  navigator.geolocation.getCurrentPosition(p=>{g('lat').value=p.coords.latitude.toFixed(6);g('lng').value=p.coords.longitude.toFixed(6);info.innerHTML='<b style="color:var(--ok)">Konum alındı ✔</b> Müşteriler sizi haritada tam yerinde görecek.';b.disabled=false;b.textContent='Konum alındı'},
+    ()=>{info.textContent='Konum izni verilmedi; adresinizden bulunacak. Sonra Ayarlar > Usta Bul\'dan haritada düzeltebilirsiniz.';b.disabled=false},{enableHighAccuracy:true,timeout:12000})});
 function clearAddr(root){const r=$(root);r.querySelectorAll('[data-a]').forEach(e=>{if(e.type==='checkbox')e.checked=true;else e.value=''})}
 // Adresten haritadaki yeri bul (OpenStreetMap). Bulunamazsa ilçe merkezine düşer.
 async function geocode(city,district,address){
@@ -2393,8 +2406,8 @@ async function writeProf(id,f){
 // Kayıtta girilen adresle profili aç (haritadaki yer kendiliğinden bulunur)
 async function profFromSignup(id,a,base){
   if(!a.city&&!a.address)return;
-  const g=a.city?await geocode(a.city,a.district,a.address):null;
-  await writeProf(id,{...a,...base,lat:g?g.lat:null,lng:g?g.lng:null});
+  const g=(a.lat!=null&&a.lng!=null)?{lat:a.lat,lng:a.lng}:(a.city?await geocode(a.city,a.district,a.address):null);
+  const {lat,lng,...rest}=a;await writeProf(id,{...rest,...base,lat:g?g.lat:null,lng:g?g.lng:null});
 }
 function starsTxt(sum,cnt){if(!cnt)return'Henüz puan yok';const a=sum/cnt;return '★'.repeat(Math.round(a))+'☆'.repeat(5-Math.round(a))+` ${a.toFixed(1).replace('.',',')} (${cnt} yorum)`}
 
@@ -2839,8 +2852,27 @@ $('#tpview').addEventListener('input',e=>{
 function showImg(src){const v=$('#imgview');v.querySelector('img').src=src;v.hidden=false}
 $('#imgview').onclick=()=>{$('#imgview').hidden=true};
 document.addEventListener('click',e=>{const c=e.target.closest('[data-tp]');if(c)openTpView(c.dataset.tp)});
+let psF='yeni';
+function renderPs(){const box=$('#ps-box');if(!box)return;const L=(state.parcaSor||[]);box.hidden=!isAdm();if(!isAdm())return;
+  const open=L.filter(x=>x.status!=='kapandi');const c=$('#ps-cnt');c.hidden=!open.length;c.textContent=open.length;
+  const V=L.filter(x=>psF==='yeni'?x.status!=='kapandi':x.status==='kapandi');
+  $('#ps-list').innerHTML=V.length?V.map(x=>{const tel=waNum(x.phone);const msg=`Merhaba ${(x.name||'').split(' ')[0]}, ustadefteri.net üzerinden ${[x.plate?fmtPlate(x.plate):'',x.vin?'şasi '+x.vin:'',x.vehicle].filter(Boolean).join(' · ')} için istediğiniz parça fiyatı:\n${x.parts}\n\n`;
+    return `<div class="card" style="--sc:${x.status==='kapandi'?'var(--muted)':'var(--info)'}">
+      <div class="plate-cell">${x.plate?plateHtml(x.plate):'<span class="hint">Plaka yok</span>'}</div>
+      <div class="mid"><div class="veh">${esc(x.name||'Müşteri')} · ${esc(x.phone||'')}${x.city?' · '+esc([x.district,x.city].filter(Boolean).join('/')):''}</div>
+        <div class="cmp" style="white-space:normal">${x.vehicle?esc(x.vehicle)+' · ':''}${x.vin?'Şasi <b>'+esc(x.vin)+'</b> · ':''}<b>${esc(x.parts||'')}</b> · ${dstr(x.createdAt)}</div></div>
+      <div class="right" style="flex-wrap:wrap;justify-content:flex-end">${tel?`<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${tel}?text=${encodeURIComponent(msg)}">WhatsApp</a><a class="btn" href="tel:+${tel}">Ara</a>`:''}
+        ${x.status!=='kapandi'?`<button class="btn" data-psok="${esc(x.id)}">Kapat</button>`:`<button class="btn" data-psdel="${esc(x.id)}">Sil</button>`}</div></div>`}).join('')
+    :'<div class="empty"><h3>'+(psF==='yeni'?'Açık müşteri talebi yok':'Kapanan talep yok')+'</h3></div>'}
+document.addEventListener('click',e=>{const f=e.target.closest('[data-psf]');if(f){psF=f.dataset.psf;document.querySelectorAll('[data-psf]').forEach(x=>x.setAttribute('aria-pressed',x===f));renderPs();return}
+  const ok=e.target.closest('[data-psok]');if(ok){fdb.doc('parca_sor/'+ok.dataset.psok).update({status:'kapandi',updatedAt:Date.now()}).catch(ex=>toast(authMsg(ex)));return}
+  const d=e.target.closest('[data-psdel]');if(d){if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='Emin misin?';setTimeout(()=>{d.classList.remove('armed');d.textContent='Sil'},2500);return}fdb.doc('parca_sor/'+d.dataset.psdel).delete().catch(ex=>toast(authMsg(ex)))}});
+function subParcaSor(){if(!isAdm())return;let first=true;
+  subs.push(fdb.collection('parca_sor').orderBy('createdAt','desc').limit(200).onSnapshot(snap=>{
+    if(!first)snap.docChanges().forEach(ch=>{const x=ch.doc.data();if(ch.type==='added'&&x.status!=='kapandi')notify('Müşteri parça fiyatı soruyor',`${x.name||''} · ${x.plate?fmtPlate(x.plate):(x.vin||'')} · ${(x.parts||'').slice(0,60)}`,'ps:'+ch.doc.id)});
+    first=false;state.parcaSor=snap.docs.map(d=>({id:d.id,...d.data()}));renderPs()},()=>{}))}
 function subTalepler(){
-  const me=state.me;
+  const me=state.me;subParcaSor();
   const q=isAdm()?fdb.collection('talepler').orderBy('createdAt','desc').limit(300):fdb.collection('talepler').where('ustaId','==',me.id);
   let first=true;
   subs.push(q.onSnapshot(snap=>{
@@ -3266,7 +3298,10 @@ function parseRuhsat(text){
   return out;
 }
 $('#f-ruhsat').onclick=()=>$('#ruhsat-file').click();
-$('#ruhsat-file').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f||!draft)return;
+$('#btn-ruhsat').onclick=()=>$('#home-ruhsat-file').click();
+$('#home-ruhsat-file').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;openSheet(null);await new Promise(r=>setTimeout(r,150));await scanRuhsat(f)});
+$('#ruhsat-file').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f||!draft)return;await scanRuhsat(f)});
+async function scanRuhsat(f){if(!draft)return;
   const b=$('#f-ruhsat');b.classList.add('busy');toast('Ruhsat okunuyor…');
   try{
     if(!navigator.onLine)throw new Error('offline');
@@ -3283,7 +3318,7 @@ $('#ruhsat-file').addEventListener('change',async e=>{const f=e.target.files[0];
     toast(filled.length?'Ruhsat okundu: '+filled.join(', ')+' dolduruldu — kontrol edin':'Ruhsat okundu ama alanlar boş kalmadı; bilgileri kontrol edin');
   }catch(ex){const m=String(ex&&ex.message||ex);
     toast(m==='offline'?'Ruhsat taramak için internet gerekli':/API key|not valid|forbidden|PERMISSION|403|has not been used|disabled/i.test(m)?'Ruhsat tarama henüz açılmamış (yönetici Vision API\'yi açmalı)':'Ruhsat okunamadı: fotoğrafı düz ve aydınlık çekin')}
-  finally{b.classList.remove('busy')}});
+  finally{b.classList.remove('busy')}}
 /* ---------- QR etiket ---------- */
 function labelUrl(plate){const q=new URLSearchParams({arac:normPlate(plate)});if(state.shop)q.set('s',state.shop);if(state.shopPhone)q.set('t',waNum(state.shopPhone));return APP_URL+'#'+q.toString()}
 async function openLabel(){
