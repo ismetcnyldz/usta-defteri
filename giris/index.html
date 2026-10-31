@@ -269,6 +269,11 @@ label.f textarea{resize:vertical;min-height:64px}
 .rp-next span{color:#444;font-size:12px}
 .rp-qr{width:150px;text-align:center;font-size:10.5px;color:#444}
 .rp-qr svg{width:110px;height:110px;display:block;margin:0 auto 4px}
+.rp-sign{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;break-inside:avoid;page-break-inside:avoid}
+.rp-sg{border:1px solid #bbb;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:3px;font-size:11.5px}
+.rp-sg small{color:#666;font-weight:700;letter-spacing:.06em;font-size:10px}.rp-sg b{font-size:12.5px}
+.rp-sgtx{color:#444;font-size:10.5px}
+.rp-sgbox{margin-top:auto;height:78px;border:1px dashed #aaa;border-radius:6px;display:flex;align-items:flex-end;justify-content:center;padding:4px;color:#999;font-size:10px}
 .rp-foot{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #ddd;margin-top:12px;padding-top:6px;color:#777;font-size:10.5px}
 #rep-view{background:#d9dde0;padding:10px;border-radius:10px;overflow-x:auto}
 @media print{
@@ -931,7 +936,7 @@ html,body{overscroll-behavior-x:none}
 
       <div class="savebar">
         <button type="button" class="btn danger" id="del" hidden>Sil</button>
-        <button type="button" class="btn" id="btn-report">Servis raporu</button>
+        <button type="button" class="btn" id="btn-report">İş emri / Servis raporu</button>
         <button type="button" class="btn" id="btn-label">QR etiket</button>
         <button type="button" class="btn" id="btn-tp-job">Parça fiyatı iste</button>
         <span style="flex:1"></span>
@@ -1223,12 +1228,14 @@ html,body{overscroll-behavior-x:none}
 <!-- Servis raporu -->
 <div class="sheet" id="repsheet" hidden>
   <div class="inner" style="max-width:820px">
-    <div class="sheet-head"><h2>Servis raporu</h2><button class="x" id="rep-close" aria-label="Kapat">×</button></div>
+    <div class="sheet-head"><h2>İş emri / Servis raporu</h2><button class="x" id="rep-close" aria-label="Kapat">×</button></div>
     <p class="hint" style="margin:0 0 8px">Yazdırıp müşterinin aracına bırakın; yapılan işler, kullanılan parçalar ve sonraki bakım yazar. Telefonda “Yazdır” deyince PDF olarak da kaydedebilirsiniz.</p>
     <div style="display:flex;gap:14px;flex-wrap:wrap;margin:0 0 10px"><label class="kvkk" style="margin:0"><input type="checkbox" id="rep-price" checked> <span>Fiyatları da göster</span></label>
-    <label class="kvkk" style="margin:0"><input type="checkbox" id="rep-fat" checked> <span>Fatura bilgilerini ekle (KDV hariç / dahil)</span></label></div>
+    <label class="kvkk" style="margin:0"><input type="checkbox" id="rep-fat" checked> <span>Fatura bilgilerini ekle (KDV hariç / dahil)</span></label>
+    <label class="kvkk" style="margin:0"><input type="checkbox" id="rep-imza" checked> <span>Kaşe ve imza alanı</span></label></div>
     <div id="rep-view"></div>
-    <div class="actions" style="margin-top:12px"><button type="button" class="btn primary" id="rep-print">Yazdır / PDF</button><button type="button" class="btn wa" id="rep-wa">WhatsApp'la gönder</button></div>
+    <div class="actions" style="margin-top:12px"><button type="button" class="btn primary" id="rep-print">Yazdır / PDF</button><button type="button" class="btn wa" id="rep-pdfwa">PDF'i WhatsApp'la gönder</button><button type="button" class="btn" id="rep-wa">Yazı + link gönder</button></div>
+    <p class="hint" style="margin:6px 0 0">PDF'i gönder deyince telefonda WhatsApp açılır, müşteriyi seçip gönderirsiniz. Bilgisayarda PDF iner, WhatsApp sohbetine sürükleyin.</p>
   </div>
 </div>
 
@@ -2627,7 +2634,7 @@ async function openReport(){
   repJob.addr=addr;
   let qr='';try{await loadLib('qr');const q=qrcode(0,'M');q.addData(trackUrl(repJob.trackId));q.make();qr=q.createSvgTag({cellSize:3,margin:0,scalable:true})}catch(_){}
   repJob.qr=qr;
-  $('#rep-price').checked=localStorage.getItem('ud_repPrice')!=='0';$('#rep-fat').checked=localStorage.getItem('ud_repFat')!=='0';
+  $('#rep-price').checked=localStorage.getItem('ud_repPrice')!=='0';$('#rep-fat').checked=localStorage.getItem('ud_repFat')!=='0';$('#rep-imza').checked=localStorage.getItem('ud_repImza')!=='0';
   renderReport();$('#repsheet').hidden=false;document.body.style.overflow='hidden';
 }
 function reportHtml(j,price,fat){
@@ -2638,7 +2645,7 @@ function reportHtml(j,price,fat){
   return `<div class="rep">
     <div class="rp-top"><div>${state.cfg&&state.cfg.logo?`<img class="rp-logo" src="${state.cfg.logo}" alt="">`:''}<div><div class="rp-shop">${esc(state.shop||'Oto Servis')}</div>
       <div class="rp-sub">${esc([state.cfg&&state.cfg.addr,state.shopPhone].filter(Boolean).join(' · '))}</div></div></div>
-      <div class="rp-tt">SERVİS RAPORU<small>${d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}${j.no?' · No: '+esc(j.no):''}</small></div></div>
+      <div class="rp-tt">İŞ EMRİ<small>Servis raporu · ${d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}${j.no?' · No: '+esc(j.no):''}</small></div></div>
     <div class="rp-car">
       <div class="rp-plate"><span>TR</span>${esc(fmtPlate(j.plate))}</div>
       <div class="rp-cf"><div><small>Marka / model</small><b>${esc(j.vehicle||'-')}</b></div><div><small>Kilometre</small><b>${j.km?Number(j.km).toLocaleString('tr-TR')+' km':'-'}</b></div>
@@ -2658,6 +2665,10 @@ function reportHtml(j,price,fat){
       ${next?`<div class="rp-next"><small>Sonraki bakım</small><b>${esc(next)}</b><span>Bu raporu aracınızda saklayın. Bakım zamanı gelince bizi arayın.</span></div>`:'<div class="rp-next"><small>Bu raporu aracınızda saklayın</small><span>Sonraki servisinizde yapılan işlemleri ve kullanılan parçaları görmek için işinize yarar.</span></div>'}
       ${j.qr?`<div class="rp-qr">${j.qr}<span>Aracınızın durumunu ve geçmişini görmek, ustanızı puanlamak için okutun</span></div>`:''}
     </div>
+    ${(()=>{const c=document.getElementById('rep-imza');return !c||c.checked})()?`<div class="rp-sign">
+      <div class="rp-sg"><small>SERVİS · TESLİM EDEN</small><b>${esc(state.shop||'')}</b><div class="rp-sgbox">Kaşe / İmza</div></div>
+      <div class="rp-sg"><small>MÜŞTERİ · TESLİM ALAN</small><b>${esc(j.customer||'')||'Ad Soyad: ..............................'}</b><span class="rp-sgtx">Aracımı yukarıda yazılı işlemler yapılmış olarak eksiksiz teslim aldım.</span><div class="rp-sgbox">Tarih: ....../....../20...... &nbsp; İmza</div></div>
+    </div>`:''}
     <div class="rp-foot"><span>${esc(state.shop||'')}${state.shopPhone?' · '+esc(state.shopPhone):''}</span><span>Usta Defteri ile hazırlanmıştır</span></div>
   </div>`;
 }
@@ -2683,6 +2694,7 @@ function invoiceHtml(j,c){
 }
 function renderReport(){const pr=$('#rep-price').checked,ft=$('#rep-fat').checked;$('#rep-view').innerHTML=reportHtml(repJob,pr,ft)}
 $('#rep-price').onchange=()=>{try{localStorage.setItem('ud_repPrice',$('#rep-price').checked?'1':'0')}catch(_){}renderReport()};
+$('#rep-imza').onchange=()=>{try{localStorage.setItem('ud_repImza',$('#rep-imza').checked?'1':'0')}catch(_){}renderReport()};
 $('#rep-fat').onchange=()=>{try{localStorage.setItem('ud_repFat',$('#rep-fat').checked?'1':'0')}catch(_){}renderReport()};
 function closeReport(){$('#repsheet').hidden=true;if($('#sheet').hidden)document.body.style.overflow=''}
 $('#rep-close').onclick=closeReport;
@@ -2691,6 +2703,24 @@ $('#rep-print').onclick=()=>{$('#printarea').innerHTML=reportHtml(repJob,$('#rep
 $('#rep-wa').onclick=()=>{const j=repJob;if(!j)return;const lines=j.items.map(i=>`• ${i.name}${(+i.qty||1)!==1?' x'+i.qty:''}`).join('\n');
   const t=`${state.shop||'Servisimiz'} – Servis raporu\n${fmtPlate(j.plate)} ${j.vehicle||''}${j.km?' · '+Number(j.km).toLocaleString('tr-TR')+' km':''}\n\nYapılan işlemler:\n${lines||'-'}\n${j.nextKm||j.nextDate?'\nSonraki bakım: '+[j.nextKm?Number(j.nextKm).toLocaleString('tr-TR')+' km':'',j.nextDate?ddate(j.nextDate):''].filter(Boolean).join(' veya ')+'\n':''}\nDetaylar: ${trackUrl(j.trackId)}`;
   try{window.open(`https://wa.me/${j.phone?waNum(j.phone):''}?text=${encodeURIComponent(t)}`,'_blank')}catch(_){}};
+async function reportPdf(){const j=repJob;await Promise.all([loadLib('h2c'),loadLib('pdf')]);
+  const box=document.createElement('div');box.style.cssText='position:fixed;left:-10000px;top:0;width:794px;background:#fff;padding:28px;color:#000';
+  box.innerHTML=reportHtml(j,$('#rep-price').checked,$('#rep-fat').checked);document.body.appendChild(box);
+  try{await new Promise(r=>setTimeout(r,250));const cv=await html2canvas(box,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+    const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4',compress:true});const W=210,H=297;const ph=Math.floor(cv.width*H/W);
+    if(cv.height<=ph*1.45){const sc=Math.min(W/cv.width,H/cv.height);const w=cv.width*sc,h=cv.height*sc;pdf.addImage(cv.toDataURL('image/jpeg',0.9),'JPEG',(W-w)/2,0,w,h)}
+    else{let y=0,first=true;while(y<cv.height){const h=Math.min(ph,cv.height-y);const c=document.createElement('canvas');c.width=cv.width;c.height=h;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,h);g.drawImage(cv,0,y,cv.width,h,0,0,cv.width,h);
+      if(!first)pdf.addPage();pdf.addImage(c.toDataURL('image/jpeg',0.9),'JPEG',0,0,W,h*W/cv.width);first=false;y+=ph}}
+    return new File([pdf.output('blob')],'Is-emri-'+fmtPlate(j.plate).replace(/\s+/g,'')+'.pdf',{type:'application/pdf'});
+  }finally{box.remove()}}
+$('#rep-pdfwa').onclick=async()=>{const j=repJob;if(!j)return;const b=$('#rep-pdfwa');const lbl=b.textContent;b.disabled=true;b.textContent='PDF hazırlanıyor…';
+  const txt=`${state.shop||'Servisimiz'} – ${fmtPlate(j.plate)} aracınızın iş emri ekte.${j.trackId?'\nAracınızın geçmişini her zaman buradan görebilirsiniz: '+trackUrl(j.trackId):''}`;
+  try{const f=await reportPdf();
+    if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],text:txt,title:'İş emri'})}catch(e){if(e&&e.name!=='AbortError')throw e}}
+    else{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);
+      toast('PDF indirildi. WhatsApp açılıyor; indirilen PDF\'i sohbete ekleyin.');try{window.open(`https://wa.me/${j.phone?waNum(j.phone):''}?text=${encodeURIComponent(txt)}`,'_blank')}catch(_){}}
+  }catch(e){toast('PDF hazırlanamadı, internet bağlantısını kontrol edin. "Yazdır / PDF" ile de kaydedebilirsiniz.')}
+  finally{b.disabled=false;b.textContent=lbl}};
 $('#btn-report').onclick=openReport;
 
 /* ---------- Parça fiyat talepleri ---------- */
@@ -3184,7 +3214,9 @@ function startApp(){
 const LIBS={
   qr:'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js',
   scan:'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js',
-  ocr:'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js'
+  ocr:'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',
+  h2c:'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+  pdf:'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'
 };
 const loaded={};
 function loadLib(k){return loaded[k]||(loaded[k]=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src=LIBS[k];sc.onload=res;sc.onerror=()=>{delete loaded[k];rej(new Error('lib'))};document.head.appendChild(sc)}))}
