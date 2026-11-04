@@ -12,7 +12,7 @@
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Usta Defteri","alternateName":"Usta Defteri – Oto Servis Takip Programı","url":"https://ustadefteri.net/","applicationCategory":"BusinessApplication","operatingSystem":"Web, Android, iOS, Windows","inLanguage":"tr","description":"Oto tamirciler için iş emri, müşteri, kasa, stok, veresiye ve personel takibi. Telefondan çalışır, WhatsApp ile müşteri bilgilendirme, ruhsat tarama, servis raporu ve fatura bilgileri.","offers":[{"@type":"Offer","price":"0","priceCurrency":"TRY","description":"İlk ay ücretsiz"},{"@type":"Offer","price":"500","priceCurrency":"TRY","description":"Aylık üyelik (açılış fiyatı)"},{"@type":"Offer","price":"5000","priceCurrency":"TRY","description":"Yıllık üyelik (açılış fiyatı)"}],"featureList":["İş emri ve servis takibi","Ruhsat tarama","WhatsApp ile müşteri bilgilendirme ve takip linki","Kasa: günlük, haftalık, aylık rapor","Stok takibi","Veresiye defteri ve tedarikçi carileri","Personel hesapları ve ücret takibi","Servis raporu PDF ve fatura bilgileri"],"image":"https://ustadefteri.net/icon-512.png","publisher":{"@type":"Organization","name":"Usta Defteri","url":"https://ustadefteri.net/","logo":"https://ustadefteri.net/icon-512.png"}}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Usta Defteri","sameAs":["https://www.instagram.com/usta.defteri/"],"alternateName":"Usta Defteri – Oto Servis Takip Programı","url":"https://ustadefteri.net/","applicationCategory":"BusinessApplication","operatingSystem":"Web, Android, iOS, Windows","inLanguage":"tr","description":"Oto tamirciler için iş emri, müşteri, kasa, stok, veresiye ve personel takibi. Telefondan çalışır, WhatsApp ile müşteri bilgilendirme, ruhsat tarama, servis raporu ve fatura bilgileri.","offers":[{"@type":"Offer","price":"0","priceCurrency":"TRY","description":"İlk ay ücretsiz"},{"@type":"Offer","price":"500","priceCurrency":"TRY","description":"Aylık üyelik (açılış fiyatı)"},{"@type":"Offer","price":"5000","priceCurrency":"TRY","description":"Yıllık üyelik (açılış fiyatı)"}],"featureList":["İş emri ve servis takibi","Ruhsat tarama","WhatsApp ile müşteri bilgilendirme ve takip linki","Kasa: günlük, haftalık, aylık rapor","Stok takibi","Veresiye defteri ve tedarikçi carileri","Personel hesapları ve ücret takibi","Servis raporu PDF ve fatura bilgileri"],"image":"https://ustadefteri.net/icon-512.png","publisher":{"@type":"Organization","name":"Usta Defteri","url":"https://ustadefteri.net/","logo":"https://ustadefteri.net/icon-512.png"}}
 </script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
@@ -53,6 +53,12 @@ a{color:inherit}
 .top nav a.l{opacity:.85;text-decoration:none;padding:8px 10px;font-size:.95rem}
 .top .btn{padding:9px 14px;font-size:.92rem}
 @media (max-width:640px){.top nav a.l{display:none}}
+.top nav a.ig{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:10px;color:inherit;opacity:.9}
+.top nav a.ig:hover{opacity:1;background:rgba(127,127,127,.12)}
+.igbox{display:flex;gap:14px;align-items:center;max-width:520px;margin:28px auto 0;padding:14px 18px;border-radius:16px;text-decoration:none;color:inherit;border:1px solid rgba(127,127,127,.35);text-align:left}
+.igbox:hover{border-color:#d6249f}
+.igbox .igi{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fd5949 45%,#d6249f 60%,#285AEB 90%)}
+.igbox b{display:block}.igbox small{display:block;opacity:.8;margin-top:2px}
 
 /* hero */
 .hero{background:var(--dark);color:#fff;position:relative;overflow:hidden}
@@ -227,6 +233,7 @@ footer a{color:#e7ecef}
       <a class="l" href="#sss">Sorular</a>
       <a class="l" href="usta-bul.html">Usta Bul</a>
       <a class="l" href="parca-sor.html">Parça Fiyatı Sor</a>
+      <a class="ig" href="https://www.instagram.com/usta.defteri/" target="_blank" rel="noopener" aria-label="Instagram: @usta.defteri" title="Instagram: @usta.defteri"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></a>
       <a class="btn ghost" href="giris/">Giriş</a>
     </nav>
   </div>
@@ -423,8 +430,11 @@ footer a{color:#e7ecef}
 <section class="video" id="video">
   <div class="wrap">
     <div class="kick">Tanıtım</div>
-    <h2>1 dakikada Usta Defteri</h2>
-    <p class="sub" style="color:#c9d3da">Dükkânda bir günün nasıl geçtiğini izleyin: araç gelir, iş fişi açılır, müşteriye mesaj gider, kasa kendiliğinden tutulur.</p>
+    <h2>Usta Defteri ustaya ne kazandırır?</h2>
+    <p class="sub" style="color:#c9d3da">1 dakikada dinleyin: kağıt kalem biter, müşteri aramaz, kasa, veresiye ve stok kendiliğinden tutulur.</p>
+    <div class="vbox"><video controls playsinline preload="metadata" poster="avantajlar.jpg" src="avantajlar.mp4"></video></div>
+    <h3 style="color:#fff;text-align:center;margin:40px 0 0;font-size:1.35rem">Uygulamada bir gün</h3>
+    <p class="sub" style="color:#c9d3da">Araç gelir, iş emri açılır, müşteriye mesaj gider, kasa kendiliğinden tutulur.</p>
     <div class="vbox" id="vbox"><div class="soon"><div><b>Tanıtım videosu çok yakında</b><br>Bu arada 1 ay ücretsiz deneyip kendiniz görebilirsiniz.</div></div></div>
   </div>
 </section>
@@ -478,6 +488,7 @@ footer a{color:#e7ecef}
       <a class="btn pri" href="giris/#kayit">1 ay ücretsiz deneyin</a>
       <a class="btn wa" id="wa" href="https://wa.me/905455260007?text=Merhaba%2C%20Usta%20Defteri%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener">WhatsApp'tan sorun</a>
     </div>
+    <a class="igbox" href="https://www.instagram.com/usta.defteri/" target="_blank" rel="noopener"><span class="igi"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></span><span><b>Instagram'da takip edin · @usta.defteri</b><small>Yenilikleri ve ustalara ipuçlarını oradan paylaşıyoruz.</small></span></a>
   </div>
 </section>
 
@@ -492,7 +503,7 @@ footer a{color:#e7ecef}
 <footer>
   <div class="wrap">
     <span>© <span id="yr">2026</span> Usta Defteri</span>
-    <span><a href="gizlilik.html">Gizlilik ve KVKK</a> · <a href="tel:+905455260007">0545 526 00 07</a></span>
+    <span><a href="gizlilik.html">Gizlilik ve KVKK</a> · <a href="https://www.instagram.com/usta.defteri/" target="_blank" rel="noopener">Instagram @usta.defteri</a> · <a href="tel:+905455260007">0545 526 00 07</a></span>
   </div>
 </footer>
 
