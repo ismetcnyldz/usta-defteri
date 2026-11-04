@@ -819,6 +819,7 @@ html,body{overscroll-behavior-x:none}
         <div class="actions"><button class="btn primary" id="u-btn" type="submit">Hesabı oluştur</button><button type="button" class="btn" id="u-gen">Yeni şifre üret</button></div>
       </fieldset>
     </form>
+    <div id="soonbox"></div>
     <div class="list" id="ulist"></div>
   </section>
 </div>
@@ -1777,12 +1778,24 @@ function addMonths(ms,m){const d=new Date(ms);d.setMonth(d.getMonth()+m);return 
 function licState(u){if(u.role==='admin'||!u.untilMs)return{k:'ok',t:'Süresiz'};const left=u.untilMs-Date.now();
   if(left<0)return{k:'exp',t:'Süresi doldu ('+new Date(u.untilMs).toLocaleDateString('tr-TR')+')'};
   return{k:left<30*864e5?'soon':'ok',t:'Bitiş: '+new Date(u.untilMs).toLocaleDateString('tr-TR')}}
+function licMsg(u){const st=state.setup||{};const left=Math.ceil((u.untilMs-Date.now())/864e5);const d=new Date(u.untilMs).toLocaleDateString('tr-TR');
+  const what=planOf(u)==='deneme'?'ücretsiz kullanım süreniz':'üyeliğiniz';
+  return `Merhaba ${u.name||u.username}, Usta Defteri ${what} ${d} tarihinde ${left<0?'doldu':left===0?'bugün doluyor':'doluyor ('+left+' gün kaldı)'}. Kayıtlarınızın hepsi duruyor, hiçbiri silinmez.\n\nDevam etmek için:\n• Aylık: ${priceTxt(st.priceM)||'-'}\n• Yıllık: ${priceTxt(st.priceY)||'-'}${st.iban?'\n\nIBAN: '+st.iban+(st.ibanName?'\nAlıcı: '+st.ibanName:''):''}\n\nÖdemeyi yaptıktan sonra uygulamada Ayarlar > "Ödemeyi yaptım, bildir" düğmesine basmanız yeterli, üyeliğiniz hemen uzatılır.\nustadefteri.net`}
+function renderSoon(all){const box=$('#soonbox');if(!box)return;const now=Date.now();
+  const L=all.filter(u=>u.role!=='admin'&&u.untilMs&&u.active!==false&&u.untilMs-now<=7*864e5&&now-u.untilMs<=14*864e5).sort((a,b)=>a.untilMs-b.untilMs);
+  if(!L.length){box.innerHTML='';return}
+  box.innerHTML=`<fieldset style="border-color:var(--warn)"><legend>Süresi yaklaşan ve yeni dolan ustalar · ${L.length}</legend><p class="hint" style="margin:0 0 8px">7 gün içinde bitecek ya da son 14 günde bitmiş hesaplar. WhatsApp'a basınca ödeme bilgili hazır mesaj açılır.</p><div class="list">${L.map(u=>{const left=Math.ceil((u.untilMs-now)/864e5);const col=left<0?'var(--crit)':'var(--warn)';
+    return `<div class="ucard" style="--sc:${col}"><div style="min-width:0"><div class="nm">${esc(u.name||u.username)} <span class="pill" style="color:${col}">${left<0?(-left)+' gün önce doldu':left===0?'bugün doluyor':left+' gün kaldı'}</span></div><div class="meta">${esc([u.shop,u.phone].filter(Boolean).join(' · '))}</div>${u.remindedAt?`<div class="meta">Son hatırlatma: ${new Date(u.remindedAt).toLocaleDateString('tr-TR')}</div>`:''}</div>
+      <div class="acts">${u.phone?`<a class="btn wa" target="_blank" rel="noopener" data-remind="${esc(u.uid)}" href="https://wa.me/${waNum(u.phone)}?text=${encodeURIComponent(licMsg(u))}">WhatsApp'la hatırlat</a>`:'<span class="hint">Telefon yok</span>'}<button type="button" class="btn" data-act="edit" data-uid="${esc(u.uid)}">Uzat</button></div></div>`}).join('')}</div></fieldset>`;
+  box.querySelectorAll('[data-remind]').forEach(a=>a.addEventListener('click',()=>{fdb.doc('ustalar/'+a.dataset.remind).update({remindedAt:Date.now()}).catch(()=>{})}));
+}
 function renderUsers(){
   const el=$('#ulist');
   const mainA=(state.setup||{}).adminUid;const all=state.users.filter(u=>u.authUid!==mainA&&u.uid!==mainA);const us=all.filter(u=>u.role!=='admin');
   $('#a-active').textContent=us.filter(u=>u.active&&licState(u).k!=='exp').length;
   $('#a-soon').textContent=us.filter(u=>u.active&&licState(u).k==='soon').length;
   $('#a-exp').textContent=us.filter(u=>licState(u).k==='exp').length;
+  renderSoon(all);
   if(!all.length){el.innerHTML='<div class="empty"><h3>Henüz usta yok</h3>Yukarıdan ilk usta hesabını oluşturun.</div>';return}
   el.innerHTML=all.map(u=>{const L=licState(u);const col=!u.active||L.k==='exp'?'var(--crit)':L.k==='soon'?'var(--warn)':'var(--ok)';return `
   <button class="ucard" style="--sc:${col}" data-act="edit" data-uid="${esc(u.uid)}">
@@ -1800,6 +1813,8 @@ function renderLic(){
   if(left>15){el.hidden=true;return}
   el.hidden=false;el.innerHTML=`<span>${me.plan==='deneme'?'Ücretsiz kullanım sürenizin':'Üyeliğinizin'} bitmesine <b>${left} gün</b> kaldı (${new Date(me.untilMs).toLocaleDateString('tr-TR')}).</span><button type="button" class="btn primary" id="lic-renew">${!PAYMENTS?'Süreyi uzat':me.plan==='deneme'?'Abone ol':'Üyeliği uzat'}</button>`;
   $('#lic-renew').onclick=()=>{$('#btn-set').click();setTimeout(()=>{const b=$('#sub-box');if(b)b.scrollIntoView({behavior:'smooth'})},80)};
+  const th=[7,3,1,0].find(x=>left<=x);if(th!==undefined&&notifyOk()){const k='ud_licN_'+me.untilMs+'_'+th;let done=false;try{done=!!localStorage.getItem(k)}catch(_){}
+    if(!done){try{localStorage.setItem(k,'1')}catch(_){}notify('Usta Defteri',(me.plan==='deneme'?'Ücretsiz kullanım süreniz':'Üyeliğiniz')+(left<=0?' bugün doluyor.':' '+left+' gün sonra doluyor.')+' Kayıtlarınız silinmez; devam etmek için süreyi uzatın.','lic')}}
 }
 function inviteText(u,p){return `Merhaba ${u.name}, Usta Defteri hesabınız hazır.\n\nUygulama: ${APP_URL}\nKullanıcı adı: ${u.username}\nŞifre: ${p}\n\nLinke girin, Android'de "Uygulamayı yükle", iPhone'da Paylaş > "Ana Ekrana Ekle" deyin. Sonra kullanıcı adı ve şifrenizle giriş yapın. İsterseniz şifrenizi Ayarlar'dan değiştirebilirsiniz.`}
 async function newAuth(username,pass){
