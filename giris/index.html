@@ -586,7 +586,7 @@ html,body{overscroll-behavior-x:none}
     <button class="tab" role="tab" id="tab-rem" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg>Bakım <span class="cnt" id="rem-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-kasa" aria-selected="false"><svg class="ic fill" aria-hidden="true"><use href="#i-kasa"/></svg>Kasa</button>
     <button class="tab" role="tab" id="tab-stok" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-oil"/></svg>Stok <span class="cnt" id="stok-cnt" hidden>0</span></button>
-    <button class="tab" role="tab" id="tab-parca" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg>Parça <span class="cnt" id="tp-cnt" hidden>0</span></button>
+    <button class="tab" role="tab" id="tab-parca" aria-selected="false" hidden><svg class="ic" aria-hidden="true"><use href="#i-lira"/></svg>Ödemeler <span class="cnt" id="tp-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-cirak" aria-selected="false"><svg class="ic fill" aria-hidden="true"><use href="#i-cirak"/></svg>Personel</button>
     <button class="tab" role="tab" id="tab-cari" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-hand"/></svg>Veresiye <span class="cnt" id="cari-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-users" aria-selected="false" hidden><svg class="ic fill" aria-hidden="true"><use href="#i-usta"/></svg>Ustalar</button>
@@ -697,8 +697,6 @@ html,body{overscroll-behavior-x:none}
         <div class="list" id="ps-list"></div></div>
       <div class="chips" id="tp-filters" style="margin-bottom:12px">
         <button class="chip" data-f="yeni" aria-pressed="true">Yeni</button>
-        <button class="chip" data-f="islemde" aria-pressed="false">İşlemde</button>
-        <button class="chip" data-f="fiyatlandi" aria-pressed="false">Fiyat verilen</button>
         <button class="chip" data-f="onaylandi" aria-pressed="false">Onaylanan</button>
         <button class="chip" data-f="tum" aria-pressed="false">Tümü</button>
       </div>
@@ -939,7 +937,6 @@ html,body{overscroll-behavior-x:none}
         <button type="button" class="btn danger" id="del" hidden>Sil</button>
         <button type="button" class="btn" id="btn-report">İş emri / Servis raporu</button>
         <button type="button" class="btn" id="btn-label">QR etiket</button>
-        <button type="button" class="btn" id="btn-tp-job">Parça fiyatı iste</button>
         <span style="flex:1"></span>
         <button type="button" class="btn" id="cancel">Vazgeç</button>
         <button type="submit" class="btn primary" id="save">Kaydet</button>
@@ -961,11 +958,11 @@ html,body{overscroll-behavior-x:none}
           <label class="f">Adres (servis raporunda görünür)<input id="set-addr" maxlength="120" placeholder="Sanayi Sitesi 12. Blok No:5, Antalya"></label>
           <div class="f" style="display:grid;gap:6px"><span style="font-size:.8rem;color:var(--muted);font-weight:500">Logo (servis raporunun sol üstünde)</span>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><img id="logo-prev" class="logo-prev" alt="" hidden><label class="btn" style="cursor:pointer">Logo seç<input type="file" id="set-logo" accept="image/*" hidden></label><button type="button" class="btn" id="logo-del" hidden>Logoyu kaldır</button></div></div>
-          <label class="kvkk" style="margin:4px 0 8px"><input type="checkbox" id="set-simple"> <span><b>Basit görünüm</b>: sadece İşler ve Kasa sekmeleri görünsün (Bakım, Stok, Parça, Personel, Veresiye gizli). Alışınca kapatırsın.</span></label>
+          <label class="kvkk" style="margin:4px 0 8px"><input type="checkbox" id="set-simple"> <span><b>Basit görünüm</b>: sadece İşler ve Kasa sekmeleri görünsün (Bakım, Stok, Personel, Veresiye gizli). Alışınca kapatırsın.</span></label>
           <label class="f">"Araç hazır" mesajım (boş bırakırsanız standart kısa mesaj gider; {ad} {arac} {plaka} {tutar} {link} {dukkan} yazdığınız yere bilgiler gelir)<textarea id="set-hazir" rows="4" placeholder="Merhaba {ad}, {arac} hazır, dilediğiniz zaman alabilirsiniz. {tutar} {link} {dukkan}"></textarea></label>
           <label class="f">Hızlı iş kalemleri (her satır: Başlık: kalem, kalem…)<textarea id="set-quick" rows="5" style="font-family:var(--f-mono);font-size:13px" placeholder="Balata değişti: Ön balata, Balata değişim işçiliği"></textarea></label>
           <p class="hint" style="margin:0">Müşteriye giden mesajlarda ve QR etiketlerde görünür.</p>
-          <div class="f" style="display:grid;gap:6px"><span style="font-size:.8rem;color:var(--muted);font-weight:500">Bildirimler (yeni parça talebi, gelen fiyat)</span><button type="button" class="btn" id="set-notif" style="justify-self:start">Bildirimleri aç</button></div>
+          <div class="f" style="display:grid;gap:6px"><span style="font-size:.8rem;color:var(--muted);font-weight:500">Bildirimler (vadesi gelen borçlar, üyelik)</span><button type="button" class="btn" id="set-notif" style="justify-self:start">Bildirimleri aç</button></div>
           <label style="display:flex;gap:8px;align-items:flex-start;font-size:.92rem"><input type="checkbox" id="set-autowa" style="margin-top:3px"> Yeni araç kaydedince müşteriye takip linkini WhatsApp’tan bir kez gönder (telefon yazılıysa). Sonraki durumlar takip linkinde kendiliğinden görünür.</label>
           <button class="btn primary" type="submit">Kaydet</button>
         </div>
@@ -1629,12 +1626,13 @@ function msg(kind,j){
 
 /* ---------- İş formu ---------- */
 /* ---------- Basit başlangıç modu ---------- */
-const SIMPLE_TABS=['tab-rem','tab-stok','tab-parca','tab-cirak','tab-cari'];
+const SIMPLE_TABS=['tab-rem','tab-stok','tab-cirak','tab-cari'];
 function isSimple(){if(!state.me||state.me.role!=='usta')return false;const c=state.cfg||{};if(typeof c.simple==='boolean')return c.simple;return (state.jobs||[]).length<5}
 function applySimple(){if(!state.me)return;const sm=isSimple();const cir=isCirak();
   SIMPLE_TABS.forEach(id=>{const t=$('#'+id);if(!t)return;t.hidden=cir?(id!=='tab-stok'):sm});
   const m=$('#tab-more');if(m)m.hidden=!sm;
   if(sm&&SIMPLE_TABS.map(x=>x.replace('tab-','')).includes(state.tab))setTab('jobs');
+  const tpb=$('#tab-parca');if(tpb){tpb.hidden=!isAdm();if(!isAdm()&&state.tab==='parca')setTab('jobs')}
   const sc=$('#set-simple');if(sc)sc.checked=sm;}
 function setSimple(v){state.cfg=Object.assign({},state.cfg,{simple:v});applySimple();settingsDoc().set({simple:v,updatedAt:Date.now()},{merge:true}).catch(()=>{});toast(v?'Basit görünüm açık: İşler ve Kasa':'Tüm bölümler açıldı')}
 $('#tab-more').onclick=()=>setSimple(false);
@@ -1643,7 +1641,7 @@ function renderWelcome(){const w=$('#welcome');if(!w)return;const show=state.me&
   w.innerHTML=`<div class="welcome"><h3>Hoş geldin${state.me.name?' '+esc(state.me.name.split(' ')[0]):''} 👋 Üç adımda ilk işin:</h3>
     <ol><li><b>Plakayı yaz</b> (ya da ruhsatı tarat)</li><li><b>İşi yaz</b>: "Balata değişti" gibi, fiyatı gelsin</li><li><b>Kaydet</b> — müşteriye WhatsApp'tan takip linki gitsin</li></ol>
     <div class="actions"><button type="button" class="btn primary" id="wl-try">Örnek bir iş aç, dene</button><button type="button" class="btn" id="wl-new">Gerçek işimi açayım</button><button type="button" class="btn" id="wl-off" style="opacity:.8">Gizle</button></div>
-    <p class="hint" style="color:#c9d3da;margin:10px 0 0">Şimdilik sadece <b>İşler</b> ve <b>Kasa</b> açık; Bakım, Stok, Parça, Personel, Veresiye bölümlerini "Diğer…" sekmesinden istediğinde açarsın.</p></div>`;
+    <p class="hint" style="color:#c9d3da;margin:10px 0 0">Şimdilik sadece <b>İşler</b> ve <b>Kasa</b> açık; Bakım, Stok, Personel, Veresiye bölümlerini "Diğer…" sekmesinden istediğinde açarsın.</p></div>`;
   $('#wl-try').onclick=()=>{openSheet(null,{plate:'34ABC123',vehicle:'Fiat Egea 1.3 Mjet 2019',customer:'Deneme Müşteri',phone:''});setTimeout(()=>{const q=quickByTitle('Balata değişti');if(q)addQuick(q);toast('Örnek iş: istersen kaydet, istersen Vazgeç')},200)};
   $('#wl-new').onclick=()=>openSheet(null);
   $('#wl-off').onclick=()=>{try{localStorage.setItem('ud_welcome_off','1')}catch(_){}w.hidden=true};}
@@ -1661,7 +1659,6 @@ function openSheet(job,prefill){
   $('#f-paymethod').value='Nakit';
   document.querySelectorAll('#sheet details.more').forEach(d=>{d.open=false});if(draft.nextDate||draft.nextKm){const nb=$('#nb-more');if(nb)nb.open=true}if(draft.tckn||draft.faddr){const fd=$('#f-tckn').closest('details');if(fd)fd.open=true}  $('#f-vat').checked=!!draft.vat;$('#f-paid').value=draft.paid?String(draft.paid).replace('.',','):'';
   $('#del').hidden=!job||isCirak();$('#del').classList.remove('armed');$('#del').textContent='Sil';
-  $('#btn-tp-job').hidden=isCirak();
   if(!draft.trackId){draft._own=newToken();draft.trackId=(!job&&prevToken(draft.plate))||draft._own}
   state.waKind=job?(draft.status==='hazir'?'hazir':draft.status==='teslim'?'fis':draft.status==='onay'?'teklif':'takip'):'takip';
   $('#ruhsat-info').innerHTML=ruhsatInfoHtml(draft.ruhsat);renderFotos();
@@ -2750,7 +2747,7 @@ function compressImage(file,max=1280,q=0.62){return new Promise((res,rej)=>{cons
   URL.revokeObjectURL(img.src);let d=c.toDataURL('image/jpeg',q);if(d.length>700000)d=c.toDataURL('image/jpeg',0.45);res(d)};img.onerror=()=>rej(new Error('img'));img.src=URL.createObjectURL(file)})}
 function tpSummary(t){const p=(t.parts||[]).filter(x=>x.name).map(x=>x.name+((+x.qty||1)>1?' x'+x.qty:'')).join(', ');return p||(t.photoCount?t.photoCount+' fotoğraf':'')}
 function renderTalepler(){
-  const adm=isAdm();const all=state.talepler;
+  const adm=isAdm();const all=state.talepler.filter(t=>t.kind==='odeme');
   const cnt=adm?all.filter(t=>t.status==='yeni').length:all.filter(t=>t.status==='fiyatlandi').length;
   $('#tp-cnt').hidden=!cnt;$('#tp-cnt').textContent=cnt;
   $('#tp-uview').hidden=adm;$('#tp-aview').hidden=!adm;
@@ -2771,7 +2768,7 @@ function renderTalepler(){
     </button>`};
   if(adm){
     const f=state.tpFilter;const list=all.filter(t=>f==='tum'||t.status===f);
-    $('#tp-alist').innerHTML=list.length?list.map(card).join(''):`<div class="empty"><h3>${f==='yeni'?'Yeni talep yok':'Bu listede talep yok'}</h3>Ustalar Parça bölümünden fiyat istediğinde burada görünür.</div>`;
+    $('#tp-alist').innerHTML=list.length?list.map(card).join(''):`<div class="empty"><h3>${f==='yeni'?'Yeni talep yok':'Bu listede talep yok'}</h3>Ustalar ödeme bildirdiğinde burada görünür.</div>`;
   }else{
     $('#tp-ulist').innerHTML=all.length?all.map(card).join(''):'<div class="empty"><h3>Henüz talep yok</h3><b>+ Parça fiyatı iste</b> ile ruhsat fotoğrafı veya parça listesi gönderin.</div>';
   }
@@ -2797,7 +2794,6 @@ async function addTpPhotos(files,kind){
   renderTpDraft();
 }
 $('#tp-new').onclick=()=>openTpNew(null);
-$('#btn-tp-job').onclick=()=>{readForm();const pre={plate:draft.plate,vehicle:draft.vehicle,parts:draft.items.filter(i=>i.type!=='iscilik'&&i.name).map(i=>({name:i.name,qty:+i.qty||1}))};closeSheet();setTab('parca');openTpNew(pre)};
 $('#tp-close').onclick=closeTpNew;$('#tp-cancel').onclick=closeTpNew;
 $('#tp-add-ruhsat').onclick=()=>$('#tp-ruhsat-file').click();
 $('#tp-add-photo').onclick=()=>$('#tp-photo-file').click();
@@ -2947,7 +2943,7 @@ function showImg(src){const v=$('#imgview');v.querySelector('img').src=src;v.hid
 $('#imgview').onclick=()=>{$('#imgview').hidden=true};
 document.addEventListener('click',e=>{const c=e.target.closest('[data-tp]');if(c)openTpView(c.dataset.tp)});
 let psF='yeni';
-function renderPs(){const box=$('#ps-box');if(!box)return;const L=(state.parcaSor||[]);box.hidden=!isAdm();if(!isAdm())return;
+function renderPs(){const box=$('#ps-box');if(!box)return;const L=(state.parcaSor||[]);box.hidden=true;return;
   const open=L.filter(x=>x.status!=='kapandi');const c=$('#ps-cnt');c.hidden=!open.length;c.textContent=open.length;
   const V=L.filter(x=>psF==='yeni'?x.status!=='kapandi':x.status==='kapandi');
   $('#ps-list').innerHTML=V.length?V.map(x=>{const tel=waNum(x.phone);const msg=`Merhaba ${(x.name||'').split(' ')[0]}, ustadefteri.net üzerinden ${[x.plate?fmtPlate(x.plate):'',x.vin?'şasi '+x.vin:'',x.vehicle].filter(Boolean).join(' · ')} için istediğiniz parça fiyatı:\n${x.parts}\n\n`;
@@ -2961,7 +2957,7 @@ function renderPs(){const box=$('#ps-box');if(!box)return;const L=(state.parcaSo
 document.addEventListener('click',e=>{const f=e.target.closest('[data-psf]');if(f){psF=f.dataset.psf;document.querySelectorAll('[data-psf]').forEach(x=>x.setAttribute('aria-pressed',x===f));renderPs();return}
   const ok=e.target.closest('[data-psok]');if(ok){fdb.doc('parca_sor/'+ok.dataset.psok).update({status:'kapandi',updatedAt:Date.now()}).catch(ex=>toast(authMsg(ex)));return}
   const d=e.target.closest('[data-psdel]');if(d){if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='Emin misin?';setTimeout(()=>{d.classList.remove('armed');d.textContent='Sil'},2500);return}fdb.doc('parca_sor/'+d.dataset.psdel).delete().catch(ex=>toast(authMsg(ex)))}});
-function subParcaSor(){if(!isAdm())return;let first=true;
+function subParcaSor(){return;let first=true;
   subs.push(fdb.collection('parca_sor').orderBy('createdAt','desc').limit(200).onSnapshot(snap=>{
     if(!first)snap.docChanges().forEach(ch=>{const x=ch.doc.data();if(ch.type==='added'&&x.status!=='kapandi')notify('Müşteri parça fiyatı soruyor',`${x.name||''} · ${x.plate?fmtPlate(x.plate):(x.vin||'')} · ${(x.parts||'').slice(0,60)}`,'ps:'+ch.doc.id)});
     first=false;state.parcaSor=snap.docs.map(d=>({id:d.id,...d.data()}));renderPs()},()=>{}))}
@@ -2971,10 +2967,10 @@ function subTalepler(){
   let first=true;
   subs.push(q.onSnapshot(snap=>{
     if(!first){snap.docChanges().forEach(ch=>{const t=ch.doc.data();
-      if(ch.type==='added'&&isAdm()&&t.status==='yeni')notify(t.kind==='odeme'?'Ödeme bildirimi':'Yeni parça talebi',t.kind==='odeme'?`${t.ustaName||'Usta'} · ${PLANS[t.plan]||t.plan}${t.amount?' · '+tl(t.amount):''}`:`${t.ustaName||t.shop||'Usta'} · ${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''}`,'tp:'+ch.doc.id);
+      if(ch.type==='added'&&isAdm()&&t.status==='yeni'&&t.kind==='odeme')notify(t.kind==='odeme'?'Ödeme bildirimi':'Yeni parça talebi',t.kind==='odeme'?`${t.ustaName||'Usta'} · ${PLANS[t.plan]||t.plan}${t.amount?' · '+tl(t.amount):''}`:`${t.ustaName||t.shop||'Usta'} · ${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''}`,'tp:'+ch.doc.id);
       if(ch.type==='modified'&&!isAdm()&&t.kind==='odeme'&&t.status==='onaylandi'&&(state.talepler.find(x=>x.id===ch.doc.id)||{}).status!=='onaylandi')notify('Üyeliğiniz uzatıldı','Ödemeniz alındı, teşekkürler. Üyelik süreniz güncellendi.','tp:'+ch.doc.id);
-      if(ch.type==='modified'&&!isAdm()&&t.status==='islemde'&&(state.talepler.find(x=>x.id===ch.doc.id)||{}).status!=='islemde')notify('Parça talebiniz işleme alındı',`${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''} — fiyat hazırlanıyor, gelince haber vereceğiz.`,'tp:'+ch.doc.id);
-      if(ch.type==='modified'&&!isAdm()&&t.status==='fiyatlandi'&&!(state.talepler.find(x=>x.id===ch.doc.id)||{}).quote)notify('Parça fiyatı geldi',`${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''} için fiyat geldi, onaylayın.`,'tp:'+ch.doc.id)})}
+      if(ch.type==='modified'&&!isAdm()&&t.kind!=='odeme'&&false&&t.status==='islemde'&&(state.talepler.find(x=>x.id===ch.doc.id)||{}).status!=='islemde')notify('Parça talebiniz işleme alındı',`${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''} — fiyat hazırlanıyor, gelince haber vereceğiz.`,'tp:'+ch.doc.id);
+      if(ch.type==='modified'&&!isAdm()&&t.kind!=='odeme'&&false&&t.status==='fiyatlandi'&&!(state.talepler.find(x=>x.id===ch.doc.id)||{}).quote)notify('Parça fiyatı geldi',`${t.plate?fmtPlate(t.plate)+' ':''}${t.vehicle||''} için fiyat geldi, onaylayın.`,'tp:'+ch.doc.id)})}
     first=false;
     state.talepler=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));renderTalepler()},()=>{}));
   renderTalepler();
@@ -2987,7 +2983,7 @@ function notify(title,body,tag){
   if(!notifyOk())return;
   try{const o={body,tag,icon:'../icon-192.png',badge:'../icon-192.png',renotify:true};
     if(navigator.serviceWorker&&navigator.serviceWorker.ready&&document.visibilityState!=='visible')navigator.serviceWorker.ready.then(r=>r.showNotification(title,o)).catch(()=>new Notification(title,o));
-    else{const n=new Notification(title,o);n.onclick=()=>{window.focus();if(tag&&tag.startsWith('tp:')){setTab('parca');openTpView(tag.slice(3))}if(tag==='borc')setTab('rem');n.close()}}}catch(_){}
+    else{const n=new Notification(title,o);n.onclick=()=>{window.focus();if(tag&&tag.startsWith('tp:')&&isAdm()){setTab('parca');openTpView(tag.slice(3))}if(tag==='borc')setTab('rem');n.close()}}}catch(_){}
 }
 function renderNotifBtn(){const b=$('#set-notif');if(!b)return;if(!('Notification' in window)){b.textContent='Bu cihaz bildirim desteklemiyor';b.disabled=true;return}
   const p=Notification.permission;b.textContent=p==='granted'?'Bildirimler açık ✓':p==='denied'?'Bildirim engellenmiş (tarayıcı ayarından açın)':'Bildirimleri aç';b.disabled=p!=='default'}
@@ -3178,7 +3174,7 @@ function startApp(){
   const cir=me.role==='cirak';
   $('#who').innerHTML=ic(me.role==='admin'?'yonetici':cir?'cirak':'usta','fill')+esc(me.name||me.username)+(me.role==='admin'?'<span class="role">Yönetici</span>':cir?'<span class="role">Personel</span>':'<span class="role">Usta</span>');
   $('#tab-users').hidden=me.role!=='admin';
-  ['tab-rem','tab-parca','tab-cirak','tab-cari'].forEach(id=>$('#'+id).hidden=cir);applySimple();
+  ['tab-rem','tab-cirak','tab-cari'].forEach(id=>$('#'+id).hidden=cir);applySimple();
   $('#v-stok').classList.toggle('cirmode',cir);{const tn=[...$('#tab-stok').childNodes].find(n=>n.nodeType===3&&n.textContent.trim());if(tn)tn.textContent=cir?'Fiyatlar ':'Stok '}
   $('#shop-form').hidden=cir;
   document.querySelector('#filters .chip[data-f="benim"]').hidden=!cir;
