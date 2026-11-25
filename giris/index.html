@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Usta Defteri</title>
 <meta name="description" content="Tamirciler için iş emri, araç geçmişi, QR etiket, plaka okuma, WhatsApp teklif ve bakım hatırlatma.">
-<meta name="theme-color" content="#2f4858">
+<meta name="theme-color" content="#141b21">
 <link rel="manifest" href="../manifest.json">
-<link rel="icon" type="image/svg+xml" href="../logo.svg">
+<link rel="icon" type="image/png" href="../ud-amblem-96.png">
 <link rel="icon" type="image/png" href="../icon-192.png">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -456,13 +456,32 @@ html,body{overscroll-behavior-x:none}
 #c-list .go{display:none}
 .take{width:100%;justify-content:center;padding:14px;font-size:1.05rem}
 .offline{background:var(--warn);color:var(--accent-ink);text-align:center;font-size:.85rem;font-weight:600;padding:4px 8px;border-radius:8px;margin-bottom:10px}
+
+/* ---------- Görsel yenileme (3D ikonlar, giriş arka planı, açılış) ---------- */
+.tab img.ic3{width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,0,0,.28));transition:transform .15s}
+.tab[aria-selected="true"] img.ic3{transform:translateY(-2px) scale(1.06)}
+.tab:not([aria-selected="true"]) img.ic3{opacity:.92}
+img.ic3s{width:22px;height:22px;object-fit:contain}
+.blogo{border-radius:22%}
+#scr-login,#scr-config{background:linear-gradient(180deg,rgba(15,21,26,.15) 0%,rgba(15,21,26,.35) 45%,rgba(15,21,26,.8) 100%),url(../giris-arka.jpg) center/cover no-repeat;background-color:#0f151a}
+#scr-login .auth-card,#scr-config .auth-card{background:rgba(22,29,35,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.14);border-radius:22px;box-shadow:0 30px 70px rgba(0,0,0,.55);color:#e7ecef}
+#scr-login .auth-card img,#scr-config .auth-card img{width:88px;height:88px;border-radius:22%;justify-self:center;filter:drop-shadow(0 10px 18px rgba(0,0,0,.5))}
+#scr-login .auth-card h1,#scr-config .auth-card h1{text-align:center;color:#fff}
+#scr-login .auth-card p,#scr-config .auth-card p{text-align:center;color:#b9c5ce}
+#scr-login .auth-card .f{color:#d5dee5}
+#splash{position:fixed;inset:0;z-index:9999;background:#0f151a url(../acilis.jpg) center/cover no-repeat;transition:opacity .45s ease}
+#splash.out{opacity:0;pointer-events:none}
 </style>
 </head>
 <body>
+<div id="splash" aria-hidden="true"></div>
+<script>(function(){var s=document.getElementById('splash');try{if(sessionStorage.getItem('ud_spl')){s.remove();return}sessionStorage.setItem('ud_spl','1')}catch(e){}
+var t0=Date.now();function go(){var w=Math.max(0,1100-(Date.now()-t0));setTimeout(function(){s.classList.add('out');setTimeout(function(){s.remove()},500)},w)}
+if(document.readyState==='complete')go();else window.addEventListener('load',go);setTimeout(function(){if(s.parentNode){s.classList.add('out');setTimeout(function(){s.remove()},500)}},3500);s.addEventListener('click',function(){s.classList.add('out')})})();</script>
 <!-- Kurulum eksik -->
 <section class="auth" id="scr-config" hidden>
   <div class="auth-card">
-    <img src="../logo.svg" alt="Usta Defteri">
+    <img src="../ud-amblem-192.png" alt="Usta Defteri">
     <h1>Usta <span>Defteri</span></h1>
     <p>Kurulum tamamlanmamış. <b>config.js</b> dosyasına Firebase bilgileri girilmeli. Ayrıntılar KURULUM.txt dosyasında.</p>
   </div>
@@ -471,7 +490,7 @@ html,body{overscroll-behavior-x:none}
 <!-- Giriş -->
 <section class="auth" id="scr-login" hidden>
   <form class="auth-card" id="login-form" autocomplete="on">
-    <img src="../logo.svg" alt="Usta Defteri">
+    <img src="../ud-amblem-192.png" alt="Usta Defteri">
     <h1>Usta <span>Defteri</span></h1>
     <p class="tagline">Sanayinin dijital defteri</p>
     <p>Size verilen kullanıcı adı ve şifreyle girin.</p>
@@ -488,7 +507,7 @@ html,body{overscroll-behavior-x:none}
 <!-- Kayıt ol (ücretsiz deneme) -->
 <section class="auth" id="scr-signup" hidden>
   <form class="auth-card" id="signup-form" autocomplete="off">
-    <img src="../logo.svg" alt="Usta Defteri">
+    <img src="../ud-amblem-192.png" alt="Usta Defteri">
     <h1>Ücretsiz <span>deneyin</span></h1>
     <p>1 ay boyunca bütün özellikler açık ve ücretsiz. Kart bilgisi istemiyoruz. Süre bitince kayıtlarınız silinmez; aylık veya yıllık üyelikle kaldığınız yerden devam edersiniz.</p>
     <label class="f">Ad soyad<input id="su-name" required placeholder="Ali Yılmaz" autocomplete="name"></label>
@@ -508,7 +527,7 @@ html,body{overscroll-behavior-x:none}
 <!-- İlk kurulum: yönetici -->
 <section class="auth" id="scr-setup" hidden>
   <form class="auth-card" id="setup-form">
-    <img src="../logo.svg" alt="Usta Defteri">
+    <img src="../ud-amblem-192.png" alt="Usta Defteri">
     <h1>Yönetici <span>hesabı</span></h1>
     <p>İlk kurulum. Ustalara hesap açacak yönetici hesabını oluşturun. Bu ekran sadece bir kez görünür.</p>
     <label class="f">Adınız<input id="s-name" required placeholder="İsmet"></label>
@@ -562,12 +581,12 @@ html,body{overscroll-behavior-x:none}
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <h1><img class="blogo" src="../logo.svg" alt="">Usta <span>Defteri</span></h1>
+      <h1><img class="blogo" src="../ud-amblem-96.png" alt="">Usta <span>Defteri</span></h1>
       <div class="shop" id="shopline"></div>
     </div>
     <div class="userbar">
       <span class="who" id="who"></span>
-      <button class="btn" id="btn-set"><svg class="ic" aria-hidden="true"><use href="#i-cog"/></svg>Ayarlar</button>
+      <button class="btn" id="btn-set"><img class="ic ic3s" src="../ik-ayarlar.png" alt="" aria-hidden="true">Ayarlar</button>
       <button class="btn" id="btn-out"><svg class="ic" aria-hidden="true"><use href="#i-exit"/></svg>Çıkış</button>
     </div>
   </header>
@@ -582,13 +601,13 @@ html,body{overscroll-behavior-x:none}
   </div>
 
   <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tab-jobs" aria-selected="true"><svg class="ic" aria-hidden="true"><use href="#i-car"/></svg>İşler</button>
-    <button class="tab" role="tab" id="tab-rem" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg>Bakım <span class="cnt" id="rem-cnt" hidden>0</span></button>
-    <button class="tab" role="tab" id="tab-kasa" aria-selected="false"><svg class="ic fill" aria-hidden="true"><use href="#i-kasa"/></svg>Kasa</button>
-    <button class="tab" role="tab" id="tab-stok" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-oil"/></svg>Stok <span class="cnt" id="stok-cnt" hidden>0</span></button>
-    <button class="tab" role="tab" id="tab-parca" aria-selected="false" hidden><svg class="ic" aria-hidden="true"><use href="#i-lira"/></svg>Ödemeler <span class="cnt" id="tp-cnt" hidden>0</span></button>
-    <button class="tab" role="tab" id="tab-cirak" aria-selected="false"><svg class="ic fill" aria-hidden="true"><use href="#i-cirak"/></svg>Personel</button>
-    <button class="tab" role="tab" id="tab-cari" aria-selected="false"><svg class="ic" aria-hidden="true"><use href="#i-hand"/></svg>Veresiye <span class="cnt" id="cari-cnt" hidden>0</span></button>
+    <button class="tab" role="tab" id="tab-jobs" aria-selected="true"><img class="ic ic3" src="../ik-isler.png" alt="" aria-hidden="true">İşler</button>
+    <button class="tab" role="tab" id="tab-rem" aria-selected="false"><img class="ic ic3" src="../ik-bakim.png" alt="" aria-hidden="true">Bakım <span class="cnt" id="rem-cnt" hidden>0</span></button>
+    <button class="tab" role="tab" id="tab-kasa" aria-selected="false"><img class="ic ic3" src="../ik-kasa.png" alt="" aria-hidden="true">Kasa</button>
+    <button class="tab" role="tab" id="tab-stok" aria-selected="false"><img class="ic ic3" src="../ik-stok.png" alt="" aria-hidden="true">Stok <span class="cnt" id="stok-cnt" hidden>0</span></button>
+    <button class="tab" role="tab" id="tab-parca" aria-selected="false" hidden><img class="ic ic3" src="../ik-odemeler.png" alt="" aria-hidden="true">Ödemeler <span class="cnt" id="tp-cnt" hidden>0</span></button>
+    <button class="tab" role="tab" id="tab-cirak" aria-selected="false"><img class="ic ic3" src="../ik-personel.png" alt="" aria-hidden="true">Personel</button>
+    <button class="tab" role="tab" id="tab-cari" aria-selected="false"><img class="ic ic3" src="../ik-veresiye.png" alt="" aria-hidden="true">Veresiye <span class="cnt" id="cari-cnt" hidden>0</span></button>
     <button class="tab" role="tab" id="tab-users" aria-selected="false" hidden><svg class="ic fill" aria-hidden="true"><use href="#i-usta"/></svg>Ustalar</button>
     <button class="tab" role="tab" id="tab-more" aria-selected="false" hidden style="--tc:#6a7681"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg>Diğer…</button>
   </div>
@@ -1311,7 +1330,7 @@ html,body{overscroll-behavior-x:none}
 <!-- Müşteri araç takip sayfası -->
 <section class="auth" id="scr-track" hidden>
   <div class="auth-card tr-card">
-    <div class="tr-head"><img src="../logo.svg" alt="Usta Defteri"><div><div class="tr-shop" id="tr-shop">Servis</div><div class="hint" id="tr-upd"></div></div></div>
+    <div class="tr-head"><img src="../ud-amblem-192.png" alt="Usta Defteri"><div><div class="tr-shop" id="tr-shop">Servis</div><div class="hint" id="tr-upd"></div></div></div>
     <div id="tr-body"><p class="hint">Yükleniyor…</p></div>
     <div id="tr-rate" hidden style="margin-top:14px"></div>
   </div>
@@ -1320,7 +1339,7 @@ html,body{overscroll-behavior-x:none}
 <!-- Müşteri QR okutursa -->
 <section class="auth" id="scr-public" hidden>
   <div class="auth-card">
-    <img src="../logo.svg" alt="Usta Defteri">
+    <img src="../ud-amblem-192.png" alt="Usta Defteri">
     <div id="pub-plate"></div>
     <h1 id="pub-shop" style="font-size:1.6rem"></h1>
     <p>Bu aracın bakım ve servis kayıtları bu serviste tutuluyor.</p>
