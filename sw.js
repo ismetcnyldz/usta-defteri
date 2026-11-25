@@ -1,10 +1,15 @@
 // Usta Defteri - çevrimdışı çalışma. Güncelleme yaptığınızda sürüm adını değiştirin (usta-v3 gibi).
-const CACHE = 'usta-v24';
+const CACHE = 'usta-v25';
 const SHELL = ['./', 'giris/', 'index.html', 'config.js', 'manifest.json', 'logo.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+// 3D görseller: biri eksik olsa bile kurulum bozulmasın diye tek tek alınır
+const GORSEL = ['ud-amblem-96.png', 'ud-amblem-192.png', 'giris-arka.jpg', 'acilis.jpg',
+  'ik-isler.png', 'ik-bakim.png', 'ik-kasa.png', 'ik-stok.png', 'ik-personel.png', 'ik-veresiye.png', 'ik-odemeler.png', 'ik-ayarlar.png',
+  'ik-qr.png', 'ik-plaka.png', 'ik-ruhsat.png', 'ik-sesle.png', 'ik-yeniis.png'];
 const LIB_HOSTS = /(^|\.)(gstatic\.com|jsdelivr\.net|googleapis\.com|projectnaptha\.com)$/;
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)
+    .then(() => Promise.all(GORSEL.map(u => c.add(u).catch(() => {}))))));
   self.skipWaiting();
 });
 self.addEventListener('activate', e => {
