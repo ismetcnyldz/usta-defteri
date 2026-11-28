@@ -2594,8 +2594,8 @@ async function renderRate(t){
     <button class="btn primary" id="rt-send" type="button" disabled>Puanı gönder</button><div class="err" id="rt-err"></div></div>`;el.hidden=false;
   let s=0;el.querySelectorAll('#rt-stars button').forEach(b=>b.onclick=()=>{s=+b.dataset.s;el.querySelectorAll('#rt-stars button').forEach(x=>x.classList.toggle('on',+x.dataset.s<=s));$('#rt-send').disabled=false});
   $('#rt-send').onclick=async()=>{if(!s)return;const bt=$('#rt-send');bt.disabled=true;bt.textContent='Gönderiliyor…';
-    try{const b=fdb.batch();b.set(fdb.doc('puanlar/'+pid),{tk:state.trackToken,ustaId:t.ustaId,stars:s,comment:$('#rt-com').value.trim().slice(0,500),name:$('#rt-name').value.trim().slice(0,40),arac:t.vehicle||'',createdAt:Date.now()});
-      b.update(profDoc(t.ustaId),{ratingSum:firebase.firestore.FieldValue.increment(s),ratingCount:firebase.firestore.FieldValue.increment(1),lastRating:pid});
+    try{const b=fdb.batch();const yid=fdb.collection('yorumlar').doc().id;const rv={ustaId:t.ustaId,stars:s,comment:$('#rt-com').value.trim().slice(0,500),name:$('#rt-name').value.trim().slice(0,40),arac:t.vehicle||'',createdAt:Date.now()};b.set(fdb.doc('puanlar/'+pid),Object.assign({tk:state.trackToken,yid},rv)); b.set(fdb.doc('puanKanit/'+yid),{p:pid}); b.set(fdb.doc('yorumlar/'+yid),rv);
+      b.update(profDoc(t.ustaId),{ratingSum:firebase.firestore.FieldValue.increment(s),ratingCount:firebase.firestore.FieldValue.increment(1),lastRating:yid});
       await b.commit();el.innerHTML='<div class="tr-big" style="--sc:var(--ok)">Puanınız için teşekkürler!<small>Yorumunuz diğer araç sahiplerine yol gösteriyor.</small></div>'}
     catch(ex){bt.disabled=false;bt.textContent='Tekrar deneyin';$('#rt-err').textContent='Gönderilemedi. İnternetinizi kontrol edip tekrar deneyin.'}};
 }
