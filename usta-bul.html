@@ -421,7 +421,7 @@ async function route(){
   $('#bk').onclick=()=>{if(history.state&&history.state.u)history.back();else{history.pushState({},'',location.pathname);route()}};
   if(p.hasPhoto)db.doc('profFoto/'+id).get().then(s=>{const v=s.data();if(v&&v.foto){const e=$('#dph');if(e){e.style.backgroundImage=`url("${v.foto}")`;e.innerHTML=''}}}).catch(()=>{});
   if(p.lat!=null&&window.L){if(dmap){dmap.remove();dmap=null}dmap=L.map('dmap',{scrollWheelZoom:false}).setView([p.lat,p.lng],16);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(dmap);L.marker([p.lat,p.lng],{icon:pin()}).addTo(dmap)}
-  let revs=[];try{const s=await db.collection('puanlar').where('ustaId','==',id).limit(200).get();revs=s.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))}catch(_){}
+  let revs=[];try{const s=await db.collection('yorumlar').where('ustaId','==',id).limit(200).get();revs=s.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))}catch(_){}
   const el=$('#revs');if(el)el.innerHTML=revs.length?revs.slice(0,50).map(r=>`<div class="rev"><div class="h"><b class="stars">${starStr(r.stars)}</b><span>${esc(r.name||'Müşteri')}${r.arac?' · '+esc(r.arac):''} · ${new Date(r.createdAt).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}</span></div>${r.comment?`<p>${esc(r.comment)}</p>`:''}</div>`).join(''):'<div class="empty">Henüz yorum yok. Bu ustaya aracınızı ilk siz götürün, ilk yorumu siz yazın.</div>';
   setLd(p,revs);
 }
